@@ -1,16 +1,15 @@
 # sales-query-portal
-HOW TO MAKE CHANGES TO APPSCRIPT
-whenever you make changes to the app script code.
-deploy the app script code as a web app in new deployment.
-then past the url you get in the env of this repo.
-for the website to be able to make requests to the appscript.
+### HOW TO MAKE CHANGES TO APPSCRIPT <br/>
+whenever you make changes to the app script code. <br/>
+deploy the app script code as a web app in new deployment. <br/>
+then past the url you get in the env of this repo. <br/>
+for the website to be able to make requests to the appscript. <br/>
 
-HOW TO ADD A NEW USER
-go to https://console.firebase.google.com
-open Sales-Query project
-left sidebar -> Authentication -> AddUser
-additionally to make the user an admin you also need to 
-left sidebar -> Firestore Database -> collection:portal-admins -> Add document -> Auto-ID -> feild:email  type:string   value:<EMAILOFTHEADMIN>
+### HOW TO ADD A NEW USER <br/>
+go to https://console.firebase.google.com <br/>
+open Sales-Query project <br/>
+left sidebar -> Authentication -> AddUser <br/>
+additionally to make the user an admin you also need to  <br/>
+left sidebar -> Firestore Database -> collection:portal-admins -> Add document -> Auto-ID -> feild:email  type:string   value:<EMAILOFTHEADMIN> <br/>
 
 --- mohammed mehdi
-the appscript and react code is well ddocumented
