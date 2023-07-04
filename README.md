@@ -7,10 +7,10 @@ for the website to be able to make requests to the appscript. <br/>
 
 ### HOW TO ADD A NEW USER <br/>
 go to https://console.firebase.google.com <br/>
-open Sales-Query project <br/>
+open ```Sales-Query``` project <br/>
 left sidebar -> Authentication -> AddUser <br/>
 additionally to make the user an admin you also need to  <br/>
-left sidebar -> Firestore Database -> collection:portal-admins -> Add document -> Auto-ID -> feild:email  type:string   value:EMAILOFTHEADMIN <br/>
+left sidebar -> Firestore Database -> collection:portal-admins -> Add document -> Auto-ID -> feild:email  type:string value:```EMAILOFTHEADMIN``` <br/>
 
 ### DEPLOY THE CHANGED CODE TO FIREBASE<br/>
 make sure you have required permissions. <br/>
