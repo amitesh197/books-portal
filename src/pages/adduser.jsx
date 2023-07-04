@@ -5,6 +5,10 @@ import { useGlobalContext } from "../context/globalContext";
 import { Toaster, toast } from "react-hot-toast";
 
 function Adduser() {
+  // no use of putting add user because. if an admin creates a user.
+  // he will automatically be loggedout and the just created user will be logged in.
+  // might as well go to https://console.firebase.google.com and create a user.
+  // read the ReadME.md for more details
   const { setUserInfo } = useGlobalContext();
 
   const [signupData, setSignupData] = useState({
