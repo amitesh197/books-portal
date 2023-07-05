@@ -74,7 +74,9 @@ function All() {
     }
   };
 
-  const handleToggleStatus = async (rowNumber) => {
+  const handleToggleStatus = async (rowNumber, state) => {
+    // if state 0. make cell not done
+    // if state 1. make cell done
     console.log(rowNumber);
     // row numbers in excel start from 1
     try {
@@ -86,6 +88,7 @@ function All() {
         body: JSON.stringify({
           sheetname: queryType,
           action: "toggleStatus",
+          state: state,
           rowNumber: rowNumber + 1,
         }),
       });
@@ -330,16 +333,33 @@ function All() {
                   // if user is admin then enable him to toggle the status of the row in the excel sheet
                   else if (key == "status" && userInfo.isAdmin) {
                     temp.push(
-                      <>
-                        <td
-                          className={`${
-                            isdone ? "hover:bg-red-600" : "hover:bg-green-600"
-                          } cursor-pointer`}
-                          onClick={() => handleToggleStatus(each["rowNumber"])}
+                      <td
+                        className={` cursor-pointer`}
+                        // onClick={() => handleToggleStatus(each["rowNumber"])}
+                      >
+                        {/* {each[key]} */}
+                        <select
+                          className={`bg-gray-800 ${isdone && "bg-green-900"} `}
+                          value={isdone ? "done" : "not done"}
                         >
-                          {each[key]}
-                        </td>
-                      </>
+                          <option
+                            value="done"
+                            onClick={() =>
+                              handleToggleStatus(each["rowNumber"], 1)
+                            }
+                          >
+                            Done
+                          </option>
+                          <option
+                            value="not done"
+                            onClick={() =>
+                              handleToggleStatus(each["rowNumber"], 0)
+                            }
+                          >
+                            not done
+                          </option>
+                        </select>
+                      </td>
                     );
                   }
                   // after all conditions. this is what is rendered for all the normal cells

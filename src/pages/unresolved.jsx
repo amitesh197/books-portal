@@ -55,7 +55,10 @@ function Unresolved() {
     }
   };
 
-  const handleToggleStatus = async (rowNumber) => {
+  const handleToggleStatus = async (rowNumber, state) => {
+    // if state 0. make cell not done
+    // if state 1. make cell done
+    console.log(rowNumber);
     // row numbers in excel start from 1
     try {
       const response = await fetch(`${import.meta.env.VITE_URL}`, {
@@ -66,6 +69,7 @@ function Unresolved() {
         body: JSON.stringify({
           sheetname: queryType,
           action: "toggleStatus",
+          state: state,
           rowNumber: rowNumber + 1,
         }),
       });
@@ -107,8 +111,8 @@ function Unresolved() {
         });
         const result = await response.json();
         if (result.successMessage == "Comment updated") {
-          setCommentModal(null)
-          setCommentText(null)
+          setCommentModal(null);
+          setCommentText(null);
           toast.success("Comment updated");
           if (userInfo.email) {
             getData();
@@ -133,7 +137,7 @@ function Unresolved() {
 
   const closeModal = () => {
     setCommentModal(null);
-    setCommentText(null)
+    setCommentText(null);
   };
 
   return (
@@ -164,9 +168,9 @@ function Unresolved() {
           type="text"
           placeholder="add comment"
           onChange={(e) => setCommentText(e.target.value)}
-          onKeyDown={(e)=>{
-            if (e.key === 'Enter') {
-              addComment()
+          onKeyDown={(e) => {
+            if (e.key === "Enter") {
+              addComment();
             }
           }}
         />
@@ -294,7 +298,10 @@ function Unresolved() {
                 // for admin to be able to edit comment
                 else if (key == "comment" && userInfo.isAdmin) {
                   temp.push(
-                    <td className="cursor-pointer hover:bg-yellow-700 " onClick={() => setCommentModal(each["rowNumber"])}>
+                    <td
+                      className="cursor-pointer hover:bg-yellow-700 "
+                      onClick={() => setCommentModal(each["rowNumber"])}
+                    >
                       {each[key]}
                     </td>
                   );
@@ -303,11 +310,31 @@ function Unresolved() {
                 else if (key == "status" && userInfo.isAdmin) {
                   temp.push(
                     <td
-                      className="hover:bg-green-600 cursor-pointer"
-                      onClick={() => handleToggleStatus(each["rowNumber"])}
+                      className={` cursor-pointer`}
+                      // onClick={() => handleToggleStatus(each["rowNumber"])}
                     >
-                      {" "}
-                      {each[key]}
+                      {/* {each[key]} */}
+                      <select
+                        className={`bg-gray-800  `}
+                        value="not done"
+                      >
+                        <option
+                          value="done"
+                          onClick={() =>
+                            handleToggleStatus(each["rowNumber"], 1)
+                          }
+                        >
+                          Done
+                        </option>
+                        <option
+                          value="not done"
+                          onClick={() =>
+                            handleToggleStatus(each["rowNumber"], 0)
+                          }
+                        >
+                          not done
+                        </option>
+                      </select>
                     </td>
                   );
                 }
