@@ -307,7 +307,7 @@ function Unresolved() {
                       onClick={() => handleToggleStatus(each["rowNumber"])}
                     >
                       {" "}
-                      adasd{each[key]}
+                      {each[key]}
                     </td>
                   );
                 }
