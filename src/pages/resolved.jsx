@@ -68,6 +68,7 @@ function Resolved() {
               <th>OLD NUMBER</th>
               <th>NEW NUMBER</th>
               <th>QUERY</th>
+              <th>COMMENT</th>
               <th>TAKENBY</th>
               <th>STATUS</th>
             </tr>
@@ -79,6 +80,7 @@ function Resolved() {
               <th>NEW EMAIL</th>
               <th>NUMBER</th>
               <th>QUERY</th>
+              <th>COMMENT</th>
               <th>TAKENBY</th>
               <th>STATUS</th>
             </tr>
@@ -91,6 +93,7 @@ function Resolved() {
               <th>COURSE NAME</th>
               <th>CONTENT</th>
               <th>QUERY</th>
+              <th>COMMENT</th>
               <th>TAKENBY</th>
               <th>STATUS</th>
             </tr>
@@ -104,6 +107,7 @@ function Resolved() {
               <th>CONTENT</th>
               <th>LINK</th>
               <th>QUERY</th>
+              <th>COMMENT</th>
               <th>TAKENBY</th>
               <th>STATUS</th>
             </tr>
@@ -116,6 +120,7 @@ function Resolved() {
               <th>COURSE NAME</th>
               <th>LINK</th>
               <th>QUERY</th>
+              <th>COMMENT</th>
               <th>TAKENBY</th>
               <th>STATUS</th>
             </tr>
@@ -127,6 +132,7 @@ function Resolved() {
               <th>NUMBER</th>
               <th>COURSE NAME</th>
               <th>QUERY</th>
+              <th>COMMENT</th>
               <th>TAKENBY</th>
               <th>STATUS</th>
             </tr>
@@ -138,6 +144,7 @@ function Resolved() {
               <th>NUMBER</th>
               <th>LINK</th>
               <th>QUERY</th>
+              <th>COMMENT</th>
               <th>TAKENBY</th>
               <th>STATUS</th>
             </tr>
@@ -149,7 +156,7 @@ function Resolved() {
             var temp = [];
             Object.keys(each).map((key, index) => {
               // condition to not make a td for rowNumber
-              if (key !== "rownNumber") {
+              if (key !== "rowNumber") {
                 // check if the text of the cell is a link or not
                 if (isLink(each[key])) {
                   temp.push(

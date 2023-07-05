@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useGlobalContext } from "../context/globalContext";
 import { Toaster, toast } from "react-hot-toast";
+import ReactModal from "react-modal";
 
 const isLink = (str) => {
   if (str) {
@@ -11,8 +12,28 @@ const isLink = (str) => {
   }
 };
 
+const customStyles = {
+  overlay: {
+    backgroundColor: "rgba(0, 0, 0, 0.5)", // Shadow background color
+  },
+  content: {
+    position: "absolute",
+    top: "50%",
+    left: "50%",
+    transform: "translate(-50%, -50%)",
+    height: "fit-content",
+    width: "fit-content",
+    padding: "0px",
+    border: "none",
+  },
+};
+
 function Unresolved() {
   const [tableData, setTableData] = useState();
+
+  // values can be rowNumber or null
+  const [commentModal, setCommentModal] = useState(null);
+  const [commentText, setCommentText] = useState(null);
 
   const { userInfo, queryType, setQueryType } = useGlobalContext();
 
@@ -34,7 +55,7 @@ function Unresolved() {
     }
   };
 
-  const modifyRow = async (rowNumber) => {
+  const handleToggleStatus = async (rowNumber) => {
     // row numbers in excel start from 1
     try {
       const response = await fetch(`${import.meta.env.VITE_URL}`, {
@@ -44,7 +65,7 @@ function Unresolved() {
         },
         body: JSON.stringify({
           sheetname: queryType,
-          toggleStatus: true,
+          action: "toggleStatus",
           rowNumber: rowNumber + 1,
         }),
       });
@@ -66,12 +87,55 @@ function Unresolved() {
     }
   };
 
+  const addComment = async (e) => {
+    // comment modal holds the rowNumber of the cell
+    if (commentModal) {
+      console.log(commentModal);
+      console.log(commentText);
+      try {
+        const response = await fetch(`${import.meta.env.VITE_URL}`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "text/plain",
+          },
+          body: JSON.stringify({
+            sheetname: queryType,
+            action: "addComment",
+            rowNumber: commentModal + 1,
+            commentText: commentText,
+          }),
+        });
+        const result = await response.json();
+        if (result.successMessage == "Comment updated") {
+          setCommentModal(null)
+          setCommentText(null)
+          toast.success("Comment updated");
+          if (userInfo.email) {
+            getData();
+          }
+        }
+      } catch (err) {
+        console.log(err);
+        toast.error("something went wrong. see console.");
+      }
+    } else {
+      toast.error("please retry");
+      setCommentModal(null);
+    }
+  };
+
   useEffect(() => {
     setTableData();
     if (userInfo.email) {
       getData();
     }
   }, [userInfo, queryType]);
+
+  const closeModal = () => {
+    setCommentModal(null);
+    setCommentText(null)
+  };
+
   return (
     <div className="text-white flex flex-col items-center">
       <Toaster />
@@ -89,6 +153,30 @@ function Unresolved() {
         <option value="grpnotalloted">grp not alloted</option>
         <option value="misc">misc</option>
       </select>
+      <ReactModal
+        isOpen={commentModal}
+        onRequestClose={closeModal}
+        style={customStyles}
+        contentLabel="Example Modal"
+      >
+        <input
+          className="text-black px-5 py-1"
+          type="text"
+          placeholder="add comment"
+          onChange={(e) => setCommentText(e.target.value)}
+          onKeyDown={(e)=>{
+            if (e.key === 'Enter') {
+              addComment()
+            }
+          }}
+        />
+        <button
+          className="bg-purple-500 hover:bg-purple-700 active:bg-purple-900 px-2 py-1 "
+          onClick={addComment}
+        >
+          Add
+        </button>
+      </ReactModal>
       <table className=" mx-auto">
         <thead>
           {queryType == "numberchange" && (
@@ -98,6 +186,7 @@ function Unresolved() {
               <th>OLD NUMBER</th>
               <th>NEW NUMBER</th>
               <th>QUERY</th>
+              <th>COMMENT</th>
               <th>TAKENBY</th>
               <th>STATUS</th>
             </tr>
@@ -109,6 +198,7 @@ function Unresolved() {
               <th>NEW EMAIL</th>
               <th>NUMBER</th>
               <th>QUERY</th>
+              <th>COMMENT</th>
               <th>TAKENBY</th>
               <th>STATUS</th>
             </tr>
@@ -121,6 +211,7 @@ function Unresolved() {
               <th>COURSE NAME</th>
               <th>CONTENT</th>
               <th>QUERY</th>
+              <th>COMMENT</th>
               <th>TAKENBY</th>
               <th>STATUS</th>
             </tr>
@@ -134,6 +225,7 @@ function Unresolved() {
               <th>CONTENT</th>
               <th>LINK</th>
               <th>QUERY</th>
+              <th>COMMENT</th>
               <th>TAKENBY</th>
               <th>STATUS</th>
             </tr>
@@ -146,6 +238,7 @@ function Unresolved() {
               <th>COURSE NAME</th>
               <th>LINK</th>
               <th>QUERY</th>
+              <th>COMMENT</th>
               <th>TAKENBY</th>
               <th>STATUS</th>
             </tr>
@@ -157,6 +250,7 @@ function Unresolved() {
               <th>NUMBER</th>
               <th>COURSE NAME</th>
               <th>QUERY</th>
+              <th>COMMENT</th>
               <th>TAKENBY</th>
               <th>STATUS</th>
             </tr>
@@ -168,6 +262,7 @@ function Unresolved() {
               <th>NUMBER</th>
               <th>LINK</th>
               <th>QUERY</th>
+              <th>COMMENT</th>
               <th>TAKENBY</th>
               <th>STATUS</th>
             </tr>
@@ -196,12 +291,20 @@ function Unresolved() {
                     </td>
                   );
                 }
+                // for admin to be able to edit comment
+                else if (key == "comment" && userInfo.isAdmin) {
+                  temp.push(
+                    <td className="cursor-pointer hover:bg-yellow-700 " onClick={() => setCommentModal(each["rowNumber"])}>
+                      {each[key]}
+                    </td>
+                  );
+                }
                 // if user is admin then enable him to toggle the status of the row in the excel sheet
                 else if (key == "status" && userInfo.isAdmin) {
                   temp.push(
                     <td
                       className="hover:bg-green-600 cursor-pointer"
-                      onClick={() => modifyRow(each["rowNumber"])}
+                      onClick={() => handleToggleStatus(each["rowNumber"])}
                     >
                       {" "}
                       adasd{each[key]}

@@ -5,7 +5,7 @@ import { storage } from "../firebase.config";
 import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
 
 function Home() {
-  const { userInfo , queryType , setQueryType } = useGlobalContext();
+  const { userInfo, queryType, setQueryType } = useGlobalContext();
 
   // can take following values
   // name
@@ -20,8 +20,6 @@ function Home() {
   // query
   // file   ->   file
   const [formData, setFormData] = useState({});
-
-
 
   const handleInput = (e) => {
     setFormData((prev) => ({
@@ -79,7 +77,11 @@ function Home() {
     ) {
       // upload the file to cloud storage and then take the url and upload to excell
 
-      const fileurl = await uploadFiletoCloud();
+      var fileurl
+
+      if (formData.file) {
+        fileurl = await uploadFiletoCloud();
+      }
 
       try {
         const response = await fetch(`${import.meta.env.VITE_URL}`, {
@@ -93,7 +95,7 @@ function Home() {
         console.log(result);
         if (result.successMessage == "done") {
           toast.success("entry made!!!");
-          clearInput()
+          clearInput();
         }
       } catch (err) {
         console.log(err);
@@ -112,14 +114,14 @@ function Home() {
         console.log(result);
         if (result.successMessage == "done") {
           toast.success("entry made!!!");
-          clearInput()
+          clearInput();
         }
       } catch (err) {
         console.log(err);
         toast.error("something went wrong. see console.");
       }
     }
-    setFormData({})
+    setFormData({});
   };
 
   useEffect(() => {
