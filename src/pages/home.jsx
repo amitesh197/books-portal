@@ -58,12 +58,15 @@ function Home() {
       `${monthYear}/${dayTime}-${formData.file.name} `
     );
     try {
+      toast.loading("Uploading File")
       const snapshot = await uploadBytes(storageRef, formData.file);
       const fileurl = getDownloadURL(storageRef);
-      toast.success("file uploaded");
+      toast.dismiss()
+      toast.success("File Uploaded");
       return fileurl;
     } catch (err) {
       console.log(err);
+      toast.dismiss()
       toast.error("problem while uploading file");
     }
   };
@@ -77,13 +80,14 @@ function Home() {
     ) {
       // upload the file to cloud storage and then take the url and upload to excell
 
-      var fileurl
+      var fileurl;
 
       if (formData.file) {
         fileurl = await uploadFiletoCloud();
       }
 
       try {
+        toast.loading("adding query")
         const response = await fetch(`${import.meta.env.VITE_URL}`, {
           method: "POST",
           headers: {
@@ -94,15 +98,18 @@ function Home() {
         const result = await response.json();
         console.log(result);
         if (result.successMessage == "done") {
+          toast.dismiss()
           toast.success("entry made!!!");
           clearInput();
         }
       } catch (err) {
+        toast.dismiss()
         console.log(err);
         toast.error("something went wrong");
       }
     } else {
       try {
+        toast.loading("adding query")
         const response = await fetch(`${import.meta.env.VITE_URL}`, {
           method: "POST",
           headers: {
@@ -113,10 +120,12 @@ function Home() {
         const result = await response.json();
         console.log(result);
         if (result.successMessage == "done") {
+          toast.dismiss()
           toast.success("entry made!!!");
           clearInput();
         }
       } catch (err) {
+        toast.dismiss()
         console.log(err);
         toast.error("something went wrong. see console.");
       }
@@ -270,15 +279,17 @@ function Home() {
       ) : null}
 
       {queryType == "UPIpayment" ? (
-        <div className="flex flex-col  items-start">
-          <span className="my-3">Course Name</span>
-          <input
-            placeholder="course name"
-            name="coursename"
-            className="text-black rounded-sm py-1 px-2"
-            onChange={handleInput}
-          />
-        </div>
+        <>
+          <div className="flex flex-col  items-start">
+            <span className="my-3">Course Name</span>
+            <input
+              placeholder="course name"
+              name="coursename"
+              className="text-black rounded-sm py-1 px-2"
+              onChange={handleInput}
+            />
+          </div>
+        </>
       ) : null}
 
       {queryType == "grpnotalloted" ? (
@@ -302,6 +313,29 @@ function Home() {
           onChange={handleInput}
         />
       </div>
+
+      {queryType == "UPIpayment" || queryType == "misc" ? (
+        <>
+          <div className="flex flex-col  items-start">
+            <span className="my-3">Current Course</span>
+            <input
+              placeholder="current course"
+              name="currentcourse"
+              className="text-black rounded-sm py-1 px-2"
+              onChange={handleInput}
+            />
+          </div>
+          <div className="flex flex-col  items-start">
+            <span className="my-3">Upgrade to which course</span>
+            <input
+              placeholder="upgrade to which course"
+              name="upgradetowhichcourse"
+              className="text-black rounded-sm py-1 px-2"
+              onChange={handleInput}
+            />
+          </div>
+        </>
+      ) : null}
 
       {queryType == "coursenotvisible" ||
       queryType == "UPIpayment" ||

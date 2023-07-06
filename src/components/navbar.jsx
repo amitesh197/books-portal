@@ -54,31 +54,37 @@ function Navbar() {
   };
 
   return (
-    <div className="flex flex-row justify-between bg-gray-800  w-full py-5 fixed top-0 px-5 md:px-20">
-      <div className="flex justify-between w-3/4 md:w-1/2">
+    <div className="flex flex-row justify-between text-xs md:text-lg bg-gray-800  w-full py-5 fixed top-0 px-1 sm:px-5 md:px-20">
+      <div className="flex justify-between w-full sm:w-3/4 md:w-1/2">
         <Link
           to="/"
-          className=" text-sm md:text-lg font-bold hover:text-gray-500 active:text-gray-800 cursor-pointer"
+          className="  font-bold hover:text-gray-500 active:text-gray-800 cursor-pointer"
         >
           New
         </Link>
         <Link
           to="/all"
-          className=" text-sm md:text-lg font-bold hover:text-gray-500 active:text-gray-800 cursor-pointer"
+          className="  font-bold hover:text-gray-500 active:text-gray-800 cursor-pointer"
         >
           All
         </Link>
         <Link
           to="/resolved"
-          className="text-sm md:text-lg font-bold hover:text-gray-500 active:text-gray-800 cursor-pointer"
+          className=" font-bold hover:text-gray-500 active:text-gray-800 cursor-pointer"
         >
           Resolved
         </Link>
         <Link
           to="/unresolved"
-          className="text-sm md:text-lg font-bold hover:text-gray-500 active:text-gray-800 cursor-pointer"
+          className=" font-bold hover:text-gray-500 active:text-gray-800 cursor-pointer"
         >
           Unresolved
+        </Link>
+        <Link
+          to="/stats"
+          className=" font-bold hover:text-gray-500 active:text-gray-800 cursor-pointer"
+        >
+          Stats
         </Link>
         {/* {userInfo?.isAdmin && (
           <Link
@@ -90,14 +96,14 @@ function Navbar() {
         )} */}
         <Link
           to="/info"
-          className=" text-sm md:text-lg font-bold flex items-center hover:text-gray-500 active:text-gray-800 cursor-pointer"
+          className="  font-bold flex items-center hover:text-gray-500 active:text-gray-800 cursor-pointer"
         >
           <img className="h-5" src={detailIcon} />
         </Link>
       </div>
       {userInfo ? (
         <a
-          className="text-sm md:text-lg font-bold text-red-500 hover:text-red-700 active:text-red-900  cursor-pointer"
+          className=" font-bold text-red-500 hover:text-red-700 active:text-red-900  cursor-pointer"
           onClick={logOut}
         >
           LogOut
@@ -105,7 +111,7 @@ function Navbar() {
       ) : (
         <Link
           to="/login"
-          className="text-sm md:text-lg font-bold hover:text-gray-500 active:text-gray-800 cursor-pointer"
+          className=" font-bold hover:text-gray-500 active:text-gray-800 cursor-pointer"
           // onClick={() => setAuth(true)}
         >
           LogIn

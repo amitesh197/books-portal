@@ -58,6 +58,7 @@ function All() {
   const getData = async () => {
     const paramsData = {
       userEmail: userInfo.isAdmin ? "admin" : userInfo.email,
+      action:"getsheetdata",
       status: "all",
       sheetname: queryType,
     };
@@ -65,11 +66,16 @@ function All() {
     const queryParams = new URLSearchParams(paramsData);
 
     try {
+      toast.loading("Fetching Data")
       const result = await fetch(`${import.meta.env.VITE_URL}?${queryParams}`);
       const data = await result.json();
       const sortedData = sortData(data.data);
+      toast.dismiss()
       setTableData(sortedData);
+      toast.success("Fetched")
     } catch (err) {
+      toast.dismiss()
+      toast.error("Failed to Fetch Data")
       console.log(err);
     }
   };
@@ -77,8 +83,12 @@ function All() {
   const handleToggleStatus = async (rowNumber, state) => {
     // if state 0. make cell not done
     // if state 1. make cell done
-    console.log(rowNumber);
-    // row numbers in excel start from 1
+    if(!state){
+      toast.loading("removing done")
+    }
+    else{
+      toast.loading("putting done")
+    }
     try {
       const response = await fetch(`${import.meta.env.VITE_URL}`, {
         method: "POST",
@@ -93,19 +103,20 @@ function All() {
         }),
       });
       const result = await response.json();
+      console.log(result)
       if (result.successMessage == "done removed") {
+        toast.dismiss()
         toast.success("done removed");
-        if (userInfo.email) {
-          getData();
-        }
       } else if (result.successMessage == "status set to done") {
+        toast.dismiss()
         toast.success("status set to done");
-        if (userInfo.email) {
-          getData();
-        }
+      }
+      if (userInfo.email) {
+        getData();
       }
     } catch (err) {
       console.log(err);
+      toast.dismiss()
       toast.error("something went wrong. see console.");
     }
   };
@@ -113,8 +124,7 @@ function All() {
   const addComment = async (e) => {
     // comment modal holds the rowNumber of the cell
     if (commentModal) {
-      console.log(commentModal);
-      console.log(commentText);
+      toast.loading("updating comment")
       try {
         const response = await fetch(`${import.meta.env.VITE_URL}`, {
           method: "POST",
@@ -130,6 +140,7 @@ function All() {
         });
         const result = await response.json();
         if (result.successMessage == "Comment updated") {
+          toast.dismiss()
           setCommentModal(null);
           setCommentText(null);
           toast.success("Comment updated");
@@ -139,9 +150,11 @@ function All() {
         }
       } catch (err) {
         console.log(err);
+        toast.dismiss()
         toast.error("something went wrong. see console.");
       }
     } else {
+      toast.dismiss()
       toast.error("please retry");
       setCommentModal(null);
     }
@@ -262,6 +275,8 @@ function All() {
                 <th>COURSE NAME</th>
                 <th>LINK</th>
                 <th>QUERY</th>
+                <th>CURRENT COURSE</th>
+                <th>UPGRADE TO WHICH COURSE</th>
                 <th>COMMENT</th>
                 <th>TAKENBY</th>
                 <th>STATUS</th>
@@ -286,6 +301,8 @@ function All() {
                 <th>NUMBER</th>
                 <th>LINK</th>
                 <th>QUERY</th>
+                <th>CURRENT COURSE</th>
+                <th>UPGRADE TO WHICH COURSE</th>
                 <th>COMMENT</th>
                 <th>TAKENBY</th>
                 <th>STATUS</th>

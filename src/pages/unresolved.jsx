@@ -40,6 +40,7 @@ function Unresolved() {
   const getData = async () => {
     const paramsData = {
       userEmail: userInfo.isAdmin ? "admin" : userInfo.email,
+      action: "getsheetdata",
       status: "notdone",
       sheetname: queryType,
     };
@@ -47,10 +48,15 @@ function Unresolved() {
     const queryParams = new URLSearchParams(paramsData);
 
     try {
+      toast.loading("Fetching Data");
       const result = await fetch(`${import.meta.env.VITE_URL}?${queryParams}`);
       const data = await result.json();
+      toast.dismiss();
       setTableData(data.data);
+      toast.success("Fetched");
     } catch (err) {
+      toast.dismiss();
+      toast.error("Failed to Fetch Data");
       console.log(err);
     }
   };
@@ -58,8 +64,11 @@ function Unresolved() {
   const handleToggleStatus = async (rowNumber, state) => {
     // if state 0. make cell not done
     // if state 1. make cell done
-    console.log(rowNumber);
-    // row numbers in excel start from 1
+    if (!state) {
+      toast.loading("removing done");
+    } else {
+      toast.loading("putting done");
+    }
     try {
       const response = await fetch(`${import.meta.env.VITE_URL}`, {
         method: "POST",
@@ -74,19 +83,27 @@ function Unresolved() {
         }),
       });
       const result = await response.json();
+      console.log(result)
       if (result.successMessage == "done removed") {
+        console.log("done removed")
+        toast.dismiss();
         toast.success("done removed");
-        if (userInfo.email) {
-          getData();
-        }
       } else if (result.successMessage == "status set to done") {
+        console.log("done added")
+        toast.dismiss()
         toast.success("status set to done");
-        if (userInfo.email) {
-          getData();
-        }
+      }
+      else if (result.errorMessage){
+        toast.dismiss()
+        toast.error(result.errorMessage)
+        toast.success("done")
+      }
+      if (userInfo.email) {
+        getData();
       }
     } catch (err) {
       console.log(err);
+      toast.dismiss()
       toast.error("something went wrong. see console.");
     }
   };
@@ -94,8 +111,7 @@ function Unresolved() {
   const addComment = async (e) => {
     // comment modal holds the rowNumber of the cell
     if (commentModal) {
-      console.log(commentModal);
-      console.log(commentText);
+      toast.loading("updating comment")
       try {
         const response = await fetch(`${import.meta.env.VITE_URL}`, {
           method: "POST",
@@ -111,6 +127,7 @@ function Unresolved() {
         });
         const result = await response.json();
         if (result.successMessage == "Comment updated") {
+          toast.dismiss()
           setCommentModal(null);
           setCommentText(null);
           toast.success("Comment updated");
@@ -120,9 +137,11 @@ function Unresolved() {
         }
       } catch (err) {
         console.log(err);
+        toast.dismiss()
         toast.error("something went wrong. see console.");
       }
     } else {
+      toast.dismiss()
       toast.error("please retry");
       setCommentModal(null);
     }
@@ -181,174 +200,177 @@ function Unresolved() {
           Add
         </button>
       </ReactModal>
-      <table className=" mx-auto">
-        <thead>
-          {queryType == "numberchange" && (
-            <tr>
-              <th>NAME</th>
-              <th>EMAIL</th>
-              <th>OLD NUMBER</th>
-              <th>NEW NUMBER</th>
-              <th>QUERY</th>
-              <th>COMMENT</th>
-              <th>TAKENBY</th>
-              <th>STATUS</th>
-            </tr>
-          )}
-          {queryType == "emailchange" && (
-            <tr>
-              <th>NAME</th>
-              <th>OLD EMAIL</th>
-              <th>NEW EMAIL</th>
-              <th>NUMBER</th>
-              <th>QUERY</th>
-              <th>COMMENT</th>
-              <th>TAKENBY</th>
-              <th>STATUS</th>
-            </tr>
-          )}
-          {queryType == "contentmissing" && (
-            <tr>
-              <th>NAME</th>
-              <th>EMAIL</th>
-              <th>NUMBER</th>
-              <th>COURSE NAME</th>
-              <th>CONTENT</th>
-              <th>QUERY</th>
-              <th>COMMENT</th>
-              <th>TAKENBY</th>
-              <th>STATUS</th>
-            </tr>
-          )}
-          {queryType == "coursenotvisible" && (
-            <tr>
-              <th>NAME</th>
-              <th>EMAIL</th>
-              <th>NUMBER</th>
-              <th>COURSE NAME</th>
-              <th>CONTENT</th>
-              <th>LINK</th>
-              <th>QUERY</th>
-              <th>COMMENT</th>
-              <th>TAKENBY</th>
-              <th>STATUS</th>
-            </tr>
-          )}
-          {queryType == "UPIpayment" && (
-            <tr>
-              <th>NAME</th>
-              <th>EMAIL</th>
-              <th>NUMBER</th>
-              <th>COURSE NAME</th>
-              <th>LINK</th>
-              <th>QUERY</th>
-              <th>COMMENT</th>
-              <th>TAKENBY</th>
-              <th>STATUS</th>
-            </tr>
-          )}
-          {queryType == "grpnotalloted" && (
-            <tr>
-              <th>NAME</th>
-              <th>EMAIL</th>
-              <th>NUMBER</th>
-              <th>COURSE NAME</th>
-              <th>QUERY</th>
-              <th>COMMENT</th>
-              <th>TAKENBY</th>
-              <th>STATUS</th>
-            </tr>
-          )}
-          {queryType == "misc" && (
-            <tr>
-              <th>NAME</th>
-              <th>EMAIL</th>
-              <th>NUMBER</th>
-              <th>LINK</th>
-              <th>QUERY</th>
-              <th>COMMENT</th>
-              <th>TAKENBY</th>
-              <th>STATUS</th>
-            </tr>
-          )}
-        </thead>
-        <tbody>
-          {tableData?.map((each) => {
-            // tableData is an array of objects
-            // temp variable stores an array of <td></td>
-            var temp = [];
-            // iteration over the objects
-            Object.keys(each).map((key, index) => {
-              // condition to not make a td for rowNumber
-              if (key !== "rowNumber") {
-                // check if the text of the cell is a link or not
-                if (isLink(each[key])) {
-                  temp.push(
-                    <td>
-                      <a
-                        className="text-blue-400 underline"
-                        target="_blank"
-                        href={each[key]}
-                      >
-                        Link
-                      </a>
-                    </td>
-                  );
-                }
-                // for admin to be able to edit comment
-                else if (key == "comment" && userInfo.isAdmin) {
-                  temp.push(
-                    <td
-                      className="cursor-pointer hover:bg-yellow-700 "
-                      onClick={() => setCommentModal(each["rowNumber"])}
-                    >
-                      {each[key]}
-                    </td>
-                  );
-                }
-                // if user is admin then enable him to toggle the status of the row in the excel sheet
-                else if (key == "status" && userInfo.isAdmin) {
-                  temp.push(
-                    <td
-                      className={` cursor-pointer`}
-                      // onClick={() => handleToggleStatus(each["rowNumber"])}
-                    >
-                      {/* {each[key]} */}
-                      <select
-                        className={`bg-gray-800  `}
-                        value="not done"
-                      >
-                        <option
-                          value="done"
-                          onClick={() =>
-                            handleToggleStatus(each["rowNumber"], 1)
-                          }
+      <div className=" w-full overflow-auto">
+        <table className=" mx-auto">
+          <thead>
+            {queryType == "numberchange" && (
+              <tr>
+                <th>NAME</th>
+                <th>EMAIL</th>
+                <th>OLD NUMBER</th>
+                <th>NEW NUMBER</th>
+                <th>QUERY</th>
+                <th>COMMENT</th>
+                <th>TAKENBY</th>
+                <th>STATUS</th>
+              </tr>
+            )}
+            {queryType == "emailchange" && (
+              <tr>
+                <th>NAME</th>
+                <th>OLD EMAIL</th>
+                <th>NEW EMAIL</th>
+                <th>NUMBER</th>
+                <th>QUERY</th>
+                <th>COMMENT</th>
+                <th>TAKENBY</th>
+                <th>STATUS</th>
+              </tr>
+            )}
+            {queryType == "contentmissing" && (
+              <tr>
+                <th>NAME</th>
+                <th>EMAIL</th>
+                <th>NUMBER</th>
+                <th>COURSE NAME</th>
+                <th>CONTENT</th>
+                <th>QUERY</th>
+                <th>COMMENT</th>
+                <th>TAKENBY</th>
+                <th>STATUS</th>
+              </tr>
+            )}
+            {queryType == "coursenotvisible" && (
+              <tr>
+                <th>NAME</th>
+                <th>EMAIL</th>
+                <th>NUMBER</th>
+                <th>COURSE NAME</th>
+                <th>CONTENT</th>
+                <th>LINK</th>
+                <th>QUERY</th>
+                <th>COMMENT</th>
+                <th>TAKENBY</th>
+                <th>STATUS</th>
+              </tr>
+            )}
+            {queryType == "UPIpayment" && (
+              <tr>
+                <th>NAME</th>
+                <th>EMAIL</th>
+                <th>NUMBER</th>
+                <th>COURSE NAME</th>
+                <th>LINK</th>
+                <th>QUERY</th>
+                <th>CURRENT COURSE</th>
+                <th>UPGRADE TO WHICH COURSE</th>
+                <th>COMMENT</th>
+                <th>TAKENBY</th>
+                <th>STATUS</th>
+              </tr>
+            )}
+            {queryType == "grpnotalloted" && (
+              <tr>
+                <th>NAME</th>
+                <th>EMAIL</th>
+                <th>NUMBER</th>
+                <th>COURSE NAME</th>
+                <th>QUERY</th>
+                <th>COMMENT</th>
+                <th>TAKENBY</th>
+                <th>STATUS</th>
+              </tr>
+            )}
+            {queryType == "misc" && (
+              <tr>
+                <th>NAME</th>
+                <th>EMAIL</th>
+                <th>NUMBER</th>
+                <th>LINK</th>
+                <th>QUERY</th>
+                <th>CURRENT COURSE</th>
+                <th>UPGRADE TO WHICH COURSE</th>
+                <th>COMMENT</th>
+                <th>TAKENBY</th>
+                <th>STATUS</th>
+              </tr>
+            )}
+          </thead>
+          <tbody>
+            {tableData?.map((each) => {
+              // tableData is an array of objects
+              // temp variable stores an array of <td></td>
+              var temp = [];
+              // iteration over the objects
+              Object.keys(each).map((key, index) => {
+                // condition to not make a td for rowNumber
+                if (key !== "rowNumber") {
+                  // check if the text of the cell is a link or not
+                  if (isLink(each[key])) {
+                    temp.push(
+                      <td>
+                        <a
+                          className="text-blue-400 underline"
+                          target="_blank"
+                          href={each[key]}
                         >
-                          Done
-                        </option>
-                        <option
-                          value="not done"
-                          onClick={() =>
-                            handleToggleStatus(each["rowNumber"], 0)
-                          }
-                        >
-                          not done
-                        </option>
-                      </select>
-                    </td>
-                  );
+                          Link
+                        </a>
+                      </td>
+                    );
+                  }
+                  // for admin to be able to edit comment
+                  else if (key == "comment" && userInfo.isAdmin) {
+                    temp.push(
+                      <td
+                        className="cursor-pointer hover:bg-yellow-700 "
+                        onClick={() => setCommentModal(each["rowNumber"])}
+                      >
+                        {each[key]}
+                      </td>
+                    );
+                  }
+                  // if user is admin then enable him to toggle the status of the row in the excel sheet
+                  else if (key == "status" && userInfo.isAdmin) {
+                    temp.push(
+                      <td
+                        className={` cursor-pointer`}
+                        // onClick={() => handleToggleStatus(each["rowNumber"])}
+                      >
+                        {/* {each[key]} */}
+                        <select className={`bg-gray-800  `} value="not done">
+                          <option
+                            value="done"
+                            onClick={() =>
+                              handleToggleStatus(each["rowNumber"], 1)
+                            }
+                          >
+                            Done
+                          </option>
+                          <option
+                            value="not done"
+                            onClick={() =>
+                              handleToggleStatus(each["rowNumber"], 0)
+                            }
+                          >
+                            not done
+                          </option>
+                        </select>
+                      </td>
+                    );
+                  }
+                  // regular <td> cell
+                  else {
+                    temp.push(<td>{each[key]}</td>);
+                  }
                 }
-                // regular <td> cell
-                else {
-                  temp.push(<td>{each[key]}</td>);
-                }
-              }
-            });
-            // return the whole row by passing the array of td as its child
-            return <tr className="">{temp}</tr>;
-          })}
-        </tbody>
-      </table>
+              });
+              // return the whole row by passing the array of td as its child
+              return <tr className="">{temp}</tr>;
+            })}
+          </tbody>
+        </table>
+      </div>
       {tableData?.length == 0 ? (
         <p className="text-xl font-semibold mt-5">empty</p>
       ) : null}
