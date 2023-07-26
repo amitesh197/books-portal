@@ -83,27 +83,26 @@ function Unresolved() {
         }),
       });
       const result = await response.json();
-      console.log(result)
+      console.log(result);
       if (result.successMessage == "done removed") {
-        console.log("done removed")
+        console.log("done removed");
         toast.dismiss();
         toast.success("done removed");
       } else if (result.successMessage == "status set to done") {
-        console.log("done added")
-        toast.dismiss()
+        console.log("done added");
+        toast.dismiss();
         toast.success("status set to done");
-      }
-      else if (result.errorMessage){
-        toast.dismiss()
-        toast.error(result.errorMessage)
-        toast.success("done")
+      } else if (result.errorMessage) {
+        toast.dismiss();
+        toast.error(result.errorMessage);
+        toast.success("done");
       }
       if (userInfo.email) {
         getData();
       }
     } catch (err) {
       console.log(err);
-      toast.dismiss()
+      toast.dismiss();
       toast.error("something went wrong. see console.");
     }
   };
@@ -111,7 +110,7 @@ function Unresolved() {
   const addComment = async (e) => {
     // comment modal holds the rowNumber of the cell
     if (commentModal) {
-      toast.loading("updating comment")
+      toast.loading("updating comment");
       try {
         const response = await fetch(`${import.meta.env.VITE_URL}`, {
           method: "POST",
@@ -127,7 +126,7 @@ function Unresolved() {
         });
         const result = await response.json();
         if (result.successMessage == "Comment updated") {
-          toast.dismiss()
+          toast.dismiss();
           setCommentModal(null);
           setCommentText(null);
           toast.success("Comment updated");
@@ -137,11 +136,11 @@ function Unresolved() {
         }
       } catch (err) {
         console.log(err);
-        toast.dismiss()
+        toast.dismiss();
         toast.error("something went wrong. see console.");
       }
     } else {
-      toast.dismiss()
+      toast.dismiss();
       toast.error("please retry");
       setCommentModal(null);
     }
@@ -338,20 +337,25 @@ function Unresolved() {
                         // onClick={() => handleToggleStatus(each["rowNumber"])}
                       >
                         {/* {each[key]} */}
-                        <select className={`bg-gray-800  `} value="not done">
+                        <select
+                          className={`bg-gray-800  `}
+                          value="not done"
+                          onChange={(e) => {
+                            const value = e.target.value;
+                            const isDone = value === "done";
+                            handleToggleStatus(
+                              each["rowNumber"],
+                              isDone ? 1 : 0
+                            );
+                          }}
+                        >
                           <option
                             value="done"
-                            onClick={() =>
-                              handleToggleStatus(each["rowNumber"], 1)
-                            }
                           >
                             Done
                           </option>
                           <option
                             value="not done"
-                            onClick={() =>
-                              handleToggleStatus(each["rowNumber"], 0)
-                            }
                           >
                             not done
                           </option>

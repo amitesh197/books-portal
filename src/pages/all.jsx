@@ -358,20 +358,20 @@ function All() {
                         <select
                           className={`bg-gray-800 ${isdone && "bg-green-900"} `}
                           value={isdone ? "done" : "not done"}
+                          onChange={(e) => {
+                            const value = e.target.value;
+                            const isDone = value === "done";
+                            handleToggleStatus(each["rowNumber"], isDone ? 1 : 0);
+                          }}
+                        
                         >
                           <option
                             value="done"
-                            onClick={() =>
-                              handleToggleStatus(each["rowNumber"], 1)
-                            }
                           >
                             Done
                           </option>
                           <option
                             value="not done"
-                            onClick={() =>
-                              handleToggleStatus(each["rowNumber"], 0)
-                            }
                           >
                             not done
                           </option>
