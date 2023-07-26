@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useGlobalContext } from "../context/globalContext";
 import { Toaster, toast } from "react-hot-toast";
 import ReactModal from "react-modal";
+import trashIcon from "../assets/trash-icon.png"
 
 const isLink = (str) => {
   if (str) {
@@ -143,6 +144,42 @@ function Unresolved() {
       toast.dismiss();
       toast.error("please retry");
       setCommentModal(null);
+    }
+  };
+
+  const deleteRow = async (rowNumber) => {
+    if (rowNumber) {
+      toast.loading("deleting query");
+      try {
+        const response = await fetch(`${import.meta.env.VITE_URL}`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "text/plain",
+          },
+          body: JSON.stringify({
+            sheetname: queryType,
+            action: "deleteRow",
+            rowNumber: rowNumber,
+          }),
+        });
+        const result = await response.json();
+        if (result.successMessage == "Row Deleted") {
+          toast.dismiss();
+          toast.success("Query Deleted");
+          if (userInfo.email) {
+            getData();
+          }
+        } else {
+          toast.dismiss();
+        }
+      } catch (err) {
+        console.log(err);
+        toast.dismiss();
+        toast.error("something went wrong. see console.");
+      }
+    } else {
+      toast.dismiss();
+      toast.error("please refresh and retry");
     }
   };
 
@@ -369,6 +406,20 @@ function Unresolved() {
                   }
                 }
               });
+
+              {
+                // for the delete cell
+                if (userInfo.isAdmin) {
+                  temp.push(
+                    <td
+                      onClick={() => deleteRow(each.rowNumber)}
+                      className="h-7 w-7 cursor-pointer bg-gray-800 hover:bg-gray-300 active:bg-red-600"
+                    >
+                      <img className=" h-7 w-7" src={trashIcon} />
+                    </td>
+                  );
+                }
+              }
               // return the whole row by passing the array of td as its child
               return <tr className="">{temp}</tr>;
             })}

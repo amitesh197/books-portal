@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useGlobalContext } from "../context/globalContext";
 import { Toaster, toast } from "react-hot-toast";
 import ReactModal from "react-modal";
+import trashIcon from "../assets/trash-icon.png"
 
 function checkDone(str) {
   var regex = /done/i; // Case-insensitive regex pattern for "done"
@@ -58,7 +59,7 @@ function All() {
   const getData = async () => {
     const paramsData = {
       userEmail: userInfo.isAdmin ? "admin" : userInfo.email,
-      action:"getsheetdata",
+      action: "getsheetdata",
       status: "all",
       sheetname: queryType,
     };
@@ -66,28 +67,28 @@ function All() {
     const queryParams = new URLSearchParams(paramsData);
 
     try {
-      toast.loading("Fetching Data")
+      toast.loading("Fetching Data");
       const result = await fetch(`${import.meta.env.VITE_URL}?${queryParams}`);
       const data = await result.json();
       const sortedData = sortData(data.data);
-      toast.dismiss()
+      toast.dismiss();
       setTableData(sortedData);
-      toast.success("Fetched")
+      toast.success("Fetched");
     } catch (err) {
-      toast.dismiss()
-      toast.error("Failed to Fetch Data")
+      toast.dismiss();
+      toast.error("Failed to Fetch Data");
       console.log(err);
     }
   };
 
   const handleToggleStatus = async (rowNumber, state) => {
+    console.log("running", rowNumber, state);
     // if state 0. make cell not done
     // if state 1. make cell done
-    if(!state){
-      toast.loading("removing done")
-    }
-    else{
-      toast.loading("putting done")
+    if (!state) {
+      toast.loading("removing done");
+    } else {
+      toast.loading("putting done");
     }
     try {
       const response = await fetch(`${import.meta.env.VITE_URL}`, {
@@ -103,12 +104,12 @@ function All() {
         }),
       });
       const result = await response.json();
-      console.log(result)
+      console.log(result);
       if (result.successMessage == "done removed") {
-        toast.dismiss()
+        toast.dismiss();
         toast.success("done removed");
       } else if (result.successMessage == "status set to done") {
-        toast.dismiss()
+        toast.dismiss();
         toast.success("status set to done");
       }
       if (userInfo.email) {
@@ -116,7 +117,7 @@ function All() {
       }
     } catch (err) {
       console.log(err);
-      toast.dismiss()
+      toast.dismiss();
       toast.error("something went wrong. see console.");
     }
   };
@@ -124,7 +125,7 @@ function All() {
   const addComment = async (e) => {
     // comment modal holds the rowNumber of the cell
     if (commentModal) {
-      toast.loading("updating comment")
+      toast.loading("updating comment");
       try {
         const response = await fetch(`${import.meta.env.VITE_URL}`, {
           method: "POST",
@@ -140,23 +141,61 @@ function All() {
         });
         const result = await response.json();
         if (result.successMessage == "Comment updated") {
-          toast.dismiss()
+          toast.dismiss();
           setCommentModal(null);
           setCommentText(null);
           toast.success("Comment updated");
           if (userInfo.email) {
             getData();
           }
+        } else {
+          toast.dismiss();
         }
       } catch (err) {
         console.log(err);
-        toast.dismiss()
+        toast.dismiss();
         toast.error("something went wrong. see console.");
       }
     } else {
-      toast.dismiss()
+      toast.dismiss();
       toast.error("please retry");
       setCommentModal(null);
+    }
+  };
+
+  const deleteRow = async (rowNumber) => {
+    if (rowNumber) {
+      toast.loading("deleting query");
+      try {
+        const response = await fetch(`${import.meta.env.VITE_URL}`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "text/plain",
+          },
+          body: JSON.stringify({
+            sheetname: queryType,
+            action: "deleteRow",
+            rowNumber: rowNumber,
+          }),
+        });
+        const result = await response.json();
+        if (result.successMessage == "Row Deleted") {
+          toast.dismiss();
+          toast.success("Query Deleted");
+          if (userInfo.email) {
+            getData();
+          }
+        } else {
+          toast.dismiss();
+        }
+      } catch (err) {
+        console.log(err);
+        toast.dismiss();
+        toast.error("something went wrong. see console.");
+      }
+    } else {
+      toast.dismiss();
+      toast.error("please refresh and retry");
     }
   };
 
@@ -361,20 +400,14 @@ function All() {
                           onChange={(e) => {
                             const value = e.target.value;
                             const isDone = value === "done";
-                            handleToggleStatus(each["rowNumber"], isDone ? 1 : 0);
+                            handleToggleStatus(
+                              each["rowNumber"],
+                              isDone ? 1 : 0
+                            );
                           }}
-                        
                         >
-                          <option
-                            value="done"
-                          >
-                            Done
-                          </option>
-                          <option
-                            value="not done"
-                          >
-                            not done
-                          </option>
+                          <option value="done">Done</option>
+                          <option value="not done">not done</option>
                         </select>
                       </td>
                     );
@@ -385,6 +418,19 @@ function All() {
                   }
                 }
               });
+              {
+                // for the delete cell
+                if (userInfo.isAdmin) {
+                  temp.push(
+                    <td
+                      onClick={() => deleteRow(each.rowNumber)}
+                      className="h-7 w-7 cursor-pointer bg-gray-800 hover:bg-gray-300 active:bg-red-600"
+                    >
+                      <img className=" h-7 w-7" src={trashIcon} />
+                    </td>
+                  );
+                }
+              }
               // return the whole row by passing the array of td as its child
               return <tr className={isdone && "bg-green-900"}>{temp}</tr>;
             })}
