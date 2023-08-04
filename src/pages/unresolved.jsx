@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useGlobalContext } from "../context/globalContext";
 import { Toaster, toast } from "react-hot-toast";
 import ReactModal from "react-modal";
-import trashIcon from "../assets/trash-icon.png"
+import trashIcon from "../assets/trash-icon.png";
 
 const isLink = (str) => {
   if (str) {
@@ -386,16 +386,8 @@ function Unresolved() {
                             );
                           }}
                         >
-                          <option
-                            value="done"
-                          >
-                            Done
-                          </option>
-                          <option
-                            value="not done"
-                          >
-                            not done
-                          </option>
+                          <option value="done">Done</option>
+                          <option value="not done">not done</option>
                         </select>
                       </td>
                     );
@@ -409,16 +401,14 @@ function Unresolved() {
 
               {
                 // for the delete cell
-                if (userInfo.isAdmin) {
-                  temp.push(
-                    <td
-                      onClick={() => deleteRow(each.rowNumber)}
-                      className="h-7 w-7 cursor-pointer bg-gray-800 hover:bg-gray-300 active:bg-red-600"
-                    >
-                      <img className=" h-7 w-7" src={trashIcon} />
-                    </td>
-                  );
-                }
+                temp.push(
+                  <td
+                    onClick={() => deleteRow(each.rowNumber)}
+                    className="h-7 w-7 cursor-pointer bg-gray-800 hover:bg-gray-300 active:bg-red-600"
+                  >
+                    <img className=" h-7 w-7" src={trashIcon} />
+                  </td>
+                );
               }
               // return the whole row by passing the array of td as its child
               return <tr className="">{temp}</tr>;
