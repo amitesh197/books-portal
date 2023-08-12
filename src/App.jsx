@@ -13,20 +13,38 @@ import Adduser from "./pages/adduser";
 import Stats from "./pages/stats";
 
 function App() {
-  const {isLoggedIn ,userInfo} =  useGlobalContext()
+  const { isLoggedIn, userInfo } = useGlobalContext();
   return (
-    <div className="">
+    <div className="bg-navbar-dark min-h-screen">
       <Navbar />
-      <div className="mt-16">
+      <div className="pt-16">
         <Routes>
-          <Route path="/" element={userInfo?<Home/>:<Navigate to="/login" />} />
-          <Route path="/all" element={userInfo?<All/>:<Navigate to="/login" />} />
-          <Route path="/resolved" element={userInfo?<Resolved/>:<Navigate to="/login" />} />
-          <Route path="/unresolved" element={userInfo?<Unresolved/>:<Navigate to="/login" />} />
-          <Route path="/stats" element={userInfo?.isAdmin?<Stats/>:<Navigate to="/" />} />
+          <Route
+            path="/"
+            element={userInfo ? <Home /> : <Navigate to="/login" />}
+          />
+          <Route
+            path="/all"
+            element={userInfo ? <All /> : <Navigate to="/login" />}
+          />
+          <Route
+            path="/resolved"
+            element={userInfo ? <Resolved /> : <Navigate to="/login" />}
+          />
+          <Route
+            path="/unresolved"
+            element={userInfo ? <Unresolved /> : <Navigate to="/login" />}
+          />
+          <Route
+            path="/stats"
+            element={userInfo?.isAdmin ? <Stats /> : <Navigate to="/" />}
+          />
           {/* <Route path="/adduser" element={userInfo?.isAdmin?<Adduser/>:<Navigate to="/" />} /> */}
-          <Route path="/info" element={userInfo?<Info/>:<Navigate to="/login" />} />
-          <Route path="/login" element={<Login/>} />
+          <Route
+            path="/info"
+            element={userInfo ? <Info /> : <Navigate to="/login" />}
+          />
+          <Route path="/login" element={<Login />} />
         </Routes>
       </div>
     </div>

@@ -17,11 +17,9 @@ function Resolved() {
   const { userInfo, queryType, setQueryType } = useGlobalContext();
 
   const getData = async () => {
-    console.log(userInfo);
-
     const paramsData = {
       userEmail: userInfo.isAdmin ? "admin" : userInfo.email,
-      action:"getsheetdata",
+      action: "getsheetdata",
       status: "done",
       sheetname: queryType,
     };
@@ -29,16 +27,15 @@ function Resolved() {
     const queryParams = new URLSearchParams(paramsData);
 
     try {
-      toast.loading("Fetching Data")
+      toast.loading("Fetching Data");
       const result = await fetch(`${import.meta.env.VITE_URL}?${queryParams}`);
       const data = await result.json();
-      console.log(data);
-      toast.dismiss()
+      toast.dismiss();
       setTableData(data.data);
-      toast.success("Fetched")
+      toast.success("Fetched");
     } catch (err) {
-      toast.dismiss()
-      toast.error("Failed to Fetch Data")
+      toast.dismiss();
+      toast.error("Failed to Fetch Data");
       console.log(err);
     }
   };
@@ -52,20 +49,20 @@ function Resolved() {
 
   return (
     <div className="text-white flex flex-col items-center">
-      <Toaster/>
-      <h1 className="text-3xl font-bold pt-10 text-center">RESOLVED</h1>
+      <Toaster />
+      <h1 className="text-3xl font-bold pt-5 text-center">RESOLVED</h1>
       <select
-        className="mt-5 bg-gray-700 mb-10 px-5 py-2 rounded-md"
+        className="my-5 bg-theme-yellow-dark  px-5 py-2 rounded-md font-semibold text-black outline-none w-full lg:w-1/3 md:w-1/2"
         value={queryType}
         onChange={(e) => setQueryType(e.target.value)}
       >
-        <option value="numberchange">number change</option>
-        <option value="emailchange">email change</option>
-        <option value="contentmissing">content missing</option>
-        <option value="coursenotvisible">course not visible</option>
+        <option value="numberchange">Number change</option>
+        <option value="emailchange">Email change</option>
+        <option value="contentmissing">Content Missing</option>
+        <option value="coursenotvisible">Course Not Visible</option>
         <option value="UPIpayment">UPI Payment</option>
-        <option value="grpnotalloted">grp not alloted</option>
-        <option value="misc">misc</option>
+        <option value="grpnotalloted">Group not alloted</option>
+        <option value="misc">Misc</option>
       </select>
       <div className=" w-full overflow-auto">
         <table className=" mx-auto">

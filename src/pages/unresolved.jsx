@@ -84,7 +84,6 @@ function Unresolved() {
         }),
       });
       const result = await response.json();
-      console.log(result);
       if (result.successMessage == "done removed") {
         console.log("done removed");
         toast.dismiss();
@@ -200,17 +199,17 @@ function Unresolved() {
       <Toaster />
       <h1 className="text-3xl font-bold pt-10 text-center">UNRESOLVED</h1>
       <select
-        className="mt-5 bg-gray-700 mb-10 px-5 py-2 rounded-md"
+        className="my-5 bg-theme-yellow-dark  px-5 py-2 rounded-md font-semibold text-black outline-none w-full lg:w-1/3 md:w-1/2"
         value={queryType}
         onChange={(e) => setQueryType(e.target.value)}
       >
-        <option value="numberchange">number change</option>
-        <option value="emailchange">email change</option>
-        <option value="contentmissing">content missing</option>
-        <option value="coursenotvisible">course not visible</option>
+        <option value="numberchange">Number change</option>
+        <option value="emailchange">Email change</option>
+        <option value="contentmissing">Content Missing</option>
+        <option value="coursenotvisible">Course Not Visible</option>
         <option value="UPIpayment">UPI Payment</option>
-        <option value="grpnotalloted">grp not alloted</option>
-        <option value="misc">misc</option>
+        <option value="grpnotalloted">Group not alloted</option>
+        <option value="misc">Misc</option>
       </select>
       <ReactModal
         isOpen={commentModal}
