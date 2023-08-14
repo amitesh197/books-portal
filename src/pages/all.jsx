@@ -251,7 +251,7 @@ function All() {
           Add
         </button>
       </ReactModal>
-      <div className="border-2 border-red-600 m-2 box-border">
+      <div className=" m-2 box-border">
         <table className="">
           <thead>
             {queryType == "numberchange" && (
