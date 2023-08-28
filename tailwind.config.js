@@ -10,9 +10,11 @@ export default {
       },
       colors: {
         "theme-yellow-dark": " #ff8e00",
-        "navbar-dark": " #2e2c2d",
+        "theme-dark": " #2e2c2d",
         "banner-btn": "#17115c",
         "theme-yellow-light": "rgb(253, 152, 25)",
+        "theme-light-gray": "rgb(210, 210, 210)",
+        "theme-dark-gray": "rgb(112, 112, 112)",
       },
     },
   },

@@ -26,8 +26,8 @@ function Stats() {
         })(),
         {
           loading: "Getting stats. This may take a while...",
-          success: "got stats",
-          error: "failed",
+
+          error: "Failed",
         }
       );
     } catch (err) {
@@ -44,11 +44,36 @@ function Stats() {
 
   return (
     <div className="flex flex-col justify-center w-full flex-wrap">
-      <Toaster />
+      <Toaster
+        position="bottom-left"
+        toastOptions={{
+          // Define default options
+          className: "",
+
+          style: {
+            background: "#ff8e00",
+            color: "#2e2c2d",
+          },
+
+          // Default options for specific types
+          success: {
+            duration: 2000,
+            theme: {
+              primary: "green",
+              secondary: "black",
+            },
+          },
+        }}
+      />
       <div className="flex justify-center font-semibold my-5">
-        <button className="bg-green-600 px-4 p-2 rounded-sm hover:bg-green-700 active:bg-green-900" onClick={()=>{if(userInfo.email){
-            getData()
-        }}}>
+        <button
+          className="bg-green-600 px-4 p-2 rounded-sm hover:bg-green-700 active:bg-green-900"
+          onClick={() => {
+            if (userInfo.email) {
+              getData();
+            }
+          }}
+        >
           REFRESH
         </button>
       </div>

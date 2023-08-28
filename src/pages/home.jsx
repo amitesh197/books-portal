@@ -6,7 +6,7 @@ import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
 
 function Home() {
   const { userInfo, queryType, setQueryType } = useGlobalContext();
-
+  const [loading, setLoading] = useState(false);
   // can take following values
   // name
   // number
@@ -63,6 +63,7 @@ function Home() {
     );
     try {
       toast.loading("Uploading File");
+      setLoading(true);
       const snapshot = await uploadBytes(storageRef, formData.file);
       const fileurl = getDownloadURL(storageRef);
       toast.dismiss();
@@ -72,6 +73,8 @@ function Home() {
       console.log(err);
       toast.dismiss();
       toast.error("problem while uploading file");
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -92,7 +95,8 @@ function Home() {
       }
 
       try {
-        toast.loading("adding query");
+        toast.loading("Adding query...");
+        setLoading(true);
         const response = await fetch(`${import.meta.env.VITE_URL}`, {
           method: "POST",
           headers: {
@@ -102,19 +106,22 @@ function Home() {
         });
         const result = await response.json();
         console.log(result);
-        if (result.successMessage == "done") {
+        if (result.successMessage == "Done") {
           toast.dismiss();
-          toast.success("entry made!!!");
+          toast.success("Entry made");
           clearInput();
         }
       } catch (err) {
         toast.dismiss();
         console.log(err);
-        toast.error("something went wrong");
+        toast.error("Something went wrong");
+      } finally {
+        setLoading(false);
       }
     } else {
       try {
-        toast.loading("adding query");
+        toast.loading("Adding query");
+        setLoading(true);
         const response = await fetch(`${import.meta.env.VITE_URL}`, {
           method: "POST",
           headers: {
@@ -126,13 +133,15 @@ function Home() {
         console.log(result);
         if (result.successMessage == "done") {
           toast.dismiss();
-          toast.success("entry made!!!");
+          toast.success("Entry made");
           clearInput();
         }
       } catch (err) {
         toast.dismiss();
         console.log(err);
         toast.error("something went wrong. see console.");
+      } finally {
+        setLoading(false);
       }
     }
     setFormData({});
@@ -146,67 +155,96 @@ function Home() {
   }, [queryType]);
 
   return (
-    <div className="flex flex-col justify-center items-center text-base font-semibold">
-      <Toaster />
-      <select
-        className="my-5 bg-theme-yellow-dark  px-5 py-2 rounded-md font-semibold text-black outline-none w-full lg:w-1/3 md:w-1/2"
-        value={queryType}
-        onChange={(e) => setQueryType(e.target.value)}
-      >
-        <option value="numberchange">Number change</option>
-        <option value="emailchange">Email change</option>
-        <option value="contentmissing">Content Missing</option>
-        <option value="coursenotvisible">Course Not Visible</option>
-        <option value="UPIpayment">UPI Payment</option>
-        <option value="grpnotalloted">Group not alloted</option>
-        <option value="misc">Misc</option>
-      </select>
+    <div className="flex flex-col items-center justify-center text-black text-base  w-full">
+      <Toaster
+        position="bottom-left"
+        toastOptions={{
+          // Define default options
+          className: "",
 
+          style: {
+            background: "#ff8e00",
+            color: "#2e2c2d",
+          },
+
+          // Default options for specific types
+          success: {
+            duration: 2000,
+            theme: {
+              primary: "green",
+              secondary: "black",
+            },
+          },
+        }}
+      />
+      <h1 className="w-full block p-2 font-semibold text-xl">
+        Welcome {userInfo.isAdmin && <span className="inline">Admin </span>}{" "}
+        {userInfo.email}
+      </h1>
       <form
-        className="flex flex-col p-5 rounded text-white  justify-center w-full md:w-1/2 lg:w-1/2"
+        className="flex flex-col gap-5 rounded  justify-center w-full md:w-2/3 lg:w-1/2 m-2 mb-5"
         onSubmit={handleSubmit}
       >
         <div className="flex flex-col">
-          <label className="my-1">Name</label>
+          <label className=" mx-1 font-semibold">Type</label>
+          <select
+            className="w-full  px-3 py-2 rounded-lg  text-lg outline-none  border border-theme-dark hover:border-theme-yellow-dark cursor-pointer"
+            value={queryType}
+            onChange={(e) => setQueryType(e.target.value)}
+          >
+            <option value="numberchange">Number change</option>
+            <option value="emailchange">Email change</option>
+            <option value="contentmissing">Content Missing</option>
+            <option value="coursenotvisible">Course Not Visible</option>
+            <option value="UPIpayment">UPI Payment</option>
+            <option value="grpnotalloted">Group not alloted</option>
+            <option value="misc">Misc</option>
+          </select>
+        </div>
+        <div className="flex flex-col">
+          <label className=" mx-1 font-semibold">Name</label>
           <input
             placeholder="Name"
             name="name"
-            className="text-black rounded-md p-2 outline-theme-yellow-dark border-none"
+            className="text-black rounded-md p-2 outline-theme-yellow-dark border border-theme-dark"
             onChange={handleInput}
           />
         </div>
 
         {queryType == "emailchange" ? (
           <>
-            <div className="flex flex-col my-3 ">
-              <label className="my-1">New Email</label>
+            <div className="flex flex-col  ">
+              <label className=" mx-1 font-semibold">New Email</label>
               <input
                 type="email"
-                placeholder="new email"
+                placeholder="New email"
+                required
                 name="newemail"
-                className="text-black rounded-md p-2 outline-theme-yellow-dark border-none"
+                className="text-black rounded-md p-2 outline-theme-yellow-dark border border-theme-dark"
                 onChange={handleInput}
               />
             </div>
-            <div className="flex flex-col my-3">
-              <label className="my-1">Old Email</label>
+            <div className="flex flex-col ">
+              <label className=" mx-1 font-semibold">Old Email</label>
               <input
                 type="email"
-                placeholder="old email"
+                placeholder="Old email"
+                required
                 name="oldemail"
-                className="text-black rounded-md p-2 outline-theme-yellow-dark border-none"
+                className="text-black rounded-md p-2 outline-theme-yellow-dark border border-theme-dark"
                 onChange={handleInput}
               />
             </div>
           </>
         ) : (
-          <div className="flex flex-col my-3">
-            <label className="my-1">Email</label>
+          <div className="flex flex-col ">
+            <label className=" mx-1 font-semibold">Email</label>
             <input
               type="email"
-              placeholder="email"
+              placeholder="Email"
+              required
               name="email"
-              className="text-black rounded-md p-2 outline-theme-yellow-dark border-none"
+              className="text-black rounded-md p-2 outline-theme-yellow-dark border border-theme-dark"
               onChange={handleInput}
             />
           </div>
@@ -214,35 +252,37 @@ function Home() {
 
         {queryType == "numberchange" ? (
           <>
-            <div className="flex flex-col my-3">
-              <label className="my-1">Old Number</label>
+            <div className="flex flex-col ">
+              <label className=" mx-1 font-semibold">Old Number</label>
               <input
                 type="number"
-                placeholder="old number"
+                placeholder="Old number"
+                required
                 name="oldnumber"
-                className="text-black rounded-md p-2 outline-theme-yellow-dark border-none"
+                className="text-black rounded-md p-2 outline-theme-yellow-dark border border-theme-dark"
                 onChange={handleInput}
               />
             </div>
-            <div className="flex flex-col my-3">
-              <label className="my-1">New Number</label>
+            <div className="flex flex-col ">
+              <label className=" mx-1 font-semibold">New Number</label>
               <input
                 type="number"
-                placeholder="new number"
+                placeholder="New number"
+                required
                 name="newnumber"
-                className="text-black rounded-md p-2 outline-theme-yellow-dark border-none"
+                className="text-black rounded-md p-2 outline-theme-yellow-dark border border-theme-dark"
                 onChange={handleInput}
               />
             </div>
           </>
         ) : (
-          <div className="flex flex-col my-3">
-            <label className="my-1">Number</label>
+          <div className="flex flex-col ">
+            <label className=" mx-1 font-semibold">Number</label>
             <input
               type="number"
-              placeholder="number"
+              placeholder="Number"
               name="number"
-              className="text-black rounded-md p-2 outline-theme-yellow-dark border-none"
+              className="text-black rounded-md p-2 outline-theme-yellow-dark border border-theme-dark"
               onChange={handleInput}
             />
           </div>
@@ -250,21 +290,23 @@ function Home() {
 
         {queryType == "contentmissing" ? (
           <>
-            <div className="flex flex-col my-3">
-              <label className="my-1">Course Name</label>
+            <div className="flex flex-col ">
+              <label className=" mx-1 font-semibold">Course Name</label>
               <input
-                placeholder="course name"
+                placeholder="Course name"
+                required
                 name="coursename"
-                className="text-black rounded-md p-2 outline-theme-yellow-dark border-none"
+                className="text-black rounded-md p-2 outline-theme-yellow-dark border border-theme-dark"
                 onChange={handleInput}
               />
             </div>
-            <div className="flex flex-col my-3">
-              <label className="my-1">Content</label>
+            <div className="flex flex-col ">
+              <label className=" mx-1 font-semibold">Content</label>
               <input
-                placeholder="content"
+                placeholder="Content"
+                required
                 name="content"
-                className="text-black rounded-md p-2 outline-theme-yellow-dark border-none"
+                className="text-black rounded-md p-2 outline-theme-yellow-dark border border-theme-dark"
                 onChange={handleInput}
               />
             </div>
@@ -273,21 +315,23 @@ function Home() {
 
         {queryType == "coursenotvisible" ? (
           <>
-            <div className="flex flex-col my-3">
-              <label className="my-1">Course Name</label>
+            <div className="flex flex-col ">
+              <label className=" mx-1 font-semibold">Course Name</label>
               <input
-                placeholder="course name"
+                placeholder="Course name"
+                required
                 name="coursename"
-                className="text-black rounded-md p-2 outline-theme-yellow-dark border-none"
+                className="text-black rounded-md p-2 outline-theme-yellow-dark border border-theme-dark"
                 onChange={handleInput}
               />
             </div>
-            <div className="flex flex-col my-3">
-              <label className="my-1">Content</label>
+            <div className="flex flex-col ">
+              <label className=" mx-1 font-semibold">Content</label>
               <input
-                placeholder="content"
+                placeholder="Content"
+                required
                 name="content"
-                className="text-black rounded-md p-2 outline-theme-yellow-dark border-none"
+                className="text-black rounded-md p-2 outline-theme-yellow-dark border border-theme-dark"
                 onChange={handleInput}
               />
             </div>
@@ -296,12 +340,13 @@ function Home() {
 
         {queryType == "UPIpayment" ? (
           <>
-            <div className="flex flex-col my-3">
-              <label className="my-1">Course Name</label>
+            <div className="flex flex-col ">
+              <label className=" mx-1 font-semibold">Course Name</label>
               <input
-                placeholder="course name"
+                placeholder="Course name"
+                required
                 name="coursename"
-                className="text-black rounded-md p-2 outline-theme-yellow-dark border-none"
+                className="text-black rounded-md p-2 outline-theme-yellow-dark border border-theme-dark"
                 onChange={handleInput}
               />
             </div>
@@ -309,45 +354,48 @@ function Home() {
         ) : null}
 
         {queryType == "grpnotalloted" ? (
-          <div className="flex flex-col my-3">
-            <label className="my-1">Course Name</label>
+          <div className="flex flex-col ">
+            <label className=" mx-1 font-semibold">Course Name</label>
             <input
-              placeholder="course name"
+              placeholder="Course name"
+              required
               name="coursename"
-              className="text-black rounded-md p-2 outline-theme-yellow-dark border-none"
+              className="text-black rounded-md p-2 outline-theme-yellow-dark border border-theme-dark"
               onChange={handleInput}
             />
           </div>
         ) : null}
 
-        <div className="flex flex-col my-3">
-          <label className="my-1">Query</label>
+        <div className="flex flex-col ">
+          <label className=" mx-1 font-semibold">Query</label>
           <textarea
             type="text"
-            placeholder="details about the query"
+            placeholder="Details about the query"
             name="query"
-            className="text-black rounded-md p-2 outline-theme-yellow-dark border-none"
+            className="text-black rounded-md p-2 outline-theme-yellow-dark border border-theme-dark"
             onChange={handleInput}
           />
         </div>
 
         {queryType == "UPIpayment" || queryType == "misc" ? (
           <>
-            <div className="flex flex-col my-3">
-              <label className="my-1">Current Course</label>
+            <div className="flex flex-col ">
+              <label className=" mx-1 font-semibold">Current Course</label>
               <input
-                placeholder="current course"
+                placeholder="Current course"
                 name="currentcourse"
-                className="text-black rounded-md p-2 outline-theme-yellow-dark border-none"
+                className="text-black rounded-md p-2 outline-theme-yellow-dark border border-theme-dark"
                 onChange={handleInput}
               />
             </div>
-            <div className="flex flex-col my-3">
-              <label className="my-1">Upgrade to which course</label>
+            <div className="flex flex-col ">
+              <label className=" mx-1 font-semibold">
+                Upgrade to which course
+              </label>
               <input
-                placeholder="upgrade to which course"
+                placeholder="Upgrade to which course"
                 name="upgradetowhichcourse"
-                className="text-black rounded-md p-2 outline-theme-yellow-dark border-none"
+                className="text-black rounded-md p-2 outline-theme-yellow-dark border border-theme-dark"
                 onChange={handleInput}
               />
             </div>
@@ -357,8 +405,8 @@ function Home() {
         {queryType == "coursenotvisible" ||
         queryType == "UPIpayment" ||
         queryType == "misc" ? (
-          <div className="flex flex-col my-3">
-            <label className=" my-3">File</label>
+          <div className="flex flex-col ">
+            <label className="  mx-1 font-semibold">File</label>
             <input
               type="file"
               name="file"
@@ -368,17 +416,16 @@ function Home() {
           </div>
         ) : null}
 
-        <span className="my-3 text-xs text-slate-300 w-full text-center">
-          {userInfo.isAdmin && (
-            <span className="mt-3 text-xs text-slate-300">Admin :</span>
-          )}{" "}
-          {userInfo.email}
-        </span>
         <button
           type="submit"
-          className="bg-purple-700 hover:bg-purple-500 active:bg-purple-300 px-5 py-2 rounded-lg"
+          className="bg-theme-yellow-dark hover:bg-theme-dark font-bold hover:text-theme-yellow-dark w-1/2 px-5 py-2 rounded-lg mx-auto mt-2"
+          disabled={loading}
         >
-          SUBMIT
+          {loading ? (
+            <i className="fa-solid fa-spinner animate-spin"></i>
+          ) : (
+            "Submit"
+          )}
         </button>
       </form>
     </div>

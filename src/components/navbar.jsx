@@ -11,6 +11,10 @@ import { useNavigate } from "react-router-dom";
 function Navbar() {
   const { userInfo, setUserInfo } = useGlobalContext();
   const navigate = useNavigate();
+  //get current url last part
+  let currentUrl = window.location.href.split("/").pop();
+
+  console.log("current url is ", currentUrl);
   const portalAdmins = collection(db, "portal-admins");
 
   const checkIfAdmin = async (email) => {
@@ -57,7 +61,7 @@ function Navbar() {
   };
 
   return (
-    <div className="flex flex-row justify-between text-xs md:text-lg bg-navbar-dark text-white  w-full p-2 fixed top-0  h-fit">
+    <div className="flex flex-row justify-between text-xs md:text-lg bg-theme-dark text-white  w-full p-2 fixed top-0  h-14">
       <div
         className="mx-2 cursor-pointer"
         onClick={() => {
@@ -66,34 +70,51 @@ function Navbar() {
       >
         <img className="w-20 h-10" src={logo} alt="logo" />
       </div>
-      <div className="flex justify-between w-full sm:w-3/4 md:w-1/2 items-center">
+      <div
+        className={`flex justify-between w-full sm:w-3/4 md:w-1/2 items-center  `}
+      >
         <Link
           to="/"
-          className="  font-bold hover:text-theme-yellow-dark  cursor-pointer"
+          className={
+            `font-bold hover:text-theme-yellow-dark  cursor-pointer ` +
+            (currentUrl == "" ? "text-theme-yellow-dark" : "")
+          }
         >
           New
         </Link>
         <Link
           to="/all"
-          className="  font-bold hover:text-theme-yellow-dark  cursor-pointer"
+          className={
+            `font-bold hover:text-theme-yellow-dark  cursor-pointer ` +
+            (currentUrl == "all" ? "text-theme-yellow-dark" : "")
+          }
         >
           All
         </Link>
         <Link
           to="/resolved"
-          className=" font-bold hover:text-theme-yellow-dark  cursor-pointer"
+          className={
+            `font-bold hover:text-theme-yellow-dark  cursor-pointer ` +
+            (currentUrl == "resolved" ? "text-theme-yellow-dark" : "")
+          }
         >
           Resolved
         </Link>
         <Link
           to="/unresolved"
-          className=" font-bold hover:text-theme-yellow-dark  cursor-pointer"
+          className={
+            `font-bold hover:text-theme-yellow-dark  cursor-pointer ` +
+            (currentUrl == "unresolved" ? "text-theme-yellow-dark" : "")
+          }
         >
           Unresolved
         </Link>
         <Link
           to="/stats"
-          className=" font-bold hover:text-theme-yellow-dark  cursor-pointer"
+          className={
+            `font-bold hover:text-theme-yellow-dark  cursor-pointer ` +
+            (currentUrl == "stats" ? "text-theme-yellow-dark" : "")
+          }
         >
           Stats
         </Link>
@@ -107,9 +128,12 @@ function Navbar() {
         )} */}
         <Link
           to="/info"
-          className="  font-bold flex items-center hover:text-theme-yellow-dark  cursor-pointer"
+          className={
+            `font-bold hover:text-theme-yellow-dark  cursor-pointer ` +
+            (currentUrl == "info" ? "text-theme-yellow-dark" : "")
+          }
         >
-          <img className="h-5" src={detailIcon} />
+          <i className="fa-solid fa-circle-info"></i>
         </Link>
       </div>
       {userInfo ? (
@@ -122,10 +146,10 @@ function Navbar() {
       ) : (
         <Link
           to="/login"
-          className="my-auto font-bold hover:text-theme-yellow-dark  cursor-pointer"
+          className="my-auto mx-2  text-theme-yellow-dark active:text-theme-yellow-dark px-2 py-1 rounded-lg  cursor-pointer"
           // onClick={() => setAuth(true)}
         >
-          LogIn
+          Login
         </Link>
       )}
     </div>

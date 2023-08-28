@@ -11,13 +11,15 @@ import All from "./pages/all";
 import Info from "./pages/info";
 import Adduser from "./pages/adduser";
 import Stats from "./pages/stats";
+import { Toaster } from "react-hot-toast";
 
 function App() {
   const { isLoggedIn, userInfo } = useGlobalContext();
   return (
-    <div className="bg-navbar-dark min-h-screen">
+    <>
+      {/* <Toaster /> */}
       <Navbar />
-      <div className="pt-16">
+      <div className=" min-h-screen pt-14 ">
         <Routes>
           <Route
             path="/"
@@ -47,7 +49,7 @@ function App() {
           <Route path="/login" element={<Login />} />
         </Routes>
       </div>
-    </div>
+    </>
   );
 }
 
