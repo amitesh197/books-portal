@@ -13,8 +13,6 @@ function Navbar() {
   const navigate = useNavigate();
   //get current url last part
   let currentUrl = window.location.href.split("/").pop();
-
-  console.log("current url is ", currentUrl);
   const portalAdmins = collection(db, "portal-admins");
 
   const checkIfAdmin = async (email) => {
@@ -109,15 +107,28 @@ function Navbar() {
         >
           Unresolved
         </Link>
-        <Link
-          to="/stats"
-          className={
-            `font-bold hover:text-theme-yellow-dark  cursor-pointer ` +
-            (currentUrl == "stats" ? "text-theme-yellow-dark" : "")
-          }
-        >
-          Stats
-        </Link>
+        {userInfo?.isAdmin && (
+          <Link
+            to="/stats"
+            className={
+              `font-bold hover:text-theme-yellow-dark  cursor-pointer ` +
+              (currentUrl == "stats" ? "text-theme-yellow-dark" : "")
+            }
+          >
+            Stats
+          </Link>
+        )}
+        {!userInfo?.isAdmin && (
+          <Link
+            to="/profile"
+            className={
+              `font-bold hover:text-theme-yellow-dark  cursor-pointer ` +
+              (currentUrl == "profile" ? "text-theme-yellow-dark" : "")
+            }
+          >
+            Profile
+          </Link>
+        )}
         {/* {userInfo?.isAdmin && (
           <Link
             to="/adduser"

@@ -12,6 +12,7 @@ import Info from "./pages/info";
 import Adduser from "./pages/adduser";
 import Stats from "./pages/stats";
 import { Toaster } from "react-hot-toast";
+import Profile from "./pages/profile";
 
 function App() {
   const { isLoggedIn, userInfo } = useGlobalContext();
@@ -36,6 +37,10 @@ function App() {
           <Route
             path="/unresolved"
             element={userInfo ? <Unresolved /> : <Navigate to="/login" />}
+          />
+          <Route
+            path="/profile"
+            element={userInfo ? <Profile /> : <Navigate to="/login" />}
           />
           <Route
             path="/stats"

@@ -28,6 +28,7 @@ function Home() {
       status: "",
       takenby: userInfo.email,
       sheetname: queryType,
+      action: "addQuery",
     }));
   };
 
@@ -80,7 +81,27 @@ function Home() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    console.log("form data is", formData);
+    /*
+    formData = 
+    {
+      "name": "hgjkgh",
+      "status": "",
+      "takenby": "test1@gmail.com",
+      "sheetname": "numberchange",
+      "email": "admin1@gmail.com",
+      "oldnumber": "12",
+      "newnumber": "12",
+      "query": "asdf",
+      "status": "",
+      "takenby": userInfo.email,
+      "sheetname": queryType,
+    }
+    
+    this is received as 
+    var jsonData = JSON.parse(e.postData.contents) in the google sheets script
 
+    */
     if (
       queryType == "coursenotvisible" ||
       queryType == "UPIpayment" ||
@@ -120,7 +141,7 @@ function Home() {
       }
     } else {
       try {
-        toast.loading("Adding query");
+        toast.loading("Adding query...");
         setLoading(true);
         const response = await fetch(`${import.meta.env.VITE_URL}`, {
           method: "POST",
