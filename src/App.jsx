@@ -13,14 +13,14 @@ import Adduser from "./pages/adduser";
 import Stats from "./pages/stats";
 import { Toaster } from "react-hot-toast";
 import Profile from "./pages/profile";
+import History from "./pages/history";
+import Dashboard from "./pages/dashboard";
 
 function App() {
   const { isLoggedIn, userInfo } = useGlobalContext();
   return (
     <>
-      {/* <Toaster /> */}
-      <Navbar />
-      <div className=" min-h-screen pt-14 ">
+      <div className=" pt-14 ">
         <Routes>
           <Route
             path="/"
@@ -43,8 +43,16 @@ function App() {
             element={userInfo ? <Profile /> : <Navigate to="/login" />}
           />
           <Route
+            path="/history"
+            element={userInfo ? <History /> : <Navigate to="/login" />}
+          />
+          <Route
             path="/stats"
             element={userInfo?.isAdmin ? <Stats /> : <Navigate to="/" />}
+          />
+          <Route
+            path="/dashboard"
+            element={userInfo?.isAdmin ? <Dashboard /> : <Navigate to="/" />}
           />
           {/* <Route path="/adduser" element={userInfo?.isAdmin?<Adduser/>:<Navigate to="/" />} /> */}
           <Route

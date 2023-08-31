@@ -59,7 +59,7 @@ function Navbar() {
   };
 
   return (
-    <div className="flex flex-row justify-between text-xs md:text-lg bg-theme-dark text-white  w-full p-2 fixed top-0  h-14">
+    <div className="flex flex-row justify-between text-xs md:text-lg bg-theme-dark text-white  w-full p-2 fixed top-0  h-14 z-10">
       <div
         className="mx-2 cursor-pointer"
         onClick={() => {
@@ -69,7 +69,7 @@ function Navbar() {
         <img className="w-20 h-10" src={logo} alt="logo" />
       </div>
       <div
-        className={`flex justify-between w-full sm:w-3/4 md:w-1/2 items-center  `}
+        className={`flex justify-between gap-5 w-full sm:w-3/4 md:w-1/2 items-center  `}
       >
         <Link
           to="/"
@@ -108,26 +108,52 @@ function Navbar() {
           Unresolved
         </Link>
         {userInfo?.isAdmin && (
-          <Link
-            to="/stats"
-            className={
-              `font-bold hover:text-theme-yellow-dark  cursor-pointer ` +
-              (currentUrl == "stats" ? "text-theme-yellow-dark" : "")
-            }
-          >
-            Stats
-          </Link>
+          <>
+            <Link
+              to="/stats"
+              className={
+                `font-bold hover:text-theme-yellow-dark  cursor-pointer ` +
+                (currentUrl == "stats" ? "text-theme-yellow-dark" : "")
+              }
+            >
+              Stats
+            </Link>
+          </>
         )}
         {!userInfo?.isAdmin && (
-          <Link
-            to="/profile"
-            className={
-              `font-bold hover:text-theme-yellow-dark  cursor-pointer ` +
-              (currentUrl == "profile" ? "text-theme-yellow-dark" : "")
-            }
-          >
-            Profile
-          </Link>
+          <>
+            <Link
+              to="/profile"
+              className={
+                `font-bold hover:text-theme-yellow-dark  cursor-pointer ` +
+                (currentUrl == "profile" ? "text-theme-yellow-dark" : "")
+              }
+            >
+              Profile
+            </Link>
+            <Link
+              to="/history"
+              className={
+                `font-bold hover:text-theme-yellow-dark  cursor-pointer ` +
+                (currentUrl == "history" ? "text-theme-yellow-dark" : "")
+              }
+            >
+              History
+            </Link>
+          </>
+        )}
+        {userInfo?.isAdmin && (
+          <>
+            <Link
+              to="/dashboard"
+              className={
+                `font-bold hover:text-theme-yellow-dark  cursor-pointer ` +
+                (currentUrl == "dashboard" ? "text-theme-yellow-dark" : "")
+              }
+            >
+              Dashboard
+            </Link>
+          </>
         )}
         {/* {userInfo?.isAdmin && (
           <Link

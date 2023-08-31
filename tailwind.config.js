@@ -12,7 +12,7 @@ export default {
         "theme-yellow-dark": " #ff8e00",
         "theme-dark": " #2e2c2d",
         "banner-btn": "#17115c",
-        "theme-yellow-light": "rgb(253, 152, 25)",
+        "theme-yellow-light": "rgba(248, 168, 69, 0.71)",
         "theme-light-gray": "rgb(210, 210, 210)",
         "theme-dark-gray": "rgb(112, 112, 112)",
       },

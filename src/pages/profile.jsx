@@ -12,6 +12,27 @@ export default function Profile({ props }) {
   //here the user object has two properties { user , isAdmin}
   const [loading, setLoading] = useState(false);
   const [userData, setUserData] = useState(null);
+  /* userData is like 
+  [
+    {
+        "Id": 1693313053204,
+        "Date": 29,
+        "Month": "Aug",
+        "Year": 2023,
+        "Type": "call",
+        "Count": 1
+    },
+    {
+        "Id": 1693313015986,
+        "Date": 29,
+        "Month": "Aug",
+        "Year": 2023,
+        "Type": "call",
+        "Count": 1
+    },
+    ...
+  ]
+    */
   const [fecthingData, setFetchingData] = useState(false);
   // Get current date, month, and year
   const currentDate = new Date();
@@ -35,6 +56,7 @@ export default function Profile({ props }) {
   const currentYear = currentDate.getFullYear();
 
   const getDataByUserEmail = async () => {
+    setFetchingData(true);
     const paramsData = {
       userEmail: userInfo?.email,
       action: "getProfileData",
@@ -48,14 +70,13 @@ export default function Profile({ props }) {
     try {
       toast.dismiss();
       setFetchingData(true);
-      toast.loading("Fetching Data");
       const result = await fetch(`${import.meta.env.VITE_URL}?${queryParams}`);
       const data = await result.json();
       toast.dismiss();
       if ((data.message = "done")) {
         setUserData(data.data);
+
         console.log("user Data", data.data);
-        toast.success("Fetched");
         setFetchingData(false);
       } else {
         toast.error("Failed to Fetch Data");
@@ -93,6 +114,8 @@ export default function Profile({ props }) {
       salesType,
       count,
       subAction: "add",
+      comment: "",
+      edited: 0,
     };
     console.log("data object is", dataObject);
 
@@ -112,7 +135,6 @@ export default function Profile({ props }) {
       console.log(result);
       if (result.successMessage == "done") {
         toast.dismiss();
-        toast.success("Entry made");
         //clear the form
         e.target["work-type"].value = "";
         e.target["count"].value = "";
@@ -199,7 +221,7 @@ export default function Profile({ props }) {
                 />
 
                 <button
-                  className="hover:bg-theme-dark hover:text-theme-yellow-dark font-semibold p-2 rounded-lg w-full border-2 border-theme-dark bg-theme-yellow-dark text-theme-dark"
+                  className="hover:bg-theme-dark hover:text-theme-yellow-dark font-semibold p-2 rounded-lg w-full border border-theme-dark bg-theme-yellow-dark text-theme-dark"
                   disabled={loading}
                 >
                   {loading ? (
@@ -213,7 +235,7 @@ export default function Profile({ props }) {
 
             {/* div for todays progress */}
             <>
-              {!fecthingData && userData ? (
+              {!fecthingData ? (
                 userData?.length > 0 ? (
                   <TodaysProgressCard userData={userData} />
                 ) : (
@@ -231,7 +253,7 @@ export default function Profile({ props }) {
 
           {/* div for monthly progress */}
           <div className="w-1/2 box-border px-5 pb-5">
-            {!fecthingData && userData ? (
+            {!fecthingData ? (
               userData?.length > 0 ? (
                 <MonthProgressCard userData={userData} />
               ) : (

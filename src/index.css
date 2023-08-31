@@ -4,6 +4,14 @@
 @tailwind components;
 @tailwind utilities;
 
+:root {
+  --theme-yellow-dark: #ff8e00;
+  --theme-yellow-light: rgb(253, 152, 25);
+  --theme-dark: #2e2c2d;
+  --banner-btn: #17115c;
+  --theme-gray: #d9d9d9;
+  --theme-gray-light: #f5f5f5;
+}
 * {
   font-family: "Roboto", sans-serif;
   padding: 0;

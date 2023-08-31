@@ -11,6 +11,7 @@
     "deploy": "npm run build && firebase deploy"
   },
   "dependencies": {
+    "@tanstack/react-table": "^8.9.3",
     "firebase": "^9.23.0",
     "firebase-tools": "^12.4.7",
     "font-awesome": "^4.7.0",

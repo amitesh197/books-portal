@@ -3,6 +3,7 @@ import ReactDOM from "react-dom/client";
 import App from "./App.jsx";
 import "./index.css";
 import "./loading-spinner.css";
+import "./modal.css";
 import "react-circular-progressbar/dist/styles.css";
 import { BrowserRouter } from "react-router-dom";
 import { GlobalContextProvider } from "./context/globalContext.jsx";

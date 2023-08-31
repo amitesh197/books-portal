@@ -76,7 +76,7 @@ function Login() {
   return (
     <>
       {/* for desktop view */}
-      <div className="w-full h-screen hidden sm:flex   flex-row flex-wrap p-0 m-0 ">
+      <div className="w-full h-screen hidden sm:flex   flex-row flex-wrap -mt-14 m-0 ">
         <div className="w-1/2  bg-theme-dark text-white ">
           <img
             className="w-1/3 h-fit mx-auto my-20"
@@ -146,7 +146,7 @@ function Login() {
 
               <button
                 type="submit"
-                className="w-full rounded-lg border-2 border-theme-yellow-light my-2 px-3 py-1 text-center  font-bold text-xl  hover:cursor-pointer bg-theme-yellow-light text-white transition-all ease-out hover:bg-white hover:text-theme-yellow-dark"
+                className="w-full rounded-lg border-2 border-theme-yellow-dark my-2 px-3 py-1 text-center  font-bold text-xl  hover:cursor-pointer bg-theme-yellow-dark text-white transition-all ease-out hover:bg-white hover:text-theme-yellow-dark"
               >
                 {
                   loading ? (
