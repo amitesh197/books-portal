@@ -40,7 +40,7 @@ function Navbar() {
     const listen = onAuthStateChanged(auth, (user) => {
       if (user) {
         settheuserdata(user);
-        console.log("user is ", user);
+        // console.log("user is ", user);
       } else {
         setUserInfo(null);
       }

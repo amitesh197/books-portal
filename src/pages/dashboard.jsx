@@ -3,13 +3,16 @@ import { useGlobalContext } from "../context/globalContext";
 import { useEffect, useState } from "react";
 import { Toaster, toast } from "react-hot-toast";
 import Navbar from "../components/navbar";
+import Loading from "../components/Loading";
+import FacultyOverAllStatsCard from "../components/FacultyOverAllStatsCard";
 
 export default function Dashboard() {
   const { userInfo } = useGlobalContext();
 
   //here the user object has two properties { user , isAdmin}
   const [fecthingData, setFetchingData] = useState(false);
-  const [userData, setUserData] = useState(null);
+  const [allUsersData, setAllUsersData] = useState(null);
+
   const getAllUsersData = async () => {
     setFetchingData(true);
     const paramsData = {
@@ -29,8 +32,7 @@ export default function Dashboard() {
       const data = await result.json();
       toast.dismiss();
       if ((data.message = "done")) {
-        setUserData(data.data);
-
+        setAllUsersData(data.data);
         console.log("user Data", data.data);
         toast.success("Fetched");
         setFetchingData(false);
@@ -55,11 +57,23 @@ export default function Dashboard() {
       <Navbar />
       <div className="flex flex-row flex-wrap items-center justify-evenly ">
         <h1 className="text-xl font-semibold w-full text-center my-2">
-          Feature coming soon !
+          All Users Stats
         </h1>
-        {/* {userData.map((user, index) => {
-        return <FacultyOverAllStatsCard key={index} facultyData={user} />;
-      })} */}
+        {!allUsersData && fecthingData ? (
+          <Loading />
+        ) : (
+          <div className="flex flex-row flex-wrap items-center justify-evenly ">
+            {allUsersData?.map((user, index) => {
+              return (
+                <FacultyOverAllStatsCard
+                  key={index}
+                  userData={user}
+                  index={index}
+                />
+              );
+            })}
+          </div>
+        )}
       </div>
     </>
   );

@@ -181,6 +181,7 @@ export default function History() {
         currentYear,
         type,
         count,
+        connectedCalls,
         comment,
         edited
       }

@@ -43,7 +43,7 @@ const customStyles = {
     left: "50%",
     transform: "translate(-50%, -50%)",
     height: "fit-content",
-    width: "fit-content",
+
     padding: "20px",
     border: "none",
     display: "flex",

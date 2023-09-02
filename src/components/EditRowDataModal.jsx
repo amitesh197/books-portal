@@ -7,16 +7,18 @@ export default function EditRowDataModal({
   handleEditRowData,
   editingRowData,
 }) {
+  console.log("row data in modal", rowData);
   //rowData is an object =
   /* {
-      dataId,
-      currentDay,
-      currentMonth,
-      currentYear,
-      type,
-      count,
-      comment,
-      edited
+      "Id": 1693651352622,
+      "Date": 2,
+      "Month": "Sep",
+      "Year": 2023,
+      "Type": "call",
+      "Count": 10,
+      "Connected": 5,
+      "Comment": "",
+      "Edited": 0
     }
 */
   const monthNames = [
@@ -37,6 +39,12 @@ export default function EditRowDataModal({
   const show = isModalOpen ? "block" : "hidden";
 
   const handleSubmit = (e) => {
+    const count = {
+      total: e.target["count"].value,
+      connected: e.target["connected-calls"]
+        ? e.target["connected-calls"].value
+        : "",
+    };
     e.preventDefault();
     //putting the form data into an object
     const formData = {
@@ -45,7 +53,7 @@ export default function EditRowDataModal({
       Month: e.target.month.value,
       Year: e.target.year.value,
       Type: e.target.type.value,
-      Count: e.target.count.value,
+      Count: count,
       Comment: e.target.comment.value,
       Edited: rowData.Edited + 1,
     };
@@ -67,7 +75,7 @@ export default function EditRowDataModal({
 
         <form
           onSubmit={handleSubmit}
-          className="flex flex-row gap-4 w-fit h-fit form relative"
+          className="flex flex-row gap-4 w-fit h-fit form relative pb-10"
         >
           <div className="flex flex-col">
             <label htmlFor="date">Date</label>
@@ -118,15 +126,43 @@ export default function EditRowDataModal({
           </div>
 
           <div className="flex flex-col">
-            <label htmlFor="count">Count</label>
-            <input
-              type="number"
-              id="count"
-              placeholder="Count"
-              name="count"
-              defaultValue={rowData.Count}
-              required
-            />
+            {
+              //if type selected is calls , then show the input for connected-calls
+              rowData.Type == "call" ? (
+                <>
+                  <label htmlFor="count">Total calls made</label>
+                  <input
+                    type="number"
+                    id="count"
+                    name="count"
+                    placeholder="Total calls made"
+                    required
+                    defaultValue={rowData.Count}
+                  />
+                  <label htmlFor="connected-calls">Connected calls</label>
+                  <input
+                    type="number"
+                    id="connected-calls"
+                    name="connected-calls"
+                    placeholder="Number of connected calls"
+                    required
+                    defaultValue={rowData.Connected}
+                  />
+                </>
+              ) : (
+                <>
+                  <label htmlFor="count">Count</label>
+                  <input
+                    type="number"
+                    id="count"
+                    name="count"
+                    placeholder="Count"
+                    required
+                    defaultValue={rowData.Count}
+                  />
+                </>
+              )
+            }
 
             <label htmlFor="comment">Comment</label>
             <textarea

@@ -34,6 +34,7 @@ export default function Profile({ props }) {
   ]
     */
   const [fecthingData, setFetchingData] = useState(false);
+  const [typeSelected, setTypeSelected] = useState("call");
   // Get current date, month, and year
   const currentDate = new Date();
   //convert current month number to month name
@@ -100,7 +101,12 @@ export default function Profile({ props }) {
 
     // Gather form data
     const salesType = e.target["work-type"].value;
-    const count = e.target["count"].value;
+    const count = {
+      total: e.target["count"].value,
+      connected: e.target["connected-calls"]
+        ? e.target["connected-calls"].value
+        : "",
+    };
 
     // Prepare the data object
     const dataObject = {
@@ -136,8 +142,9 @@ export default function Profile({ props }) {
       if (result.successMessage == "done") {
         toast.dismiss();
         //clear the form
-        e.target["work-type"].value = "";
+
         e.target["count"].value = "";
+        e.target["connected-calls"].value = "";
       }
     } catch (err) {
       toast.dismiss();
@@ -189,7 +196,7 @@ export default function Profile({ props }) {
           {/* div for form and todays progress */}
           <div className="flex flex-col w-1/2 px-10 gap-10 justify-between items-center  h-full ">
             {/* div for form */}
-            <div className="bg-theme-light-gray rounded-lg p-5 w-fit mx-auto">
+            <div className="bg-theme-light-gray rounded-lg p-5 w-2/3 mx-auto">
               <h3 className="font-semibold w-full text-center mb-5">
                 Add data
               </h3>
@@ -204,21 +211,45 @@ export default function Profile({ props }) {
                   id="work-type"
                   name="work-type"
                   required
+                  onChange={(e) => setTypeSelected(e.target.value)}
                 >
-                  <option value="" defaultChecked disabled>
+                  <option value="Select type" defaultChecked disabled>
                     Select Type
                   </option>
                   <option value="call">Call</option>
                   <option value="chat">Chat</option>
                 </select>
 
-                <input
-                  type="number"
-                  id="count"
-                  placeholder="Count"
-                  className="w-full p-2 outline-none  rounded-lg border border-theme-dark hover:border-theme-yellow-dark"
-                  required
-                />
+                {
+                  //if type selected is calls , then show the input for connected-calls
+                  typeSelected == "call" ? (
+                    <>
+                      <input
+                        type="number"
+                        id="count"
+                        placeholder="Total calls made"
+                        className="w-full p-2 outline-none  rounded-lg border border-theme-dark hover:border-theme-yellow-dark"
+                        required
+                      />
+                      <input
+                        type="number"
+                        id="connected-calls"
+                        name="connected-calls"
+                        placeholder="Number of connected calls"
+                        className="w-full p-2 outline-none  rounded-lg border border-theme-dark hover:border-theme-yellow-dark"
+                        required
+                      />
+                    </>
+                  ) : (
+                    <input
+                      type="number"
+                      id="count"
+                      placeholder="Count"
+                      className="w-full p-2 outline-none  rounded-lg border border-theme-dark hover:border-theme-yellow-dark"
+                      required
+                    />
+                  )
+                }
 
                 <button
                   className="hover:bg-theme-dark hover:text-theme-yellow-dark font-semibold p-2 rounded-lg w-full border border-theme-dark bg-theme-yellow-dark text-theme-dark"

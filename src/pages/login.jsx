@@ -60,7 +60,7 @@ function Login() {
         const bool = await checkIfAdmin(loginData.email);
         setUserInfo({ email: user.email, isAdmin: bool });
         if (bool) {
-          navigate("/unresolved");
+          navigate("/stats");
         } else {
           navigate("/");
         }

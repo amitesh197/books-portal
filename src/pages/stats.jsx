@@ -89,7 +89,10 @@ function Stats() {
             {statsData &&
               Object.entries(statsData).map(([key, value]) => {
                 return (
-                  <div className="bg-theme-light-gray flex flex-col p-5 rounded-lg  m-5 text-center text-theme-dark border border-theme-yellow-dark">
+                  <div
+                    key={key}
+                    className="bg-theme-light-gray flex flex-col p-5 rounded-lg  m-5 text-center text-theme-dark border border-theme-yellow-dark"
+                  >
                     <span className="text-xl mb-2 font-bold">
                       {camelCaseToSentenceCase(key)}
                     </span>
