@@ -1,9 +1,11 @@
 import React from "react";
 import { CircularProgressbar } from "react-circular-progressbar";
+import { useNavigate } from "react-router-dom";
 
-export default function FacultyOverAllStatsCard({ userData }) {
+export default function UserOverallStatsCard({ userData }) {
+  const navigate = useNavigate();
   const handleClick = () => {
-    console.log("user data is", userData);
+    // console.log("user data is", userData);
     /* 
     userData = {
     "userName": "test2@gmail.com",
@@ -13,6 +15,12 @@ export default function FacultyOverAllStatsCard({ userData }) {
     "totalChatCount": 20
 }
     */
+    //set username in local storage
+    localStorage.setItem("userName", userData.userName);
+    //redirect to user history page
+    // get username from email
+    const userName = userData.userName.split("@")[0];
+    navigate(`/users/${userName}`);
   };
   const targetCountForMonth = 1875;
 

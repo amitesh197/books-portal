@@ -1,10 +1,8 @@
-import React, { useEffect } from "react";
+import React from "react";
 import { useGlobalContext } from "../context/globalContext";
 import { Link } from "react-router-dom";
-import { auth, db } from "../firebase.config";
-import { onAuthStateChanged, signOut } from "firebase/auth";
-import { collection, getDocs, query, where } from "firebase/firestore";
-import detailIcon from "../assets/detail.png";
+import { auth } from "../firebase.config";
+import { signOut } from "firebase/auth";
 import logo from "../assets/edsarrthi-logo.webp";
 import { useNavigate } from "react-router-dom";
 
@@ -13,45 +11,15 @@ function Navbar() {
   const navigate = useNavigate();
   //get current url last part
   let currentUrl = window.location.href.split("/").pop();
-  const portalAdmins = collection(db, "portal-admins");
-
-  const checkIfAdmin = async (email) => {
-    const q = query(portalAdmins, where("email", "==", email));
-    const querySnapshot = await getDocs(q);
-    var arr = false;
-    querySnapshot.forEach((doc) => {
-      // doc.data() is never undefined for query doc snapshots
-      // const eachDoc = doc.data();
-      // console.log(doc.id, " => ", eachDoc);
-      arr = true;
-    });
-    if (arr) {
-      return true;
-    } else {
-      return false;
-    }
-  };
-  const settheuserdata = async (user) => {
-    const bool = await checkIfAdmin(user.email);
-    setUserInfo({ email: user.email, isAdmin: bool });
-  };
-
-  useEffect(() => {
-    const listen = onAuthStateChanged(auth, (user) => {
-      if (user) {
-        settheuserdata(user);
-        // console.log("user is ", user);
-      } else {
-        setUserInfo(null);
-      }
-    });
-  }, []);
 
   const logOut = () => {
     signOut(auth)
       .then((a) => {
         console.log(a);
         console.log("signout succesfulling");
+        sessionStorage.removeItem("userInfo");
+        navigate("/login");
+        setUserInfo(null);
       })
       .catch((error) => {
         console.log("error is ", err);

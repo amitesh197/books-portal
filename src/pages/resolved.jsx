@@ -33,8 +33,31 @@ function Resolved() {
       const result = await fetch(`${import.meta.env.VITE_URL}?${queryParams}`);
       const data = await result.json();
       toast.dismiss();
-      setTableData(data.data);
-      console.log("data in resolved", data.data);
+      /* data.data = [
+        {
+          "date": "2023-04-08T18:30:00.000Z",
+          "name": "New User",
+          "email": "shantanuesakpal1420@gmail.com",
+          "oldnumber": 3,
+          "newnumber": 2,
+          "query": "",
+          "comment": "",
+          "querytakenby": "shantanuesakpal1420@gmail.com",
+          "status": "",
+          "rowNumber": 24
+        },
+      ...
+      ]
+      */
+      //sort data in descending order of id
+      let sortedData = data.data.sort((a, b) => b.id - a.id);
+      //remove the id from the data and fix the date format
+      sortedData = sortedData.map((each) => {
+        delete each.id;
+        each.date = new Date(each.date).toLocaleDateString();
+        return each;
+      });
+      setTableData(sortedData);
       toast.success("Fetched");
     } catch (err) {
       toast.dismiss();
@@ -109,9 +132,12 @@ function Resolved() {
         ) : (
           <div className=" mx-2 my-5 flex flex-col items-center ">
             <table>
-              <thead className="bg-theme-yellow-dark border border-theme-dark-gray  text-theme-dark px-2 py-1 ">
+              <thead className="bg-theme-yellow-dark border border-theme-dark-gray text-theme-dark px-2 py-1">
                 {queryType == "numberchange" && (
-                  <tr className="">
+                  <tr>
+                    <th className="px-3 py-2 text-sm border border-theme-dark-gray">
+                      DATE
+                    </th>
                     <th className="px-3 py-2 text-sm border border-theme-dark-gray">
                       NAME
                     </th>
@@ -131,7 +157,7 @@ function Resolved() {
                       COMMENT
                     </th>
                     <th className="px-3 py-2 text-sm border border-theme-dark-gray">
-                      TAKENBY
+                      TAKEN BY
                     </th>
                     <th className="px-3 py-2 text-sm border border-theme-dark-gray">
                       STATUS
@@ -140,6 +166,9 @@ function Resolved() {
                 )}
                 {queryType == "emailchange" && (
                   <tr>
+                    <th className="px-3 py-2 text-sm border border-theme-dark-gray">
+                      DATE
+                    </th>
                     <th className="px-3 py-2 text-sm border border-theme-dark-gray">
                       NAME
                     </th>
@@ -159,7 +188,7 @@ function Resolved() {
                       COMMENT
                     </th>
                     <th className="px-3 py-2 text-sm border border-theme-dark-gray">
-                      TAKENBY
+                      TAKEN BY
                     </th>
                     <th className="px-3 py-2 text-sm border border-theme-dark-gray">
                       STATUS
@@ -169,6 +198,9 @@ function Resolved() {
                 {queryType == "contentmissing" && (
                   <tr>
                     <th className="px-3 py-2 text-sm border border-theme-dark-gray">
+                      DATE
+                    </th>
+                    <th className="px-3 py-2 text-sm border border-theme-dark-gray">
                       NAME
                     </th>
                     <th className="px-3 py-2 text-sm border border-theme-dark-gray">
@@ -190,7 +222,7 @@ function Resolved() {
                       COMMENT
                     </th>
                     <th className="px-3 py-2 text-sm border border-theme-dark-gray">
-                      TAKENBY
+                      TAKEN BY
                     </th>
                     <th className="px-3 py-2 text-sm border border-theme-dark-gray">
                       STATUS
@@ -200,6 +232,9 @@ function Resolved() {
                 {queryType == "coursenotvisible" && (
                   <tr>
                     <th className="px-3 py-2 text-sm border border-theme-dark-gray">
+                      DATE
+                    </th>
+                    <th className="px-3 py-2 text-sm border border-theme-dark-gray">
                       NAME
                     </th>
                     <th className="px-3 py-2 text-sm border border-theme-dark-gray">
@@ -224,7 +259,7 @@ function Resolved() {
                       COMMENT
                     </th>
                     <th className="px-3 py-2 text-sm border border-theme-dark-gray">
-                      TAKENBY
+                      TAKEN BY
                     </th>
                     <th className="px-3 py-2 text-sm border border-theme-dark-gray">
                       STATUS
@@ -234,6 +269,9 @@ function Resolved() {
                 {queryType == "UPIpayment" && (
                   <tr>
                     <th className="px-3 py-2 text-sm border border-theme-dark-gray">
+                      DATE
+                    </th>
+                    <th className="px-3 py-2 text-sm border border-theme-dark-gray">
                       NAME
                     </th>
                     <th className="px-3 py-2 text-sm border border-theme-dark-gray">
@@ -261,7 +299,7 @@ function Resolved() {
                       COMMENT
                     </th>
                     <th className="px-3 py-2 text-sm border border-theme-dark-gray">
-                      TAKENBY
+                      TAKEN BY
                     </th>
                     <th className="px-3 py-2 text-sm border border-theme-dark-gray">
                       STATUS
@@ -271,6 +309,9 @@ function Resolved() {
                 {queryType == "grpnotalloted" && (
                   <tr>
                     <th className="px-3 py-2 text-sm border border-theme-dark-gray">
+                      DATE
+                    </th>
+                    <th className="px-3 py-2 text-sm border border-theme-dark-gray">
                       NAME
                     </th>
                     <th className="px-3 py-2 text-sm border border-theme-dark-gray">
@@ -289,7 +330,7 @@ function Resolved() {
                       COMMENT
                     </th>
                     <th className="px-3 py-2 text-sm border border-theme-dark-gray">
-                      TAKENBY
+                      TAKEN BY
                     </th>
                     <th className="px-3 py-2 text-sm border border-theme-dark-gray">
                       STATUS
@@ -298,6 +339,9 @@ function Resolved() {
                 )}
                 {queryType == "misc" && (
                   <tr>
+                    <th className="px-3 py-2 text-sm border border-theme-dark-gray">
+                      DATE
+                    </th>
                     <th className="px-3 py-2 text-sm border border-theme-dark-gray">
                       NAME
                     </th>
@@ -323,7 +367,7 @@ function Resolved() {
                       COMMENT
                     </th>
                     <th className="px-3 py-2 text-sm border border-theme-dark-gray">
-                      TAKENBY
+                      TAKEN BY
                     </th>
                     <th className="px-3 py-2 text-sm border border-theme-dark-gray">
                       STATUS
@@ -331,6 +375,7 @@ function Resolved() {
                   </tr>
                 )}
               </thead>
+
               <tbody>
                 {tableData?.map((each) => {
                   // tableData is an array of objects

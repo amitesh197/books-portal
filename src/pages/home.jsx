@@ -22,10 +22,21 @@ function Home() {
   // file   ->   file
   const [formData, setFormData] = useState({});
 
+  //todays data in 13 digit format and use it as id, cause it will be unique
+  const dataId = Date.now();
+  // Get current date, month, and year in format day/month/year
+  const now = new Date();
+  const currentDay = now.getDate();
+  const currentMonth = now.getMonth() + 1;
+  const currentYear = now.getFullYear();
+  const todaysdate = `${currentDay}/${currentMonth}/${currentYear}`;
+
   const handleInput = (e) => {
     setFormData((prev) => ({
       ...prev,
       [e.target.name]: e.target.value,
+      id: dataId,
+      date: todaysdate,
       status: "",
       takenby: userInfo.email,
       sheetname: queryType,
@@ -128,7 +139,7 @@ function Home() {
         });
         const result = await response.json();
         console.log(result);
-        if (result.successMessage == "Done") {
+        if (result.successMessage == "done") {
           toast.dismiss();
           toast.success("Entry made");
           clearInput();

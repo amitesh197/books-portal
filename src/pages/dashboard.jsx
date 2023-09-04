@@ -4,15 +4,18 @@ import { useEffect, useState } from "react";
 import { Toaster, toast } from "react-hot-toast";
 import Navbar from "../components/navbar";
 import Loading from "../components/Loading";
-import FacultyOverAllStatsCard from "../components/FacultyOverAllStatsCard";
+import UserOverallStatsCard from "../components/UserOverallStatsCard";
+import { useNavigate } from "react-router-dom";
 
 export default function Dashboard() {
   const { userInfo } = useGlobalContext();
+  const navigate = useNavigate();
 
   //here the user object has two properties { user , isAdmin}
   const [fecthingData, setFetchingData] = useState(false);
   const [allUsersData, setAllUsersData] = useState(null);
 
+  //useMemo
   const getAllUsersData = async () => {
     setFetchingData(true);
     const paramsData = {
@@ -49,8 +52,12 @@ export default function Dashboard() {
   };
 
   useEffect(() => {
+    if (userInfo?.isAdmin === false) {
+      toast.error("You are not authorized to view this page");
+      navigate("/");
+    }
     getAllUsersData();
-  }, []);
+  }, [userInfo?.isAdmin]);
 
   return (
     <>
@@ -65,7 +72,7 @@ export default function Dashboard() {
           <div className="flex flex-row flex-wrap items-center justify-evenly ">
             {allUsersData?.map((user, index) => {
               return (
-                <FacultyOverAllStatsCard
+                <UserOverallStatsCard
                   key={index}
                   userData={user}
                   index={index}

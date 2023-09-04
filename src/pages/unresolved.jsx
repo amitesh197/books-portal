@@ -25,9 +25,15 @@ const customStyles = {
     left: "50%",
     transform: "translate(-50%, -50%)",
     height: "fit-content",
-    width: "fit-content",
-    padding: "0px",
+
+    padding: "20px",
     border: "none",
+    display: "flex",
+    flexDirection: "column",
+    justifyContent: "center",
+    alignItems: "center",
+    gap: "20px",
+    width: "30rem",
   },
 };
 
@@ -56,7 +62,15 @@ function Unresolved() {
       const result = await fetch(`${import.meta.env.VITE_URL}?${queryParams}`);
       const data = await result.json();
       toast.dismiss();
-      setTableData(data.data);
+      // //sort data in ascending order of id
+      // let sortedData = data.data.sort((a, b) => b.id - a.id);
+      //remove the id from the data and fix the date format
+      let sortedData = data.data.map((each) => {
+        delete each.id;
+        each.date = new Date(each.date).toLocaleDateString();
+        return each;
+      });
+      setTableData(sortedData);
       toast.success("Fetched");
     } catch (err) {
       toast.dismiss();
@@ -262,22 +276,30 @@ function Unresolved() {
           style={customStyles}
           contentLabel="Example Modal"
         >
-          <input
-            className="text-black px-5 py-1"
+          <textarea
+            className="text-black p-2 border border-theme-dark-gray rounded-md w-full outline-none focus:border-theme-yellow-dark"
             type="text"
-            placeholder="add comment"
+            placeholder="Add comment..."
             onChange={(e) => setCommentText(e.target.value)}
             onKeyDown={(e) => {
               if (e.key === "Enter") {
                 addComment();
               }
             }}
+            rows={3}
+            autoFocus
           />
           <button
-            className="bg-purple-500 hover:bg-purple-700 active:bg-purple-900 px-2 py-1 "
-            onClick={addComment}
+            className="bg-theme-yellow-dark hover:bg-theme-dark text-theme-dark hover:text-theme-yellow-dark border border-theme-dark px-2 py-1 cursor-pointer rounded-md w-20 "
+            onClick={() => {
+              addComment();
+            }}
           >
-            Add
+            {loading ? (
+              <i className="fa-solid fa-spinner animate-spin "></i>
+            ) : (
+              "Add"
+            )}
           </button>
         </ReactModal>
         {loading ? (
@@ -289,9 +311,12 @@ function Unresolved() {
         ) : (
           <div className=" mx-2 my-5 flex flex-col items-center ">
             <table>
-              <thead className="bg-theme-yellow-dark border border-theme-dark-gray  text-theme-dark px-2 py-1 ">
+              <thead className="bg-theme-yellow-dark border border-theme-dark-gray text-theme-dark px-2 py-1">
                 {queryType == "numberchange" && (
-                  <tr className="">
+                  <tr>
+                    <th className="px-3 py-2 text-sm border border-theme-dark-gray">
+                      DATE
+                    </th>
                     <th className="px-3 py-2 text-sm border border-theme-dark-gray">
                       NAME
                     </th>
@@ -311,7 +336,7 @@ function Unresolved() {
                       COMMENT
                     </th>
                     <th className="px-3 py-2 text-sm border border-theme-dark-gray">
-                      TAKENBY
+                      TAKEN BY
                     </th>
                     <th className="px-3 py-2 text-sm border border-theme-dark-gray">
                       STATUS
@@ -320,6 +345,9 @@ function Unresolved() {
                 )}
                 {queryType == "emailchange" && (
                   <tr>
+                    <th className="px-3 py-2 text-sm border border-theme-dark-gray">
+                      DATE
+                    </th>
                     <th className="px-3 py-2 text-sm border border-theme-dark-gray">
                       NAME
                     </th>
@@ -339,7 +367,7 @@ function Unresolved() {
                       COMMENT
                     </th>
                     <th className="px-3 py-2 text-sm border border-theme-dark-gray">
-                      TAKENBY
+                      TAKEN BY
                     </th>
                     <th className="px-3 py-2 text-sm border border-theme-dark-gray">
                       STATUS
@@ -349,6 +377,9 @@ function Unresolved() {
                 {queryType == "contentmissing" && (
                   <tr>
                     <th className="px-3 py-2 text-sm border border-theme-dark-gray">
+                      DATE
+                    </th>
+                    <th className="px-3 py-2 text-sm border border-theme-dark-gray">
                       NAME
                     </th>
                     <th className="px-3 py-2 text-sm border border-theme-dark-gray">
@@ -370,7 +401,7 @@ function Unresolved() {
                       COMMENT
                     </th>
                     <th className="px-3 py-2 text-sm border border-theme-dark-gray">
-                      TAKENBY
+                      TAKEN BY
                     </th>
                     <th className="px-3 py-2 text-sm border border-theme-dark-gray">
                       STATUS
@@ -380,6 +411,9 @@ function Unresolved() {
                 {queryType == "coursenotvisible" && (
                   <tr>
                     <th className="px-3 py-2 text-sm border border-theme-dark-gray">
+                      DATE
+                    </th>
+                    <th className="px-3 py-2 text-sm border border-theme-dark-gray">
                       NAME
                     </th>
                     <th className="px-3 py-2 text-sm border border-theme-dark-gray">
@@ -404,7 +438,7 @@ function Unresolved() {
                       COMMENT
                     </th>
                     <th className="px-3 py-2 text-sm border border-theme-dark-gray">
-                      TAKENBY
+                      TAKEN BY
                     </th>
                     <th className="px-3 py-2 text-sm border border-theme-dark-gray">
                       STATUS
@@ -414,6 +448,9 @@ function Unresolved() {
                 {queryType == "UPIpayment" && (
                   <tr>
                     <th className="px-3 py-2 text-sm border border-theme-dark-gray">
+                      DATE
+                    </th>
+                    <th className="px-3 py-2 text-sm border border-theme-dark-gray">
                       NAME
                     </th>
                     <th className="px-3 py-2 text-sm border border-theme-dark-gray">
@@ -441,7 +478,7 @@ function Unresolved() {
                       COMMENT
                     </th>
                     <th className="px-3 py-2 text-sm border border-theme-dark-gray">
-                      TAKENBY
+                      TAKEN BY
                     </th>
                     <th className="px-3 py-2 text-sm border border-theme-dark-gray">
                       STATUS
@@ -451,6 +488,9 @@ function Unresolved() {
                 {queryType == "grpnotalloted" && (
                   <tr>
                     <th className="px-3 py-2 text-sm border border-theme-dark-gray">
+                      DATE
+                    </th>
+                    <th className="px-3 py-2 text-sm border border-theme-dark-gray">
                       NAME
                     </th>
                     <th className="px-3 py-2 text-sm border border-theme-dark-gray">
@@ -469,7 +509,7 @@ function Unresolved() {
                       COMMENT
                     </th>
                     <th className="px-3 py-2 text-sm border border-theme-dark-gray">
-                      TAKENBY
+                      TAKEN BY
                     </th>
                     <th className="px-3 py-2 text-sm border border-theme-dark-gray">
                       STATUS
@@ -478,6 +518,9 @@ function Unresolved() {
                 )}
                 {queryType == "misc" && (
                   <tr>
+                    <th className="px-3 py-2 text-sm border border-theme-dark-gray">
+                      DATE
+                    </th>
                     <th className="px-3 py-2 text-sm border border-theme-dark-gray">
                       NAME
                     </th>
@@ -503,7 +546,7 @@ function Unresolved() {
                       COMMENT
                     </th>
                     <th className="px-3 py-2 text-sm border border-theme-dark-gray">
-                      TAKENBY
+                      TAKEN BY
                     </th>
                     <th className="px-3 py-2 text-sm border border-theme-dark-gray">
                       STATUS
@@ -511,7 +554,8 @@ function Unresolved() {
                   </tr>
                 )}
               </thead>
-              <tbody>
+
+              <tbody className="border border-theme-dark-gray bg-theme-light-gray p-2">
                 {tableData?.map((each) => {
                   // tableData is an array of objects
                   // temp variable stores an array of <td></td>
@@ -538,7 +582,8 @@ function Unresolved() {
                       else if (key == "comment" && userInfo.isAdmin) {
                         temp.push(
                           <td
-                            className="border border-theme-dark-gray bg-theme-light-gray p-2 cursor-pointer "
+                            key={index}
+                            className="border border-theme-dark-gray hover:bg-theme-yellow-light p-2 cursor-pointer"
                             onClick={() => setCommentModal(each["rowNumber"])}
                           >
                             {each[key]}

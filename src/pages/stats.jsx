@@ -3,11 +3,13 @@ import { useGlobalContext } from "../context/globalContext";
 import { Toaster, toast } from "react-hot-toast";
 import Navbar from "../components/navbar";
 import Loading from "../components/Loading";
+import { useNavigate } from "react-router-dom";
 
 function Stats() {
   const { userInfo } = useGlobalContext();
   const [fecthingData, setFetchingData] = useState(false);
   const [statsData, setStatsData] = useState();
+  const navigate = useNavigate();
 
   const getData = async () => {
     setFetchingData(true);
@@ -51,6 +53,10 @@ function Stats() {
 
   useEffect(() => {
     setStatsData(null);
+    if (userInfo?.isAdmin === false) {
+      toast.error("You are not authorized to view this page");
+      navigate("/");
+    }
     if (userInfo.email) {
       getData();
     }
@@ -91,7 +97,12 @@ function Stats() {
                 return (
                   <div
                     key={key}
-                    className="bg-theme-light-gray flex flex-col p-5 rounded-lg  m-5 text-center text-theme-dark border border-theme-yellow-dark"
+                    className="bg-theme-light-gray flex flex-col p-5 rounded-lg  m-5 text-center text-theme-dark border border-theme-yellow-dark hover:shadow-xl transition duration-300 ease-in-out cursor-pointer"
+                    onClick={() => {
+                      localStorage.setItem("queryType", key);
+                      //push to /all
+                      navigate("/all");
+                    }}
                   >
                     <span className="text-xl mb-2 font-bold">
                       {camelCaseToSentenceCase(key)}
@@ -117,7 +128,7 @@ function Stats() {
         )}
         <div className="flex justify-center font-semibold my-5">
           <button
-            className="bg-green-600 px-4 p-2 rounded-sm hover:bg-green-700 active:bg-green-900"
+            className="px-3 py-2 font-semibold rounded-lg text-theme-dark bg-theme-yellow-dark transition duration-300 ease-in-out"
             onClick={() => {
               if (userInfo.email) {
                 getData();

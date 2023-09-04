@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useGlobalContext } from "../context/globalContext";
 import { auth, db } from "../firebase.config.jsx";
 import { signInWithEmailAndPassword } from "firebase/auth";
@@ -59,6 +59,10 @@ function Login() {
         const user = userCredentials.user;
         const bool = await checkIfAdmin(loginData.email);
         setUserInfo({ email: user.email, isAdmin: bool });
+        sessionStorage.setItem(
+          "userInfo",
+          JSON.stringify({ email: user.email, isAdmin: bool })
+        );
         if (bool) {
           navigate("/stats");
         } else {
@@ -72,6 +76,12 @@ function Login() {
       }
     }
   };
+
+  useEffect(() => {
+    if (sessionStorage.getItem("userInfo")) {
+      navigate("/");
+    }
+  }, []);
 
   return (
     <>

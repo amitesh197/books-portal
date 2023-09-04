@@ -14,6 +14,34 @@ export default function TodaysProgressCard({ userData }) {
    ...
 ]
     */
+  // Get current date, month, and year
+  const currentDate = new Date();
+  //convert current month number to month name
+  let currentDay = currentDate.getDate();
+  const monthNames = [
+    "Jan",
+    "Feb",
+    "Mar",
+    "Apr",
+    "May",
+    "Jun",
+    "Jul",
+    "Aug",
+    "Sep",
+    "Oct",
+    "Nov",
+    "Dec",
+  ];
+  const currentMonth = monthNames[currentDate.getMonth()];
+  const currentYear = currentDate.getFullYear();
+  //filter the data by current date, month, and year
+  userData = userData.filter(
+    (item) =>
+      item.Date === currentDay &&
+      item.Month === currentMonth &&
+      item.Year === currentYear
+  );
+  console.log("userData is in todays", userData);
   const callsCount = userData
     .filter((item) => item.Type === "call")
     .reduce((acc, item) => acc + item.Count, 0);

@@ -56,16 +56,15 @@ const customStyles = {
 };
 
 function All() {
+  const { userInfo, queryType, setQueryType } = useGlobalContext();
   const [tableData, setTableData] = useState();
-  const [loading, setLoading] = useState(false);
-
+  const [loading, setLoading] = useState(true);
   // values can be rowNumber or null
   const [commentModal, setCommentModal] = useState(null);
   const [commentText, setCommentText] = useState(null);
 
-  const { userInfo, queryType, setQueryType } = useGlobalContext();
-
   const getData = async () => {
+    // console.log("running");
     setLoading(true);
     const paramsData = {
       userEmail: userInfo.isAdmin ? "admin" : userInfo.email,
@@ -73,16 +72,40 @@ function All() {
       status: "all",
       sheetname: queryType,
     };
-    console.log("params data is", paramsData);
+    // console.log("params data is", paramsData);
     const queryParams = new URLSearchParams(paramsData);
 
     try {
       const result = await fetch(`${import.meta.env.VITE_URL}?${queryParams}`);
       const data = await result.json();
-      const sortedData = sortData(data.data);
+      //remvove the id from the data
+      console.log("data", data.data);
+      /* data.data = [
+        {
+          "date": "2023-04-08T18:30:00.000Z",
+          "name": "New User",
+          "email": "shantanuesakpal1420@gmail.com",
+          "oldnumber": 3,
+          "newnumber": 2,
+          "query": "",
+          "comment": "",
+          "querytakenby": "shantanuesakpal1420@gmail.com",
+          "status": "",
+          "rowNumber": 24
+        },
+      ...
+      ]
+      */
+      let sortedData = sortData(data.data);
+      //remove the id from the data and fix the date format
+      sortedData = sortedData.map((each) => {
+        delete each.id;
+        each.date = new Date(each.date).toLocaleDateString();
+
+        return each;
+      });
       toast.dismiss();
       setTableData(sortedData);
-      console.log("sortedData", sortedData);
       toast.success("Fetched");
     } catch (err) {
       toast.dismiss();
@@ -217,11 +240,21 @@ function All() {
   };
 
   useEffect(() => {
-    setTableData();
+    //set the query type to the query in local storage
+    const query = localStorage.getItem("queryType");
+    //if query is not null then set the query type to the query in local storage
+    if (query) {
+      setQueryType(query);
+    } else {
+      setQueryType("numberchange");
+      localStorage.setItem("queryType", "numberchange");
+    }
+
+    setTableData(null);
     if (userInfo?.email) {
       getData();
     }
-  }, [userInfo, queryType]);
+  }, [userInfo?.email, queryType]);
 
   const closeModal = () => {
     setCommentModal(null);
@@ -264,7 +297,10 @@ function All() {
           <select
             className="float-left  border-2 border-theme-yellow-dark inline px-3 py-2 rounded-md  text-black outline-none w-fit  cursor-pointer"
             value={queryType}
-            onChange={(e) => setQueryType(e.target.value)}
+            onChange={(e) => {
+              setQueryType(e.target.value);
+              localStorage.setItem("queryType", e.target.value);
+            }}
           >
             <option value="numberchange">Number change</option>
             <option value="emailchange">Email change</option>
@@ -292,6 +328,7 @@ function All() {
               }
             }}
             rows={3}
+            autoFocus
           />
           <button
             className="bg-theme-yellow-dark hover:bg-theme-dark text-theme-dark hover:text-theme-yellow-dark border border-theme-dark px-2 py-1 cursor-pointer rounded-md w-20 "
@@ -315,9 +352,12 @@ function All() {
         ) : (
           <div className=" mx-2 my-5 flex flex-col items-center ">
             <table>
-              <thead className="bg-theme-yellow-dark border border-theme-dark-gray  text-theme-dark px-2 py-1 ">
+              <thead className="bg-theme-yellow-dark border border-theme-dark-gray text-theme-dark px-2 py-1">
                 {queryType == "numberchange" && (
-                  <tr className="">
+                  <tr>
+                    <th className="px-3 py-2 text-sm border border-theme-dark-gray">
+                      DATE
+                    </th>
                     <th className="px-3 py-2 text-sm border border-theme-dark-gray">
                       NAME
                     </th>
@@ -337,7 +377,7 @@ function All() {
                       COMMENT
                     </th>
                     <th className="px-3 py-2 text-sm border border-theme-dark-gray">
-                      TAKENBY
+                      TAKEN BY
                     </th>
                     <th className="px-3 py-2 text-sm border border-theme-dark-gray">
                       STATUS
@@ -346,6 +386,9 @@ function All() {
                 )}
                 {queryType == "emailchange" && (
                   <tr>
+                    <th className="px-3 py-2 text-sm border border-theme-dark-gray">
+                      DATE
+                    </th>
                     <th className="px-3 py-2 text-sm border border-theme-dark-gray">
                       NAME
                     </th>
@@ -365,7 +408,7 @@ function All() {
                       COMMENT
                     </th>
                     <th className="px-3 py-2 text-sm border border-theme-dark-gray">
-                      TAKENBY
+                      TAKEN BY
                     </th>
                     <th className="px-3 py-2 text-sm border border-theme-dark-gray">
                       STATUS
@@ -375,6 +418,9 @@ function All() {
                 {queryType == "contentmissing" && (
                   <tr>
                     <th className="px-3 py-2 text-sm border border-theme-dark-gray">
+                      DATE
+                    </th>
+                    <th className="px-3 py-2 text-sm border border-theme-dark-gray">
                       NAME
                     </th>
                     <th className="px-3 py-2 text-sm border border-theme-dark-gray">
@@ -396,7 +442,7 @@ function All() {
                       COMMENT
                     </th>
                     <th className="px-3 py-2 text-sm border border-theme-dark-gray">
-                      TAKENBY
+                      TAKEN BY
                     </th>
                     <th className="px-3 py-2 text-sm border border-theme-dark-gray">
                       STATUS
@@ -406,6 +452,9 @@ function All() {
                 {queryType == "coursenotvisible" && (
                   <tr>
                     <th className="px-3 py-2 text-sm border border-theme-dark-gray">
+                      DATE
+                    </th>
+                    <th className="px-3 py-2 text-sm border border-theme-dark-gray">
                       NAME
                     </th>
                     <th className="px-3 py-2 text-sm border border-theme-dark-gray">
@@ -430,7 +479,7 @@ function All() {
                       COMMENT
                     </th>
                     <th className="px-3 py-2 text-sm border border-theme-dark-gray">
-                      TAKENBY
+                      TAKEN BY
                     </th>
                     <th className="px-3 py-2 text-sm border border-theme-dark-gray">
                       STATUS
@@ -440,6 +489,9 @@ function All() {
                 {queryType == "UPIpayment" && (
                   <tr>
                     <th className="px-3 py-2 text-sm border border-theme-dark-gray">
+                      DATE
+                    </th>
+                    <th className="px-3 py-2 text-sm border border-theme-dark-gray">
                       NAME
                     </th>
                     <th className="px-3 py-2 text-sm border border-theme-dark-gray">
@@ -467,7 +519,7 @@ function All() {
                       COMMENT
                     </th>
                     <th className="px-3 py-2 text-sm border border-theme-dark-gray">
-                      TAKENBY
+                      TAKEN BY
                     </th>
                     <th className="px-3 py-2 text-sm border border-theme-dark-gray">
                       STATUS
@@ -477,6 +529,9 @@ function All() {
                 {queryType == "grpnotalloted" && (
                   <tr>
                     <th className="px-3 py-2 text-sm border border-theme-dark-gray">
+                      DATE
+                    </th>
+                    <th className="px-3 py-2 text-sm border border-theme-dark-gray">
                       NAME
                     </th>
                     <th className="px-3 py-2 text-sm border border-theme-dark-gray">
@@ -495,7 +550,7 @@ function All() {
                       COMMENT
                     </th>
                     <th className="px-3 py-2 text-sm border border-theme-dark-gray">
-                      TAKENBY
+                      TAKEN BY
                     </th>
                     <th className="px-3 py-2 text-sm border border-theme-dark-gray">
                       STATUS
@@ -504,6 +559,9 @@ function All() {
                 )}
                 {queryType == "misc" && (
                   <tr>
+                    <th className="px-3 py-2 text-sm border border-theme-dark-gray">
+                      DATE
+                    </th>
                     <th className="px-3 py-2 text-sm border border-theme-dark-gray">
                       NAME
                     </th>
@@ -529,7 +587,7 @@ function All() {
                       COMMENT
                     </th>
                     <th className="px-3 py-2 text-sm border border-theme-dark-gray">
-                      TAKENBY
+                      TAKEN BY
                     </th>
                     <th className="px-3 py-2 text-sm border border-theme-dark-gray">
                       STATUS
@@ -537,8 +595,9 @@ function All() {
                   </tr>
                 )}
               </thead>
+
               <tbody className="border border-theme-dark-gray bg-theme-light-gray p-2">
-                {tableData?.map((each) => {
+                {tableData?.map((each, ind) => {
                   // tableData is an array of objects
                   // temp variable stores an array of <td></td>
                   var temp = [];
@@ -554,7 +613,10 @@ function All() {
                       // if the text is of the form of a link. then display a link
                       if (isLink(each[key])) {
                         temp.push(
-                          <td className="border border-theme-dark-gray bg-theme-light-gray p-2">
+                          <td
+                            key={index}
+                            className="border border-theme-dark-gray bg-theme-light-gray p-2"
+                          >
                             <a
                               className="text-blue-400 underline"
                               target="_blank"
@@ -569,6 +631,7 @@ function All() {
                       else if (key == "comment" && userInfo.isAdmin) {
                         temp.push(
                           <td
+                            key={index}
                             className="border border-theme-dark-gray hover:bg-theme-yellow-light p-2 cursor-pointer"
                             onClick={() => setCommentModal(each["rowNumber"])}
                           >
@@ -580,6 +643,7 @@ function All() {
                       else if (key == "status" && userInfo.isAdmin) {
                         temp.push(
                           <td
+                            key={index}
                             className={` cursor-pointer border border-theme-dark-gray bg-theme-light-gray p-2`}
                             // onClick={() => handleToggleStatus(each["rowNumber"])}
                           >
@@ -605,7 +669,10 @@ function All() {
                       // after all conditions. this is what is rendered for all the normal cells
                       else {
                         temp.push(
-                          <td className="border border-theme-dark-gray bg-theme-light-gray p-2">
+                          <td
+                            key={index}
+                            className="border border-theme-dark-gray bg-theme-light-gray p-2"
+                          >
                             {each[key]}
                           </td>
                         );
@@ -627,11 +694,11 @@ function All() {
                   return (
                     <tr className="border border-theme-dark-gray p-1 relative">
                       {temp}
-                      <div
-                        className={`h-full w-2 absolute left-0 top-0 ${
+                      <td
+                        className={`h-full w-2 absolute -left-1 top-0 z-10 ${
                           isdone ? "bg-green-600" : "bg-red-500"
                         }`}
-                      ></div>
+                      ></td>
                     </tr>
                   );
                 })}
