@@ -17,6 +17,7 @@ import { useGlobalContext } from "./context/globalContext";
 import { auth, db } from "./firebase.config";
 import { onAuthStateChanged, signOut } from "firebase/auth";
 import { collection, getDocs, query, where } from "firebase/firestore";
+import TopPerformers from "./pages/topPerformers";
 
 function App() {
   const { userInfo, setUserInfo } = useGlobalContext();
@@ -86,8 +87,18 @@ function App() {
               element={userInfo ? <Unresolved /> : <Navigate to="/login" />}
             />
             <Route
+              path="/topperformers"
+              element={userInfo ? <TopPerformers /> : <Navigate to="/login" />}
+            />
+            <Route
               path="/profile"
-              element={userInfo ? <Profile /> : <Navigate to="/login" />}
+              element={
+                userInfo?.isAdmin === false ? (
+                  <Profile />
+                ) : (
+                  <Navigate to="/login" />
+                )
+              }
             />
             <Route
               path="/history"

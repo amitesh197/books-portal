@@ -42,7 +42,7 @@ function Navbar() {
         <Link
           to="/"
           className={
-            `font-bold hover:text-theme-yellow-dark  cursor-pointer ` +
+            `font-semibold hover:text-theme-yellow-dark  cursor-pointer ` +
             (currentUrl == "" ? "text-theme-yellow-dark" : "")
           }
         >
@@ -51,7 +51,7 @@ function Navbar() {
         <Link
           to="/all"
           className={
-            `font-bold hover:text-theme-yellow-dark  cursor-pointer ` +
+            `font-semibold hover:text-theme-yellow-dark  cursor-pointer ` +
             (currentUrl == "all" ? "text-theme-yellow-dark" : "")
           }
         >
@@ -60,7 +60,7 @@ function Navbar() {
         <Link
           to="/resolved"
           className={
-            `font-bold hover:text-theme-yellow-dark  cursor-pointer ` +
+            `font-semibold hover:text-theme-yellow-dark  cursor-pointer ` +
             (currentUrl == "resolved" ? "text-theme-yellow-dark" : "")
           }
         >
@@ -69,7 +69,7 @@ function Navbar() {
         <Link
           to="/unresolved"
           className={
-            `font-bold hover:text-theme-yellow-dark  cursor-pointer ` +
+            `font-semibold hover:text-theme-yellow-dark  cursor-pointer ` +
             (currentUrl == "unresolved" ? "text-theme-yellow-dark" : "")
           }
         >
@@ -80,7 +80,7 @@ function Navbar() {
             <Link
               to="/stats"
               className={
-                `font-bold hover:text-theme-yellow-dark  cursor-pointer ` +
+                `font-semibold hover:text-theme-yellow-dark  cursor-pointer ` +
                 (currentUrl == "stats" ? "text-theme-yellow-dark" : "")
               }
             >
@@ -93,7 +93,7 @@ function Navbar() {
             <Link
               to="/profile"
               className={
-                `font-bold hover:text-theme-yellow-dark  cursor-pointer ` +
+                `font-semibold hover:text-theme-yellow-dark  cursor-pointer ` +
                 (currentUrl == "profile" ? "text-theme-yellow-dark" : "")
               }
             >
@@ -102,7 +102,7 @@ function Navbar() {
             <Link
               to="/history"
               className={
-                `font-bold hover:text-theme-yellow-dark  cursor-pointer ` +
+                `font-semibold hover:text-theme-yellow-dark  cursor-pointer ` +
                 (currentUrl == "history" ? "text-theme-yellow-dark" : "")
               }
             >
@@ -110,12 +110,21 @@ function Navbar() {
             </Link>
           </>
         )}
+        <Link
+          to="/topperformers"
+          className={
+            `font-semibold hover:text-theme-yellow-dark  cursor-pointer ` +
+            (currentUrl == "topperformers" ? "text-theme-yellow-dark" : "")
+          }
+        >
+          Top Performers
+        </Link>
         {userInfo?.isAdmin && (
           <>
             <Link
               to="/dashboard"
               className={
-                `font-bold hover:text-theme-yellow-dark  cursor-pointer ` +
+                `font-semibold hover:text-theme-yellow-dark  cursor-pointer ` +
                 (currentUrl == "dashboard" ? "text-theme-yellow-dark" : "")
               }
             >
@@ -126,7 +135,7 @@ function Navbar() {
         {/* {userInfo?.isAdmin && (
           <Link
             to="/adduser"
-            className="text-sm md:text-lg font-bold hover:text-theme-yellow-dark  cursor-pointer"
+            className="text-sm md:text-lg font-semibold hover:text-theme-yellow-dark  cursor-pointer"
           >
             Add User
           </Link>
@@ -134,7 +143,7 @@ function Navbar() {
         <Link
           to="/info"
           className={
-            `font-bold hover:text-theme-yellow-dark  cursor-pointer ` +
+            `font-semibold hover:text-theme-yellow-dark  cursor-pointer ` +
             (currentUrl == "info" ? "text-theme-yellow-dark" : "")
           }
         >
@@ -143,7 +152,7 @@ function Navbar() {
       </div>
       {userInfo ? (
         <a
-          className="my-auto mx-2 hover:bg-red-600 font-bold hover:text-white text-red-600 active:text-red-600 px-2 py-1 rounded-lg  cursor-pointer"
+          className="my-auto mx-2 hover:bg-red-600 font-semibold hover:text-white text-red-600 active:text-red-600 px-2 py-1 rounded-lg  cursor-pointer"
           onClick={logOut}
         >
           Logout
