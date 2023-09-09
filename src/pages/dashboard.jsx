@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useMemo } from "react";
 import { useGlobalContext } from "../context/globalContext";
 import { useEffect, useState } from "react";
 import { Toaster, toast } from "react-hot-toast";
@@ -13,6 +13,7 @@ export default function Dashboard() {
 
   //here the user object has two properties { user , isAdmin}
   const [fecthingData, setFetchingData] = useState(false);
+  // const [allUsersData, setAllUsersData] = useState(null);
   const [allUsersData, setAllUsersData] = useState(null);
 
   //useMemo
