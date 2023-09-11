@@ -37,7 +37,7 @@ function Navbar() {
         <img className="w-20 h-10" src={logo} alt="logo" />
       </div>
       <div
-        className={`flex justify-between gap-5 w-full sm:w-3/4 md:w-1/2 items-center text-xs md:text-base lg:text-lg `}
+        className={`flex justify-between gap-5 lg:gap-10  w-fit items-center text-xs md:text-base lg:text-lg `}
       >
         <Link
           to="/"
@@ -131,6 +131,15 @@ function Navbar() {
           }
         >
           Top Performers
+        </Link>
+        <Link
+          to="/announcements"
+          className={
+            ` hover:text-theme-yellow-dark  cursor-pointer whitespace-nowrap ` +
+            (currentUrl == "announcements" ? "text-theme-yellow-dark" : "")
+          }
+        >
+          Announcements
         </Link>
 
         {/* {userInfo?.isAdmin && (

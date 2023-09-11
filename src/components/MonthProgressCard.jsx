@@ -42,9 +42,9 @@ export default function MonthProgressCard({ userData }) {
       <div className="flex flex-col justify-center items-center w-full my-3">
         <div className="w-full sm:w-full md:w-2/3 lg:w-1/2 px-2">
           <CircularProgressbar
-            value={currentCount}
+            value={connectedCount}
             maxValue={targetCountForMonth}
-            text={`${currentCount}`}
+            text={`${connectedCount}`}
             strokeWidth={10}
             styles={{
               // Customize the path, i.e. the "completed progress"

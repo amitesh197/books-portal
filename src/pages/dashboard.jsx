@@ -36,6 +36,11 @@ export default function Dashboard() {
       const data = await result.json();
       toast.dismiss();
       if ((data.message = "done")) {
+        //sort data by total connected count
+        data.data.sort((a, b) => {
+          return b.totalConnectedCount - a.totalConnectedCount;
+        });
+
         setAllUsersData(data.data);
         console.log("user Data", data.data);
         toast.success("Fetched");

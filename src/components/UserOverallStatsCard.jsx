@@ -40,9 +40,9 @@ export default function UserOverallStatsCard({ userData }) {
         {/* progress bar */}
         <div className="w-28 h-2w-28">
           <CircularProgressbar
-            value={userData.totalCount}
+            value={userData.totalConnectedCount}
             maxValue={targetCountForMonth}
-            text={`${userData.totalCount} `}
+            text={`${userData.totalConnectedCount} `}
             strokeWidth={12}
             styles={{
               // Customize the path, i.e. the "completed progress"

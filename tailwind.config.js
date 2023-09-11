@@ -15,6 +15,7 @@ export default {
         "theme-yellow-light": "rgba(248, 168, 69, 0.71)",
         "theme-light-gray": "rgb(210, 210, 210)",
         "theme-dark-gray": "rgb(112, 112, 112)",
+        "theme-gray": "#D9D9D9",
       },
     },
   },

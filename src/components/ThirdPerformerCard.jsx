@@ -36,9 +36,9 @@ export default function ThirdPerformerCard({ topThree }) {
         {/* div for progress bar */}
         <div className="w-full sm:w-full md:w-2/3 lg:w-1/2 px-2">
           <CircularProgressbar
-            value={totalCount}
+            value={totalConnectedCount}
             maxValue={targetCountForMonth}
-            text={`${totalCount}`}
+            text={`${totalConnectedCount}`}
             strokeWidth={10}
             styles={{
               // Customize the path, i.e. the "completed progress"

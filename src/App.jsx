@@ -18,6 +18,7 @@ import { auth, db } from "./firebase.config";
 import { onAuthStateChanged, signOut } from "firebase/auth";
 import { collection, getDocs, query, where } from "firebase/firestore";
 import TopPerformers from "./pages/topPerformers";
+import Announcements from "./pages/announcements";
 
 function App() {
   const { userInfo, setUserInfo } = useGlobalContext();
@@ -51,7 +52,7 @@ function App() {
     const listen = onAuthStateChanged(auth, (user) => {
       if (user) {
         settheuserdata(user);
-        console.log("user is ", user);
+        // console.log("user is ", user);
       } else {
         setUserInfo(null);
       }
@@ -111,6 +112,10 @@ function App() {
             <Route
               path="/dashboard"
               element={userInfo?.isAdmin ? <Dashboard /> : <Navigate to="/" />}
+            />
+            <Route
+              path="/announcements"
+              element={userInfo ? <Announcements /> : <Navigate to="/" />}
             />
             <Route
               path="/users/:userName"
