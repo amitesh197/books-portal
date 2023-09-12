@@ -194,9 +194,9 @@ export default function Profile({ props }) {
         </h1>
         <div className="flex flex-row  h-full p-3">
           {/* div for form and todays progress */}
-          <div className="flex flex-col w-1/2 px-10 gap-10 justify-between items-center  h-full ">
+          <div className="flex flex-col w-full sm:w-1/2 px-10 gap-10 justify-between items-center  h-full ">
             {/* div for form */}
-            <div className="bg-theme-light-gray rounded-lg p-5 w-2/3 mx-auto">
+            <div className="bg-theme-light-gray rounded-lg p-5 w-full lg:w-2/3 mx-auto">
               <h3 className="font-semibold w-full text-center mb-5">
                 Add data
               </h3>

@@ -170,6 +170,93 @@ function Login() {
           </div>
         </div>
       </div>
+
+      {/* for mobile view */}
+      <div className="w-full h-screen flex flex-row flex-wrap p-0 -mt-14 sm:hidden box-border ">
+        <div className=" w-full bg-theme-dark text-white ">
+          <img
+            className="w-1/3 h-fit mx-auto my-20"
+            src={logo}
+            width="100"
+            height="100"
+            alt="edsarrthi logo"
+          />
+          <div className="font-bold text-3xl mx-2 text-center my-10">
+            Welcome to{" "}
+            <span className="text-theme-yellow-dark"> Edsarrthi's</span>{" "}
+            Performance Portal!
+          </div>
+          <div className="my-5 mx-auto text-center text-xl font-semibold">
+            Please Login to continue.
+          </div>
+
+          <div className="flex flex-col gap-5 items-center justify-center ">
+            <form
+              className="w-full px-10 lg:px-32 text-black"
+              onSubmit={loginHandler}
+            >
+              <input
+                className="w-full rounded-lg border-2 border-theme-dark my-2 px-3 py-1  text-lg  outline-none focus:border-theme-yellow-dark"
+                type="email"
+                placeholder="Email"
+                name="email"
+                onChange={(e) =>
+                  setLoginData((prev) => ({ ...prev, email: e.target.value }))
+                }
+                value={loginData.email}
+                required
+                autoComplete="on"
+              />
+
+              <div className="relative">
+                <input
+                  className="w-full rounded-lg border-2 border-theme-dark my-2 px-3 py-1 text-lg outline-none focus:border-theme-yellow-dark"
+                  type={passwordVisible ? "text" : "password"}
+                  placeholder="Password"
+                  name="password"
+                  onChange={(e) =>
+                    setLoginData((prev) => ({
+                      ...prev,
+                      password: e.target.value,
+                    }))
+                  }
+                  value={loginData.password}
+                  required
+                />
+                <button
+                  type="button"
+                  className="absolute top-1/2 right-4 transform -translate-y-1/2"
+                  onClick={togglePasswordVisibility}
+                >
+                  {passwordVisible ? (
+                    <i className="far fa-eye-slash" id="togglePassword"></i>
+                  ) : (
+                    <i className="far fa-eye" id="togglePassword"></i>
+                  )}
+                </button>
+              </div>
+
+              {loginError && (
+                <div className="text-red-500 text-sm mt-1 mx-2">
+                  {loginError}
+                </div>
+              )}
+              <button
+                type="submit"
+                className="w-full rounded-lg border-2 border-theme-yellow-light my-2 px-3 py-1 text-center  font-bold text-xl  hover:cursor-pointer bg-theme-yellow-light text-white transition-all ease-out hover:bg-white hover:text-theme-yellow-dark"
+              >
+                {
+                  loading ? (
+                    <i className="fa-solid fa-spinner animate-spin"></i>
+                  ) : (
+                    "Login"
+                  ) //not using google sign in for now
+                }
+              </button>
+            </form>
+          </div>
+        </div>
+      </div>
     </>
   );
 }
