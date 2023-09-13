@@ -51,7 +51,7 @@ function Navbar() {
         ref={navbarRef}
         className="flex items-center justify-between flex-wrap px-2 py-2 bg-theme-dark text-white fixed top-0 left-0 z-10 w-screen"
       >
-        <div className="flex items-center flex-shrink-0 text-white mr-6  w-1/4 lg:w-fit">
+        <div className="flex items-center flex-shrink-0 text-white mr-6  w-1/4 lg:w-20">
           <Link to="/">
             <img src={logo} className="w-100 h-10 mr-2" alt="Logo" />
           </Link>
@@ -90,11 +90,11 @@ function Navbar() {
           </button>
         </div>
         <div
-          className={`w-full block flex-grow lg:flex lg:items-center lg:w-auto py-2 lg:py-0 ${
+          className={`w-full block flex-grow lg:flex lg:items-center lg:justify-center lg:w-auto py-2 lg:py-0  ${
             isOpen ? "block" : "hidden"
           }`}
         >
-          <div className="text-sm lg:flex-grow ">
+          <div className="text-sm lg:flex-grow lg:flex lg:items-center lg:justify-center">
             <Link
               to="/"
               className={
@@ -219,7 +219,7 @@ function Navbar() {
           <div>
             {userInfo ? (
               <Link
-                className="inline-flex items-center bg-red-500 rounded-lg py-1 px-2 my-3 lg:my-0 text-lg border-0 mx-2 lg:py-0 lg:mx-5"
+                className="inline-flex items-center bg-red-500 rounded-lg py-1 px-2 my-3  text-lg border-0 mx-2 lg:my-0 lg:w-20  lg:px-2"
                 onClick={logOut}
               >
                 Logout
