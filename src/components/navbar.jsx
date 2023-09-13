@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { useGlobalContext } from "../context/globalContext";
 import { Link } from "react-router-dom";
 import { auth } from "../firebase.config";
@@ -12,6 +12,24 @@ function Navbar() {
   //get current url last part
   let currentUrl = window.location.href.split("/").pop();
   const [isOpen, setIsOpen] = useState(false);
+  const navbarRef = useRef(null);
+
+  // Function to close the navbar when clicking outside of it
+  const closeNavbar = (event) => {
+    if (navbarRef.current && !navbarRef.current.contains(event.target)) {
+      setIsOpen(false);
+    }
+  };
+
+  // Add a click event listener to the document body
+  useEffect(() => {
+    document.body.addEventListener("click", closeNavbar);
+
+    // Clean up the event listener when the component unmounts
+    return () => {
+      document.body.removeEventListener("click", closeNavbar);
+    };
+  }, []);
 
   const logOut = () => {
     signOut(auth)
@@ -29,7 +47,10 @@ function Navbar() {
 
   return (
     <>
-      <nav className="flex items-center justify-between flex-wrap px-2 py-2 bg-theme-dark text-white fixed top-0 left-0 z-10 w-screen">
+      <nav
+        ref={navbarRef}
+        className="flex items-center justify-between flex-wrap px-2 py-2 bg-theme-dark text-white fixed top-0 left-0 z-10 w-screen"
+      >
         <div className="flex items-center flex-shrink-0 text-white mr-6  w-1/4 lg:w-fit">
           <Link to="/">
             <img src={logo} className="w-100 h-10 mr-2" alt="Logo" />
