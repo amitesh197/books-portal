@@ -4,6 +4,39 @@
 @tailwind components;
 @tailwind utilities;
 
+@layer base {
+  .full-announcement h1 {
+    @apply text-2xl;
+  }
+  .full-announcement h2 {
+    @apply text-xl;
+  }
+  .full-announcement ul {
+    @apply list-disc;
+    @apply ml-4;
+  }
+  .full-announcement ul li {
+    @apply ml-4;
+  }
+  .full-announcement ol {
+    @apply list-decimal;
+    @apply ml-4;
+  }
+  .full-announcement ol li {
+    @apply ml-4;
+  }
+
+  .full-announcement a {
+    @apply text-blue-500;
+    @apply underline;
+  }
+  .full-announcement a:hover {
+    @apply text-blue-700;
+  }
+
+  /* ... */
+}
+
 :root {
   --theme-yellow-dark: #ff8e00;
   --theme-yellow-light: rgb(253, 152, 25);

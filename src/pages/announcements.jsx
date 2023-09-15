@@ -80,6 +80,7 @@ export default function Announcements({ data }) {
   const handleNewAnnouncement = async () => {
     //set the currAnnouncement to "new" so that the FullAnnouncementContainer renders the form
     setCurrAnnouncement("new");
+    localStorage.setItem("currAnnouncement", JSON.stringify("new"));
   };
 
   useEffect(() => {
@@ -87,7 +88,7 @@ export default function Announcements({ data }) {
   }, []);
 
   return (
-    <div className="w-screen h-screen box-border overflow-clip">
+    <div className="w-full  box-border overflow-clip">
       <Navbar />
       <div className=" m-2 text-lg font-semibold w-fit">
         Recent Announcements
@@ -96,9 +97,9 @@ export default function Announcements({ data }) {
       {fetchingData ? (
         <Loading />
       ) : (
-        <div className="flex flex-row gap-10 h-full p-5 box-border ">
+        <div className="flex  flex-col  md:flex-row gap-5  h-full px-5 md:px-10 box-border ">
           {/* cards container */}
-          <div className="flex flex-col w-4/6  gap-5 h-5/6 overflow-auto px-2">
+          <div className="flex flex-col w-full md:w-4/6  gap-5 overflow-auto px-2 h-60 md:h-full">
             {/* card */}
             {userInfo?.isAdmin && (
               <div
@@ -130,11 +131,12 @@ export default function Announcements({ data }) {
           </div>
 
           {/* full info container */}
-          <div className="w-full px-5 py-3  bg-theme-gray rounded-lg h-5/6  overflow-auto relative">
+          <div className="w-full px-5 py-3 my-5 md:my-0 bg-theme-gray rounded-lg  relative ">
             {currAnnouncement && (
               <FullAnnouncementContainer
                 currAnnouncement={currAnnouncement}
                 handleGetAnnouncements={handleGetAnnouncements}
+                setCurrAnnouncement={setCurrAnnouncement}
               />
             )}
           </div>

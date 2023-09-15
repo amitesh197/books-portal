@@ -1,20 +1,24 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Timestamp } from "firebase/firestore";
 import { useGlobalContext } from "../context/globalContext";
 import { auth, db, storage } from "../firebase.config";
-import { collection, addDoc } from "firebase/firestore";
+import { collection, addDoc, doc, updateDoc } from "firebase/firestore";
 import {
   ref,
   getDownloadURL,
   uploadBytesResumable,
   uploadBytes,
 } from "firebase/storage";
+import ReactQuill from "react-quill";
+import "react-quill/dist/quill.snow.css"; // Import styles
 
 export default function CreateAnnounceForm({ handleGetAnnouncements }) {
   const { userInfo, setUserInfo } = useGlobalContext();
   const [submitting, setSubmitting] = useState(false);
   const [files, setFiles] = useState([]);
   const [progress, setProgress] = useState(0); // [0, 100]
+  const [editorHtml, setEditorHtml] = useState(""); // Add a state for the editor content
+  const [title, setTitle] = useState("");
 
   const uploadFile = async (file) => {
     if (!file) return null;
@@ -53,26 +57,70 @@ export default function CreateAnnounceForm({ handleGetAnnouncements }) {
 
     setSubmitting(true);
     try {
-      const current_timestamp = Timestamp.fromDate(new Date());
+      const currAnnouncement = JSON.parse(
+        localStorage.getItem("currAnnouncement")
+      );
+      if (currAnnouncement === "new") {
+        const current_timestamp = Timestamp.fromDate(new Date());
 
-      const uploadedFilePropObjs = await Promise.all(files.map(uploadFile));
+        const uploadedFilePropObjs = await Promise.all(files.map(uploadFile));
 
-      const response = await addDoc(collection(db, "announcements"), {
-        title: e.target.title.value,
-        content: e.target.content.value,
-        author: userInfo?.isAdmin ? "Admin" : userInfo?.email,
-        date: current_timestamp,
-        uploadedFilePropObjs: uploadedFilePropObjs, // Array of file URLs
-      });
+        const response = await addDoc(collection(db, "announcements"), {
+          title: e.target.title.value,
+          content: editorHtml, // Use the editor content
+          author: userInfo?.isAdmin ? "Admin" : userInfo?.email,
+          date: current_timestamp,
+          uploadedFilePropObjs: uploadedFilePropObjs,
+        });
 
-      console.log("Announcement added successfully!");
-      handleGetAnnouncements();
+        console.log("Announcement added successfully!");
+        handleGetAnnouncements();
+      } else {
+        // Edit an existing announcement
+        // You need to find the announcement in the database using currAnnouncement.id
+        // Then, update the announcement with the new title and content
+        const announcementRef = doc(db, "announcements", currAnnouncement.id);
+        await updateDoc(announcementRef, {
+          title: e.target.title.value,
+          content: editorHtml,
+        });
+
+        console.log("Announcement edited successfully!");
+        handleGetAnnouncements();
+        setEditing(false); // Exit edit mode after editing
+      }
     } catch (err) {
       console.log("Error:", err);
     } finally {
       setSubmitting(false);
     }
   };
+
+  // Render the WYSIWYG editor
+  const modules = {
+    toolbar: [
+      [{ header: "1" }, { header: "2" }],
+      [{ list: "ordered" }, { list: "bullet" }],
+      ["bold", "italic", "underline"],
+      ["link"],
+    ],
+  };
+
+  // Handle editor content change
+  const handleEditorChange = (content) => {
+    setEditorHtml(content);
+  };
+
+  //parse the stringified currAnnouncement frm localStorage
+  const currAnnouncement = JSON.parse(localStorage.getItem("currAnnouncement"));
+  // console.log("currAnnouncement", currAnnouncement);
+
+  useEffect(() => {
+    if (currAnnouncement !== "new") {
+      setEditorHtml(currAnnouncement.content);
+      setTitle(currAnnouncement.title);
+    }
+  }, []);
 
   return (
     <div className="flex flex-col">
@@ -89,16 +137,17 @@ export default function CreateAnnounceForm({ handleGetAnnouncements }) {
           id="title"
           name="title"
           required
+          defaultValue={title}
         />
 
         <label className="mb-1 font-bold" htmlFor="body">
           Body:
         </label>
-        <textarea
-          className="w-full bg-white rounded-lg outline-none focus:border-theme-yellow-dark focus:ring-2 focus:ring-theme-yellow-dark px-2 py-1 text-lg mb-5"
-          id="body"
-          rows={5}
-          name="content"
+        <ReactQuill
+          value={editorHtml}
+          onChange={handleEditorChange}
+          modules={modules}
+          className="bg-white rounded-lg outline-none focus:border-theme-yellow-dark focus:ring-2 focus:ring-theme-yellow-dark px-2 py-1 text-lg mb-5"
           required
         />
 
@@ -147,8 +196,10 @@ export default function CreateAnnounceForm({ handleGetAnnouncements }) {
         >
           {submitting ? (
             <i className="fa-solid fa-spinner animate-spin" />
-          ) : (
+          ) : currAnnouncement === "new" ? (
             "Submit"
+          ) : (
+            "Update"
           )}
         </button>
       </form>
