@@ -79,20 +79,20 @@ function All() {
       const result = await fetch(`${import.meta.env.VITE_URL}?${queryParams}`);
       const data = await result.json();
       //remvove the id from the data
-      console.log("data", data.data);
+      console.log("data isdfsdf", data.data);
       /* data.data = [
         {
-          "date": "2023-04-08T18:30:00.000Z",
-          "name": "New User",
-          "email": "shantanuesakpal1420@gmail.com",
-          "oldnumber": 3,
-          "newnumber": 2,
+          "date": "Invalid Date",
+          "name": "Arijit Singh",
+          "newemail": "new@sadf.asdf",
+          "oldemail": "old@asa.asd",
+          "number": "",
           "query": "",
           "comment": "",
           "querytakenby": "shantanuesakpal1420@gmail.com",
           "status": "",
-          "rowNumber": 24
-        },
+          "rowNumber": 13
+        }
       ...
       ]
       */
@@ -101,7 +101,6 @@ function All() {
       sortedData = sortedData.map((each) => {
         delete each.id;
         each.date = new Date(each.date).toLocaleDateString();
-
         return each;
       });
       toast.dismiss();
@@ -393,10 +392,10 @@ function All() {
                       NAME
                     </th>
                     <th className="px-3 py-2 text-sm border border-theme-dark-gray">
-                      OLD EMAIL
+                      NEW EMAIL
                     </th>
                     <th className="px-3 py-2 text-sm border border-theme-dark-gray">
-                      NEW EMAIL
+                      OLD EMAIL
                     </th>
                     <th className="px-3 py-2 text-sm border border-theme-dark-gray">
                       NUMBER

@@ -173,10 +173,10 @@ function Resolved() {
                       NAME
                     </th>
                     <th className="px-3 py-2 text-sm border border-theme-dark-gray">
-                      OLD EMAIL
+                      NEW EMAIL
                     </th>
                     <th className="px-3 py-2 text-sm border border-theme-dark-gray">
-                      NEW EMAIL
+                      OLD EMAIL
                     </th>
                     <th className="px-3 py-2 text-sm border border-theme-dark-gray">
                       NUMBER

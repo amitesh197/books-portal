@@ -25,11 +25,11 @@ function Home() {
   //todays data in 13 digit format and use it as id, cause it will be unique
   const dataId = Date.now();
   // Get current date, month, and year in format day/month/year
-  const now = new Date();
+  const now = new Date(dataId);
   const currentDay = now.getDate();
   const currentMonth = now.getMonth() + 1;
   const currentYear = now.getFullYear();
-  const todaysdate = `${currentDay}/${currentMonth}/${currentYear}`;
+  const todaysdate = now;
 
   const handleInput = (e) => {
     setFormData((prev) => ({

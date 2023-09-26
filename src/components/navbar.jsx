@@ -49,7 +49,7 @@ function Navbar() {
     <>
       <nav
         ref={navbarRef}
-        className="flex items-center justify-between flex-wrap px-2 py-2 bg-theme-dark text-white fixed top-0 left-0 z-10 w-screen"
+        className="flex items-center justify-between flex-wrap px-2 py-2 bg-theme-dark text-white fixed top-0 left-0 z-20 w-screen"
       >
         <div className="flex items-center flex-shrink-0 text-white mr-6  w-1/4 lg:w-20">
           <Link to="/">
