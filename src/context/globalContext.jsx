@@ -16,8 +16,15 @@ export const GlobalContextProvider = ({ children }) => {
     isAdmin: false,
   });
 
-  // can take following values.
+  const [queryType, setQueryType] = useState("numberchange");
+  // queryType can take following values.
   // this is also the sheetname in the spreadsheet
+  // nameChange
+  // batchShift
+  // emi
+  // refund
+  // removeCourseAccess
+  // feedback
   // numberchange
   // emailchange
   // contentmissing
@@ -25,7 +32,7 @@ export const GlobalContextProvider = ({ children }) => {
   // UPIpayment
   // grpnotalloted
   // misc
-  const [queryType, setQueryType] = useState("numberchange");
+
   return (
     <globalContext.Provider
       value={{

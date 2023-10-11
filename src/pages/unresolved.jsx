@@ -261,6 +261,13 @@ function Unresolved() {
             value={queryType}
             onChange={(e) => setQueryType(e.target.value)}
           >
+            <option value="nameChange">Name Change</option>
+            <option value="batchShift">Batch Shift</option>
+            <option value="emi">EMI</option>
+            <option value="refund">Refund</option>
+            <option value="removeCourseAccess">Remove Course Access</option>
+            <option value="feedback">Feedback</option>
+
             <option value="numberchange">Number change</option>
             <option value="emailchange">Email change</option>
             <option value="contentmissing">Content Missing</option>
@@ -312,6 +319,222 @@ function Unresolved() {
           <div className=" mx-2 my-5 flex flex-col items-center ">
             <table>
               <thead className="bg-theme-yellow-dark border border-theme-dark-gray text-theme-dark px-2 py-1">
+                {queryType === "nameChange" && (
+                  <tr>
+                    <th className="px-3 py-2 text-sm border border-theme-dark-gray">
+                      DATE
+                    </th>
+                    <th className="px-3 py-2 text-sm border border-theme-dark-gray">
+                      OLD NAME
+                    </th>
+                    <th className="px-3 py-2 text-sm border border-theme-dark-gray">
+                      EMAIL
+                    </th>
+                    <th className="px-3 py-2 text-sm border border-theme-dark-gray">
+                      NUMBER
+                    </th>
+                    <th className="px-3 py-2 text-sm border border-theme-dark-gray">
+                      NEW NAME
+                    </th>
+                    <th className="px-3 py-2 text-sm border border-theme-dark-gray">
+                      QUERY
+                    </th>
+                    <th className="px-3 py-2 text-sm border border-theme-dark-gray">
+                      COMMENT
+                    </th>
+                    <th className="px-3 py-2 text-sm border border-theme-dark-gray">
+                      TAKEN BY
+                    </th>
+                    <th className="px-3 py-2 text-sm border border-theme-dark-gray">
+                      STATUS
+                    </th>
+                  </tr>
+                )}
+                {queryType === "batchShift" && (
+                  <tr>
+                    <th className="px-3 py-2 text-sm border border-theme-dark-gray">
+                      DATE
+                    </th>
+                    <th className="px-3 py-2 text-sm border border-theme-dark-gray">
+                      NAME
+                    </th>
+                    <th className="px-3 py-2 text-sm border border-theme-dark-gray">
+                      EMAIL
+                    </th>
+                    <th className="px-3 py-2 text-sm border border-theme-dark-gray">
+                      NUMBER
+                    </th>
+                    <th className="px-3 py-2 text-sm border border-theme-dark-gray">
+                      CURRENT BATCH
+                    </th>
+                    <th className="px-3 py-2 text-sm border border-theme-dark-gray">
+                      NEW BATCH
+                    </th>
+                    <th className="px-3 py-2 text-sm border border-theme-dark-gray">
+                      REASON
+                    </th>
+                    <th className="px-3 py-2 text-sm border border-theme-dark-gray">
+                      FILE
+                    </th>
+                    <th className="px-3 py-2 text-sm border border-theme-dark-gray">
+                      QUERY
+                    </th>
+                    <th className="px-3 py-2 text-sm border border-theme-dark-gray">
+                      COMMENT
+                    </th>
+                    <th className="px-3 py-2 text-sm border border-theme-dark-gray">
+                      TAKEN BY
+                    </th>
+                    <th className="px-3 py-2 text-sm border border-theme-dark-gray">
+                      STATUS
+                    </th>
+                  </tr>
+                )}
+                {queryType === "emi" && (
+                  <tr>
+                    <th className="px-3 py-2 text-sm border border-theme-dark-gray">
+                      DATE
+                    </th>
+                    <th className="px-3 py-2 text-sm border border-theme-dark-gray">
+                      NAME
+                    </th>
+                    <th className="px-3 py-2 text-sm border border-theme-dark-gray">
+                      EMAIL
+                    </th>
+                    <th className="px-3 py-2 text-sm border border-theme-dark-gray">
+                      NUMBER
+                    </th>
+                    <th className="px-3 py-2 text-sm border border-theme-dark-gray">
+                      COURSE NAME
+                    </th>
+                    <th className="px-3 py-2 text-sm border border-theme-dark-gray">
+                      FIRST INSTALLMENT
+                    </th>
+                    <th className="px-3 py-2 text-sm border border-theme-dark-gray">
+                      SECOND INSTALLMENT
+                    </th>
+                    <th className="px-3 py-2 text-sm border border-theme-dark-gray">
+                      FILE
+                    </th>
+                    <th className="px-3 py-2 text-sm border border-theme-dark-gray">
+                      QUERY
+                    </th>
+                    <th className="px-3 py-2 text-sm border border-theme-dark-gray">
+                      COMMENT
+                    </th>
+                    <th className="px-3 py-2 text-sm border border-theme-dark-gray">
+                      TAKEN BY
+                    </th>
+                    <th className="px-3 py-2 text-sm border border-theme-dark-gray">
+                      STATUS
+                    </th>
+                  </tr>
+                )}
+                {queryType === "refund" && (
+                  <tr>
+                    <th className="px-3 py-2 text-sm border border-theme-dark-gray">
+                      DATE
+                    </th>
+                    <th className="px-3 py-2 text-sm border border-theme-dark-gray">
+                      NAME
+                    </th>
+                    <th className="px-3 py-2 text-sm border border-theme-dark-gray">
+                      EMAIL
+                    </th>
+                    <th className="px-3 py-2 text-sm border border-theme-dark-gray">
+                      NUMBER
+                    </th>
+                    <th className="px-3 py-2 text-sm border border-theme-dark-gray">
+                      COURSE NAME
+                    </th>
+                    <th className="px-3 py-2 text-sm border border-theme-dark-gray">
+                      REASON
+                    </th>
+                    <th className="px-3 py-2 text-sm border border-theme-dark-gray">
+                      QUERY
+                    </th>
+                    <th className="px-3 py-2 text-sm border border-theme-dark-gray">
+                      COMMENT
+                    </th>
+                    <th className="px-3 py-2 text-sm border border-theme-dark-gray">
+                      TAKEN BY
+                    </th>
+                    <th className="px-3 py-2 text-sm border border-theme-dark-gray">
+                      STATUS
+                    </th>
+                  </tr>
+                )}
+                {queryType === "removeCourseAccess" && (
+                  <tr>
+                    <th className="px-3 py-2 text-sm border border-theme-dark-gray">
+                      DATE
+                    </th>
+                    <th className="px-3 py-2 text-sm border border-theme-dark-gray">
+                      NAME
+                    </th>
+                    <th className="px-3 py-2 text-sm border border-theme-dark-gray">
+                      EMAIL
+                    </th>
+                    <th className="px-3 py-2 text-sm border border-theme-dark-gray">
+                      NUMBER
+                    </th>
+                    <th className="px-3 py-2 text-sm border border-theme-dark-gray">
+                      COURSE NAME
+                    </th>
+                    <th className="px-3 py-2 text-sm border border-theme-dark-gray">
+                      REASON
+                    </th>
+                    <th className="px-3 py-2 text-sm border border-theme-dark-gray">
+                      QUERY
+                    </th>
+                    <th className="px-3 py-2 text-sm border border-theme-dark-gray">
+                      COMMENT
+                    </th>
+                    <th className="px-3 py-2 text-sm border border-theme-dark-gray">
+                      TAKEN BY
+                    </th>
+                    <th className="px-3 py-2 text-sm border border-theme-dark-gray">
+                      STATUS
+                    </th>
+                  </tr>
+                )}
+                {queryType === "feedback" && (
+                  <tr>
+                    <th className="px-3 py-2 text-sm border border-theme-dark-gray">
+                      DATE
+                    </th>
+                    <th className="px-3 py-2 text-sm border border-theme-dark-gray">
+                      NAME
+                    </th>
+                    <th className="px-3 py-2 text-sm border border-theme-dark-gray">
+                      EMAIL
+                    </th>
+                    <th className="px-3 py-2 text-sm border border-theme-dark-gray">
+                      NUMBER
+                    </th>
+                    <th className="px-3 py-2 text-sm border border-theme-dark-gray">
+                      COURSE NAME
+                    </th>
+                    <th className="px-3 py-2 text-sm border border-theme-dark-gray">
+                      FEEDBACK
+                    </th>
+                    <th className="px-3 py-2 text-sm border border-theme-dark-gray">
+                      FILE
+                    </th>
+                    <th className="px-3 py-2 text-sm border border-theme-dark-gray">
+                      QUERY
+                    </th>
+                    <th className="px-3 py-2 text-sm border border-theme-dark-gray">
+                      COMMENT
+                    </th>
+                    <th className="px-3 py-2 text-sm border border-theme-dark-gray">
+                      TAKEN BY
+                    </th>
+                    <th className="px-3 py-2 text-sm border border-theme-dark-gray">
+                      STATUS
+                    </th>
+                  </tr>
+                )}
                 {queryType == "numberchange" && (
                   <tr>
                     <th className="px-3 py-2 text-sm border border-theme-dark-gray">

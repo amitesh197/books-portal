@@ -8,27 +8,195 @@ import Navbar from "../components/navbar";
 function Home() {
   const { userInfo, queryType, setQueryType } = useGlobalContext();
   const [loading, setLoading] = useState(false);
-  // can take following values
-  // name
-  // number
-  // newnumber
-  // oldnumber
-  // email
-  // newemail
-  // oldemail
-  // coursename
-  // content
-  // query
-  // file   ->   file
   const [formData, setFormData] = useState({});
+
+  /* types of queries
+  nameChange: {
+    id: 0,
+    date: 1,
+    name: 2,
+    email: 3,
+    number: 4,
+    newName: 5,
+    query: 6,
+    comment: 7,
+    querytakenby: 8,
+    status: 9
+  },
+
+  batchShift: {
+    id: 0,
+    date: 1,
+    name: 2,
+    email: 3,
+    number: 4,
+    currentBatch: 5,
+    newBatch: 6,
+    reason: 7,
+    file: 8,
+    query: 9,
+    comment: 10,
+    querytakenby: 11,
+    status: 12
+  },
+
+  emi: {
+    id: 0,
+    date: 1,
+    name: 2,
+    email: 3,
+    number: 4,
+    coursename: 5,
+    firstInstallment: 6,
+    secondInstallment: 7,
+    file: 8,
+    query: 9,
+    comment: 10,
+    querytakenby: 11,
+    status: 12
+  },
+
+  refund: {
+    id: 0,
+    date: 1,
+    name: 2,
+    email: 3,
+    number: 4,
+    coursename: 5,
+    reason: 6,
+    query: 7,
+    comment: 8,
+    querytakenby: 9,
+    status: 10
+  },
+
+  removeCourseAccess: {
+    id: 0,
+    date: 1,
+    name: 2,
+    email: 3,
+    number: 4,
+    coursename: 5,
+    reason: 6,
+    query: 7,
+    comment: 8,
+    querytakenby: 9,
+    status: 10
+  },
+
+  feedback: {
+    id: 0,
+    date: 1,
+    name: 2,
+    email: 3,
+    number: 4,
+    coursename: 5,
+    feedback: 6,
+    file: 7,
+    query: 8,
+    comment: 9,
+    querytakenby: 10,
+    status: 11
+  },
+
+  numberchange: {
+    id: 0,
+    date: 1,
+    name: 2,
+    email: 3,
+    oldnumber: 4,
+    newnumber: 5,
+    query: 6,
+    comment: 7,
+    querytakenby: 8,
+    status: 9
+  },
+  emailchange: {
+    id: 0,
+    date: 1,
+    name: 2,
+    newemail: 3,
+    oldemail: 4,
+    number: 5,
+    query: 6,
+    comment: 7,
+    querytakenby: 8,
+    status: 9
+  },
+  contentmissing: {
+    id: 0,
+    date: 1,
+    name: 2,
+    email: 3,
+    number: 4,
+    coursename: 5,
+    content: 6,
+    query: 7,
+    comment: 8,
+    querytakenby: 9,
+    status: 10
+  },
+  coursenotvisible: {
+    id: 0,
+    date: 1,
+    name: 2,
+    email: 3,
+    number: 4,
+    coursename: 5,
+    content: 6,
+    file: 7,
+    query: 8,
+    comment: 9,
+    querytakenby: 10,
+    status: 11
+  },
+  UPIpayment: {
+    id: 0,
+    date: 1,
+    name: 2,
+    email: 3,
+    number: 4,
+    coursename: 5,
+    file: 6,
+    query: 7,
+    currentcourse: 8,
+    upgradetowhichcourse: 9,
+    comment: 10,
+    querytakenby: 11,
+    status: 12
+  },
+  grpnotalloted: {
+    id: 0,
+    date: 1,
+    name: 2,
+    email: 3,
+    number: 4,
+    coursename: 5,
+    query: 6,
+    comment: 7,
+    querytakenby: 8,
+    status: 9
+  },
+  misc: {
+    id: 0,
+    date: 1,
+    name: 2,
+    email: 3,
+    number: 4,
+    file: 5,
+    query: 6,
+    currentcourse: 7,
+    upgradetowhichcourse: 8,
+    comment: 9,
+    querytakenby: 10,
+    status: 11
+  }
+  */
 
   //todays data in 13 digit format and use it as id, cause it will be unique
   const dataId = Date.now();
   // Get current date, month, and year in format day/month/year
   const now = new Date(dataId);
-  const currentDay = now.getDate();
-  const currentMonth = now.getMonth() + 1;
-  const currentYear = now.getFullYear();
   const todaysdate = now;
 
   const handleInput = (e) => {
@@ -38,7 +206,7 @@ function Home() {
       id: dataId,
       date: todaysdate,
       status: "",
-      takenby: userInfo.email,
+      querytakenby: userInfo.email,
       sheetname: queryType,
       action: "addQuery",
     }));
@@ -117,7 +285,10 @@ function Home() {
     if (
       queryType == "coursenotvisible" ||
       queryType == "UPIpayment" ||
-      queryType == "misc"
+      queryType == "misc" ||
+      queryType == "batchShift" ||
+      queryType == "emi" ||
+      queryType == "feedback"
     ) {
       // upload the file to cloud storage and then take the url and upload to excell
 
@@ -177,7 +348,7 @@ function Home() {
         setLoading(false);
       }
     }
-    setFormData({});
+    // setFormData({});
   };
 
   useEffect(() => {
@@ -227,6 +398,13 @@ function Home() {
               value={queryType}
               onChange={(e) => setQueryType(e.target.value)}
             >
+              <option value="nameChange">Name Change</option>
+              <option value="batchShift">Batch Shift</option>
+              <option value="emi">EMI</option>
+              <option value="refund">Refund</option>
+              <option value="removeCourseAccess">Remove Course Access</option>
+              <option value="feedback">Feedback</option>
+
               <option value="numberchange">Number change</option>
               <option value="emailchange">Email change</option>
               <option value="contentmissing">Content Missing</option>
@@ -236,15 +414,43 @@ function Home() {
               <option value="misc">Misc</option>
             </select>
           </div>
-          <div className="flex flex-col">
-            <label className=" mx-1 font-semibold">Name</label>
-            <input
-              placeholder="Name"
-              name="name"
-              className="text-black rounded-md p-2 outline-theme-yellow-dark border border-theme-dark"
-              onChange={handleInput}
-            />
-          </div>
+
+          {queryType != "nameChange" && (
+            <div className="flex flex-col">
+              <label className=" mx-1 font-semibold">Name</label>
+              <input
+                placeholder="Name"
+                name="name"
+                className="text-black rounded-md p-2 outline-theme-yellow-dark border border-theme-dark"
+                onChange={handleInput}
+              />
+            </div>
+          )}
+
+          {queryType == "nameChange" ? (
+            <>
+              <div className="flex flex-col">
+                <label className=" mx-1 font-semibold">Old Name</label>
+                <input
+                  placeholder="Old Name"
+                  name="oldName"
+                  className="text-black rounded-md p-2 outline-theme-yellow-dark border border-theme-dark"
+                  onChange={handleInput}
+                  required
+                />
+              </div>
+              <div className="flex flex-col">
+                <label className=" mx-1 font-semibold">New Name</label>
+                <input
+                  placeholder="New Name"
+                  name="newName"
+                  className="text-black rounded-md p-2 outline-theme-yellow-dark border border-theme-dark"
+                  onChange={handleInput}
+                  required
+                />
+              </div>
+            </>
+          ) : null}
 
           {queryType == "emailchange" ? (
             <>
@@ -296,6 +502,7 @@ function Home() {
                   name="oldnumber"
                   className="text-black rounded-md p-2 outline-theme-yellow-dark border border-theme-dark"
                   onChange={handleInput}
+                  min={0}
                 />
               </div>
               <div className="flex flex-col ">
@@ -307,6 +514,7 @@ function Home() {
                   name="newnumber"
                   className="text-black rounded-md p-2 outline-theme-yellow-dark border border-theme-dark"
                   onChange={handleInput}
+                  min={0}
                 />
               </div>
             </>
@@ -319,9 +527,94 @@ function Home() {
                 name="number"
                 className="text-black rounded-md p-2 outline-theme-yellow-dark border border-theme-dark"
                 onChange={handleInput}
+                min={0}
               />
             </div>
           )}
+          {queryType === "batchShift" ? (
+            <>
+              <div className="flex flex-col ">
+                <label className=" mx-1 font-semibold">Current Batch</label>
+                <input
+                  placeholder="Current batch"
+                  name="currentBatch"
+                  className="text-black rounded-md p-2 outline-theme-yellow-dark border border-theme-dark"
+                  onChange={handleInput}
+                />
+              </div>
+              <div className="flex flex-col ">
+                <label className=" mx-1 font-semibold">New Batch</label>
+                <input
+                  placeholder="New batch"
+                  name="newBatch"
+                  className="text-black rounded-md p-2 outline-theme-yellow-dark border border-theme-dark"
+                  onChange={handleInput}
+                />
+              </div>
+            </>
+          ) : null}
+
+          {queryType === "refund" ||
+          queryType === "removeCourseAccess" ||
+          queryType === "feedback" ? (
+            <div className="flex flex-col ">
+              <label className=" mx-1 font-semibold">Course Name</label>
+              <input
+                placeholder="Course name"
+                name="coursename"
+                className="text-black rounded-md p-2 outline-theme-yellow-dark border border-theme-dark"
+                onChange={handleInput}
+              />
+            </div>
+          ) : null}
+
+          {queryType === "batchShift" ||
+          queryType === "refund" ||
+          queryType === "removeCourseAccess" ? (
+            <div className="flex flex-col ">
+              <label className=" mx-1 font-semibold">Reason</label>
+              <input
+                placeholder="Reason"
+                name="reason"
+                className="text-black rounded-md p-2 outline-theme-yellow-dark border border-theme-dark"
+                onChange={handleInput}
+              />
+            </div>
+          ) : null}
+
+          {queryType === "emi" ? (
+            <>
+              <div className="flex flex-col ">
+                <label className=" mx-1 font-semibold">Course Name</label>
+                <input
+                  placeholder="Current course"
+                  name="coursename"
+                  className="text-black rounded-md p-2 outline-theme-yellow-dark border border-theme-dark"
+                  onChange={handleInput}
+                />
+              </div>
+              <div className="flex flex-col ">
+                <label className=" mx-1 font-semibold">First Installment</label>
+                <input
+                  placeholder="First Installment"
+                  name="firstInstallment"
+                  className="text-black rounded-md p-2 outline-theme-yellow-dark border border-theme-dark"
+                  onChange={handleInput}
+                />
+              </div>
+              <div className="flex flex-col ">
+                <label className=" mx-1 font-semibold">
+                  Second Installment
+                </label>
+                <input
+                  placeholder="Second Installment"
+                  name="secondInstallment"
+                  className="text-black rounded-md p-2 outline-theme-yellow-dark border border-theme-dark"
+                  onChange={handleInput}
+                />
+              </div>
+            </>
+          ) : null}
 
           {queryType == "contentmissing" ? (
             <>
@@ -401,6 +694,19 @@ function Home() {
             </div>
           ) : null}
 
+          {queryType == "feedback" ? (
+            <div className="flex flex-col ">
+              <label className=" mx-1 font-semibold">Feedback</label>
+              <input
+                placeholder="Feedback"
+                required
+                name="feedback"
+                className="text-black rounded-md p-2 outline-theme-yellow-dark border border-theme-dark"
+                onChange={handleInput}
+              />
+            </div>
+          ) : null}
+
           <div className="flex flex-col ">
             <label className=" mx-1 font-semibold">Query</label>
             <textarea
@@ -439,7 +745,10 @@ function Home() {
 
           {queryType == "coursenotvisible" ||
           queryType == "UPIpayment" ||
-          queryType == "misc" ? (
+          queryType == "misc" ||
+          queryType == "batchShift" ||
+          queryType == "emi" ||
+          queryType == "feedback" ? (
             <div className="flex flex-col ">
               <label className="  mx-1 font-semibold">File</label>
               <input
