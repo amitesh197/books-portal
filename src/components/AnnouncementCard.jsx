@@ -23,13 +23,11 @@ export default function AnnouncementCard({
   const { id, title, content, date, author } = announcement;
 
   const highlight =
-    currAnnouncementId === id
-      ? "border-theme-yellow-dark"
-      : "border-transparent";
+    currAnnouncementId === id ? "bg-theme-yellow-dark" : "bg-theme-gray";
 
   return (
     <div
-      className={`w-full h-fit rounded bg-theme-gray p-2 relative border-2  hover:border-theme-yellow-light cursor-pointer ${highlight}`}
+      className={`w-full h-fit rounded-lg  p-3 relative    cursor-pointer ${highlight}`}
       onClick={() => setCurrAnnouncement(announcement)}
     >
       <div className="font-semibold text-lg mb-5">{title}</div>
@@ -37,7 +35,7 @@ export default function AnnouncementCard({
         <div>{date}</div>
         <div>By {author}</div>
       </div>
-      <div className="absolute bottom-2 right-2 text-xs">
+      <div className="absolute bottom-2 right-3 text-xs">
         Click to read more <i className="fa-solid fa-arrow-right"></i>
       </div>
     </div>

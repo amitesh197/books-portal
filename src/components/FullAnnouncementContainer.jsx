@@ -3,7 +3,7 @@ import CreateAnnounceForm from "./CreateAnnounceForm";
 import { useGlobalContext } from "../context/globalContext";
 import { auth, db, storage } from "../firebase.config";
 import { doc, deleteDoc } from "firebase/firestore";
-import parse from "html-react-parser"; // Import the parse function from html-react-parser
+import parse from "html-react-parser"; // Import the parse function from html-react-parser:
 
 export default function FullAnnouncementContainer({
   currAnnouncement,
@@ -29,7 +29,6 @@ export default function FullAnnouncementContainer({
   const { title, content, date, author, uploadedFilePropObjs } =
     currAnnouncement;
   const [deleting, setDeleting] = useState(false);
-  const [isEditing, setIsEditing] = useState(false);
 
   const handleEdit = () => {
     localStorage.setItem("currAnnouncement", JSON.stringify(currAnnouncement));

@@ -6,9 +6,11 @@ import { useGlobalContext } from "../context/globalContext";
 import React, { useEffect } from "react";
 import { auth, db, storage } from "../firebase.config";
 import { collection, getDocs, query, where } from "firebase/firestore";
+import ScrollToTopBtn from "../components/ScrollToTopBtn";
 
 export default function Announcements({ data }) {
   const { userInfo, setUserInfo } = useGlobalContext();
+  console.log("userInfo", userInfo);
   const [fetchingData, setFetchingData] = React.useState(false);
   const [allAnnouncements, setAllAnnouncements] = React.useState([]); // [ {author, date, content}, {author, date, content}, ...
   const [currAnnouncement, setCurrAnnouncement] = React.useState(null);
@@ -97,7 +99,7 @@ export default function Announcements({ data }) {
       {fetchingData ? (
         <Loading />
       ) : (
-        <div className="flex  flex-col  md:flex-row gap-5  h-full px-5 md:px-10 box-border ">
+        <div className="flex  flex-col  md:flex-row gap-5  h-full px-5 md:px-10 box-border pb-10">
           {/* cards container */}
           <div className="flex flex-col w-full md:w-4/6  gap-5 overflow-auto px-2 h-60 md:h-full">
             {/* card */}
@@ -131,7 +133,7 @@ export default function Announcements({ data }) {
           </div>
 
           {/* full info container */}
-          <div className="w-full px-5 py-3 my-5 md:my-0 bg-theme-gray rounded-lg  relative ">
+          <div className="w-full px-5 py-3 my-5 md:my-0 bg-theme-gray rounded-lg  relative mb-3">
             {currAnnouncement && (
               <FullAnnouncementContainer
                 currAnnouncement={currAnnouncement}
@@ -140,6 +142,8 @@ export default function Announcements({ data }) {
               />
             )}
           </div>
+
+          <ScrollToTopBtn />
         </div>
       )}
     </div>

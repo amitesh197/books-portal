@@ -33,8 +33,6 @@
   .full-announcement a:hover {
     @apply text-blue-700;
   }
-
-  /* ... */
 }
 
 :root {

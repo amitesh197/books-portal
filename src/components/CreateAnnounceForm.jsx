@@ -169,6 +169,7 @@ export default function CreateAnnounceForm({ handleGetAnnouncements }) {
             setFiles([]);
             document.getElementById("file").value = "";
           }}
+          type="button"
         >
           Remove all files
         </button>
