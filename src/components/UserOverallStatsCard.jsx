@@ -2,7 +2,7 @@ import React from "react";
 import { CircularProgressbar } from "react-circular-progressbar";
 import { useNavigate } from "react-router-dom";
 
-export default function UserOverallStatsCard({ userData }) {
+export default function UserOverallStatsCard({ userData, type }) {
   const navigate = useNavigate();
   const handleClick = () => {
     // console.log("user data is", userData);
@@ -31,9 +31,11 @@ export default function UserOverallStatsCard({ userData }) {
         handleClick();
       }}
     >
-      <h1 className="text-lg font-semibold w-full text-center">
-        {userData.userName}
-      </h1>
+      {type !== "monthly" && (
+        <h1 className="text-lg font-semibold w-full text-center">
+          {userData.userName}
+        </h1>
+      )}
 
       {/* progress bar and stats container */}
       <div className="flex flex-row flex-nowrap justify-center items-center gap-3 px-3">

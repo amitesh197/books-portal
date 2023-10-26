@@ -7,7 +7,7 @@ import Loading from "../components/Loading";
 import UserOverallStatsCard from "../components/UserOverallStatsCard";
 import { useNavigate } from "react-router-dom";
 
-export default function Dashboard() {
+export default function CurrUsersStats() {
   const { userInfo } = useGlobalContext();
   const navigate = useNavigate();
 
@@ -70,7 +70,7 @@ export default function Dashboard() {
       <Navbar />
       <div className="flex flex-row flex-wrap items-center justify-evenly ">
         <h1 className="text-xl font-semibold w-full text-center my-2">
-          All Users Stats
+          All users stats for current month
         </h1>
         {!allUsersData && fecthingData ? (
           <Loading />

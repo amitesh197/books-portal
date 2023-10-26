@@ -8,16 +8,23 @@ import { useNavigate } from "react-router-dom";
 
 function Navbar() {
   const { userInfo, setUserInfo } = useGlobalContext();
+  const [menuOpen, setMenuOpen] = useState(false);
   const navigate = useNavigate();
   //get current url last part
   let currentUrl = window.location.href.split("/").pop();
   const [isOpen, setIsOpen] = useState(false);
   const navbarRef = useRef(null);
+  const dashboardRef = useRef(null);
 
   // Function to close the navbar when clicking outside of it
   const closeNavbar = (event) => {
-    if (navbarRef.current && !navbarRef.current.contains(event.target)) {
+    if (
+      navbarRef.current &&
+      !navbarRef.current.contains(event.target) &&
+      !dashboardRef.current.contains(event.target)
+    ) {
       setIsOpen(false);
+      setMenuOpen(false);
     }
   };
 
@@ -168,15 +175,45 @@ function Navbar() {
             )}
             {userInfo?.isAdmin && (
               <>
-                <Link
-                  to="/dashboard"
+                <div
+                  ref={dashboardRef}
                   className={
-                    `px-2 block my-3 lg:my-0 text-lg lg:inline-block lg:mt-0 text-white-200 mr-4 hover:text-theme-yellow-dark  cursor-pointer ` +
+                    `pr-5 block my-3 lg:my-0 text-lg lg:inline-block lg:mt-0 text-white-200 mr-4 hover:text-theme-yellow-dark  cursor-pointer relative select-none ` +
                     (currentUrl == "dashboard" ? "text-theme-yellow-dark" : "")
                   }
+                  onClick={() => setMenuOpen(!menuOpen)}
                 >
-                  Dashboard
-                </Link>
+                  Dashboard&nbsp;&nbsp;
+                  <div
+                    className={`absolute -top-1 right-0 bg-theme-dark text-white w-4 h-4 m-2`}
+                  >
+                    <svg
+                      className="fill-current text-white h-4 w-4"
+                      xmlns="http://www.w3.org/2000/svg"
+                      viewBox="0 0 24 24"
+                    >
+                      <path d="M7 10l5 5 5-5z" />
+                    </svg>
+                  </div>
+                  <div
+                    className={`${
+                      menuOpen ? "block" : "hidden"
+                    } absolute top-full left-0 bg-theme-dark text-white   mt-1 w-max `}
+                  >
+                    <Link
+                      to="/current-users-stats"
+                      className="block px-4 py-2 border border-theme-yellow-dark text-sm capitalize hover:bg-theme-yellow-dark hover:text-white "
+                    >
+                      Current Month Stats
+                    </Link>
+                    <Link
+                      to="/monthly-user-history"
+                      className="block px-4 py-2 text-sm border border-theme-yellow-dark capitalize hover:bg-theme-yellow-dark hover:text-white"
+                    >
+                      Monthly user&apos;s history
+                    </Link>
+                  </div>
+                </div>
               </>
             )}
             <Link

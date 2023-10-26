@@ -10,7 +10,6 @@ import Info from "./pages/info";
 import Stats from "./pages/stats";
 import Profile from "./pages/profile";
 import History from "./pages/history";
-import Dashboard from "./pages/dashboard";
 import UserHistory from "./pages/[userName]";
 import Loading from "./components/Loading";
 import { useGlobalContext } from "./context/globalContext";
@@ -19,6 +18,8 @@ import { onAuthStateChanged, signOut } from "firebase/auth";
 import { collection, getDocs, query, where } from "firebase/firestore";
 import TopPerformers from "./pages/topPerformers";
 import Announcements from "./pages/announcements";
+import MonthlyUserHistory from "./pages/monthlyUserHistory";
+import CurrUsersStats from "./pages/currUsersStats";
 
 function App() {
   const { userInfo, setUserInfo } = useGlobalContext();
@@ -110,9 +111,18 @@ function App() {
               element={userInfo?.isAdmin ? <Stats /> : <Navigate to="/" />}
             />
             <Route
-              path="/dashboard"
-              element={userInfo?.isAdmin ? <Dashboard /> : <Navigate to="/" />}
+              path="/current-users-stats"
+              element={
+                userInfo?.isAdmin ? <CurrUsersStats /> : <Navigate to="/" />
+              }
             />
+            <Route
+              path="/monthly-user-history"
+              element={
+                userInfo?.isAdmin ? <MonthlyUserHistory /> : <Navigate to="/" />
+              }
+            />
+
             <Route
               path="/announcements"
               element={userInfo ? <Announcements /> : <Navigate to="/" />}

@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { CircularProgressbar } from "react-circular-progressbar";
 
-export default function MonthProgressCard({ userData }) {
+export default function UserMonthlyStatsCard({ userData }) {
   // console.log("user data in month progress card", userData);
   const [progress, setProgress] = useState(10);
 
