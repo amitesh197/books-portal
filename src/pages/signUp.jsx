@@ -1,75 +1,74 @@
 import React, { useEffect, useState } from "react";
 import { useGlobalContext } from "../context/globalContext";
-import { useNavigate } from "react-router-dom";
 import logo from "../assets/edsarrthi-logo.webp";
 import { supabase } from "../supabaseClient";
+import { useNavigate } from "react-router-dom";
 
-function Login() {
+function SignUp() {
+  const navigate = useNavigate();
   const { setUserInfo } = useGlobalContext();
   const [loginData, setLoginData] = useState({
     email: "",
     password: "",
+    confirm_password: "",
   });
 
   const [loginError, setLoginError] = useState(null);
   const [passwordVisible, setPasswordVisible] = useState(false);
+  const [confirmPasswordVisible, setConfirmPasswordVisible] = useState(false);
   const [loading, setLoading] = useState(false);
 
   const togglePasswordVisibility = () => {
     setPasswordVisible((prevVisible) => !prevVisible);
   };
-
-  const navigate = useNavigate();
-
-  const checkIfAdmin = async (email) => {
-    //supabase query to select the email from the users table
-    const { data, error } = await supabase
-      .from("users")
-      .select("isAdmin")
-      .eq("email", email);
-
-    console.log("isAdmin is ", data);
-    if (error) {
-      console.log("error is ", error);
-    } else if (data.length === 0) {
-      return false;
-    } else {
-      return data[0].isAdmin;
-    }
+  const toggleConfirmPasswordVisibility = () => {
+    setConfirmPasswordVisible((prevVisible) => !prevVisible);
   };
 
-  const loginHandler = async (e) => {
+  const signupHandler = async (e) => {
     e.preventDefault();
     setLoginError(null);
     setLoading(true);
     if (loginData.email && loginData.password) {
-      //supabase query to sign in with email and password
-      const { data, error } = await supabase.auth.signInWithPassword({
-        email: loginData.email,
-        password: loginData.password,
-      });
-      if (error) {
-        console.log("error is ", error);
-        setLoginError(error.message);
-        setLoading(false);
-      } else {
-        // console.log("data is ", data);
-        let isAdmin = await checkIfAdmin(data?.user.email);
-        if (isAdmin === undefined) {
-          isAdmin = false;
+      try {
+        const { data, error } = await supabase.auth.signUp({
+          email: loginData.email,
+          password: loginData.password,
+        });
+        console.log("data", data);
+        /* data: 
+        {
+            "user": {
+                "id",
+                "email",
+                ...
+            },
+            "session": {
+                "access_token",
+                "user": {
+                    "id",
+                    "email",
+                    ...
+                }
+            }
         }
-        setUserInfo({ email: data?.user.email, isAdmin: isAdmin });
+        */
+        setUserInfo({ email: data.user.email, isAdmin: false });
         sessionStorage.setItem(
           "userInfo",
           JSON.stringify({
-            token: data?.session.access_token,
-            email: data?.user.email,
-            isAdmin: isAdmin,
+            token: data.session.access_token,
+            email: data.user.email,
+            isAdmin: false,
           })
         );
-        setLoading(false);
 
         navigate("/");
+      } catch (err) {
+        console.log("error is ", err.message);
+        setLoginError(err.message);
+      } finally {
+        setLoading(false);
       }
     }
   };
@@ -78,6 +77,7 @@ function Login() {
     if (sessionStorage.getItem("userInfo")) {
       navigate("/");
     }
+    // console.log("data", data, error);
   }, []);
 
   return (
@@ -100,11 +100,11 @@ function Login() {
         </div>
         <div className="w-1/2">
           <div className="my-10 mx-auto text-center text-xl font-semibold">
-            Please <span className="text-theme-yellow-dark">Login</span> to
+            Please <span className="text-theme-yellow-dark">SignUp</span> to
             continue
           </div>
           <div className="flex flex-col gap-5 items-center justify-center ">
-            <form className="w-full px-10 lg:px-32" onSubmit={loginHandler}>
+            <form className="w-full px-10 lg:px-32" onSubmit={signupHandler}>
               <input
                 className="w-full rounded-lg border-2 border-theme-dark my-2 px-3 py-1  text-lg  outline-none focus:border-theme-yellow-dark"
                 type="email"
@@ -145,6 +145,35 @@ function Login() {
                   )}
                 </button>
               </div>
+
+              <div className="relative">
+                <input
+                  className="w-full rounded-lg border-2 border-theme-dark my-2 px-3 py-1 text-lg outline-none focus:border-theme-yellow-dark"
+                  type={confirmPasswordVisible ? "text" : "password"}
+                  placeholder="Confirm Password"
+                  name="confirm_password"
+                  onChange={(e) =>
+                    setLoginData((prev) => ({
+                      ...prev,
+                      confirm_password: e.target.value,
+                    }))
+                  }
+                  value={loginData.confirm_password}
+                  required
+                />
+                <button
+                  type="button"
+                  className="absolute top-1/2 right-4 transform -translate-y-1/2 "
+                  onClick={toggleConfirmPasswordVisibility}
+                >
+                  {confirmPasswordVisible ? (
+                    <i className="far fa-eye-slash" id="togglePassword"></i>
+                  ) : (
+                    <i className="far fa-eye" id="togglePassword"></i>
+                  )}
+                </button>
+              </div>
+
               {loginError && (
                 <div className="text-red-500 text-sm mt-1 mx-2">
                   {loginError}
@@ -159,7 +188,7 @@ function Login() {
                   loading ? (
                     <i className="fa-solid fa-spinner animate-spin"></i>
                   ) : (
-                    "Login"
+                    "SignUp"
                   ) //not using google sign in for now
                 }
               </button>
@@ -184,13 +213,13 @@ function Login() {
             Performance Portal!
           </div>
           <div className="my-5 mx-auto text-center text-xl font-semibold">
-            Please Login to continue.
+            Please SignUp to continue.
           </div>
 
           <div className="flex flex-col gap-5 items-center justify-center ">
             <form
               className="w-full px-10 lg:px-32 text-black"
-              onSubmit={loginHandler}
+              onSubmit={signupHandler}
             >
               <input
                 className="w-full rounded-lg border-2 border-theme-dark my-2 px-3 py-1  text-lg  outline-none focus:border-theme-yellow-dark"
@@ -220,12 +249,42 @@ function Login() {
                   value={loginData.password}
                   required
                 />
+
                 <button
                   type="button"
                   className="absolute top-1/2 right-4 transform -translate-y-1/2"
                   onClick={togglePasswordVisibility}
                 >
                   {passwordVisible ? (
+                    <i className="far fa-eye-slash" id="togglePassword"></i>
+                  ) : (
+                    <i className="far fa-eye" id="togglePassword"></i>
+                  )}
+                </button>
+              </div>
+
+              <div className="relative">
+                <input
+                  className="w-full rounded-lg border-2 border-theme-dark my-2 px-3 py-1 text-lg outline-none focus:border-theme-yellow-dark"
+                  type={confirmPasswordVisible ? "text" : "password"}
+                  placeholder="Confirm Password"
+                  name="confirm_password"
+                  onChange={(e) =>
+                    setLoginData((prev) => ({
+                      ...prev,
+                      confirm_password: e.target.value,
+                    }))
+                  }
+                  value={loginData.confirm_password}
+                  required
+                />
+
+                <button
+                  type="button"
+                  className="absolute top-1/2 right-4 transform -translate-y-1/2"
+                  onClick={toggleConfirmPasswordVisibility}
+                >
+                  {confirmPasswordVisible ? (
                     <i className="far fa-eye-slash" id="togglePassword"></i>
                   ) : (
                     <i className="far fa-eye" id="togglePassword"></i>
@@ -246,7 +305,7 @@ function Login() {
                   loading ? (
                     <i className="fa-solid fa-spinner animate-spin"></i>
                   ) : (
-                    "Login"
+                    "SignUp"
                   ) //not using google sign in for now
                 }
               </button>
@@ -258,4 +317,4 @@ function Login() {
   );
 }
 
-export default Login;
+export default SignUp;

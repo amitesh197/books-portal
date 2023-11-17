@@ -79,7 +79,7 @@ function All() {
       const result = await fetch(`${import.meta.env.VITE_URL}?${queryParams}`);
       const data = await result.json();
       //remvove the id from the data
-      console.log("data isdfsdf", data.data);
+      // console.log("data isdfsdf", data.data);
       /* data.data = [
         {
           "date": "Invalid Date",

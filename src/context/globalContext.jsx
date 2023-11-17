@@ -1,14 +1,6 @@
 import { createContext, useContext, useState } from "react";
 
-const globalContext = createContext({
-  userInfo: {
-    queryType: "",
-    setQueryType: "",
-    email: "",
-    isAdmin: false,
-  },
-  setUserInfo: () => {},
-});
+const globalContext = createContext();
 
 export const GlobalContextProvider = ({ children }) => {
   const [userInfo, setUserInfo] = useState({
