@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useGlobalContext } from "../context/globalContext";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import logo from "../assets/edsarrthi-logo.webp";
 import { supabase } from "../supabaseClient";
 
@@ -100,8 +100,10 @@ function Login() {
         </div>
         <div className="w-1/2">
           <div className="my-10 mx-auto text-center text-xl font-semibold">
-            Please <span className="text-theme-yellow-dark">Login</span> to
-            continue
+            Please Login to continue <br /> OR <br />{" "}
+            <Link to="/signup" className="text-theme-yellow-dark">
+              Sign Up
+            </Link>
           </div>
           <div className="flex flex-col gap-5 items-center justify-center ">
             <form className="w-full px-10 lg:px-32" onSubmit={loginHandler}>
