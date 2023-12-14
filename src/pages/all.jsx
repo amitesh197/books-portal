@@ -44,6 +44,7 @@ function All() {
       "status",
     ];
     const columnOrder = [
+      "status",
       "id",
       "date",
       "name",
@@ -65,7 +66,6 @@ function All() {
       "query_desc",
       "taken_by",
       "comment",
-      "status",
     ];
 
     // Get unique columns from the data
@@ -83,12 +83,18 @@ function All() {
       (a, b) => columnOrder.indexOf(a.id) - columnOrder.indexOf(b.id)
     );
 
-    // Sort data based on the "status" column, putting "pending" values at the top
+    // Sort data based on the "status" column and id, putting "done" values at the end
     const sortedData = data.sort((a, b) => {
       if (a.status === b.status) {
         return b.id - a.id; // If statuses are the same, sort by id in descending order
       }
-      return a.status === "pending" ? -1 : 1; // Sort "pending" values first
+      if (a.status === "done" && b.status !== "done") {
+        return 1; // "done" values go at the end
+      }
+      if (a.status !== "done" && b.status === "done") {
+        return -1; // "done" values go at the end
+      }
+      return 0; // All other cases
     });
 
     // Filter out 'query_type' and "id" columns and sort the rest based on the desired order
@@ -103,7 +109,50 @@ function All() {
         sortedData.some((row) => row[column.id] !== null) // Show if at least one cell is not null
     );
 
-    return finalColumns;
+    // Add a "Delete" column at the end
+    const deleteColumn = {
+      id: "delete",
+      header: "Delete",
+      accessorKey: "delete",
+      footer: "Delete",
+      cell: ({ row }) => (
+        <td className="delete-cell" key={`delete-${row.id}`}>
+          <button onClick={() => handleDelete(row.original.id)}>
+            <i className="fa-solid fa-trash-can"></i>
+          </button>
+        </td>
+      ),
+    };
+
+    return [...finalColumns, deleteColumn];
+  };
+
+  const handleDelete = async (rowId) => {
+    toast.loading("Deleting row...");
+    try {
+      // Send a delete query to Supabase
+      const { data: deletedRow, error } = await supabase
+        .from("queries")
+        .delete()
+        .eq("id", rowId);
+
+      if (error) {
+        toast.error(error.message);
+        console.error("Supabase error:", error);
+      } else {
+        // Update the data state accordingly (remove the deleted row)
+        //clear toast
+        getData();
+
+        toast.dismiss();
+        toast.success("Row deleted successfully");
+      }
+    } catch (error) {
+      //clear toast
+      toast.dismiss();
+      toast.error(error.message);
+      console.error("Supabase error:", error);
+    }
   };
 
   const getData = async () => {
@@ -159,9 +208,9 @@ function All() {
   }, [userInfo?.email, queryType]);
 
   return (
-    <>
+    <div className="p-2 ">
       <Navbar />
-      <div className="flex flex-row gap-3 items-center justify-center  w-fit">
+      <div className="flex flex-row gap-3 items-center justify-center  w-fit ">
         <label
           htmlFor="query-type "
           className="w-fit text-left pl-1 text-lg font-semibold "
@@ -222,9 +271,16 @@ function All() {
           No Data of the selected type found.
         </p>
       ) : (
-        data && columns && <TableRenderer data={data} columns={columns} />
+        data &&
+        columns && (
+          <TableRenderer
+            data={data}
+            columns={columns}
+            getData = {getData}
+          />
+        )
       )}
-    </>
+    </div>
   );
 }
 

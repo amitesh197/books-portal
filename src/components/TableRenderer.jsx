@@ -6,10 +6,14 @@ import {
   getSortedRowModel,
   useReactTable,
 } from "@tanstack/react-table";
+import { supabase } from "../supabaseClient";
 
 import React, { useEffect, useState } from "react";
+import CommentModal from "./CommentModal";
 
-export default function TableRenderer({ data, columns }) {
+export default function TableRenderer({ data, columns, getData }) {
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [selectedRowId, setSelectedRowId] = useState(null);
   const [columnSizing, setColumnSizing] = useState({});
   const [sorting, setSorting] = useState([]);
   const [filtering, setFiltering] = useState("");
@@ -42,18 +46,48 @@ export default function TableRenderer({ data, columns }) {
 
   const handleCellClick = (cell) => {
     const cellValue = cell.getValue(cell.column.id);
-    let ele = document.getElementById(cell.id);
-    let eleCoordinates = ele.getBoundingClientRect();
     setSelectedCellValue({
       value: cellValue,
-      x: eleCoordinates.x,
-      y: eleCoordinates.y,
     });
-    console.log({
-      value: cellValue,
-      x: eleCoordinates.x,
-      y: eleCoordinates.y,
-    });
+    // console.log({
+    //   value: cellValue,
+    //   x: eleCoordinates.x,
+    //   y: eleCoordinates.y,
+    // });
+    // Check if the clicked cell is in the "comment" column
+    if (cell.column.id === "comment") {
+      const rowId = cell.row.original.id;
+      // console.log("Clicked on comment cell in row with ID:", rowId);
+      setIsModalOpen(true);
+      setSelectedRowId(rowId);
+    }
+  };
+
+  const handleSaveComment = async (comment) => {
+    try {
+      // Assuming 'comments' is the column you want to update
+      const { data, error } = await supabase
+        .from("queries") // Replace with your actual table name
+        .update({ comment })
+        .eq("id", selectedRowId);
+
+      if (error) {
+        console.error("Supabase error:", error.message);
+        // Handle error as needed
+      } else {
+        // console.log(
+        //   `Comment updated for row with ID ${selectedRowId}:`,
+        //   comment
+        // );
+        // Close the modal or perform other actions
+        getData();
+        setIsModalOpen(false);
+        setSelectedRowId(null);
+      }
+    } catch (error) {
+      console.error("Supabase error:", error.message);
+      // Handle error as needed
+    }
   };
 
   const table = useReactTable({
@@ -87,7 +121,7 @@ export default function TableRenderer({ data, columns }) {
     },...
 ]
     */
-    console.log("columns", columns);
+    // console.log("columns", columns);
     /*
     columns = [
     {
@@ -106,9 +140,17 @@ export default function TableRenderer({ data, columns }) {
 ]
     */
   }, [data, columns]);
+  var isDone = false;
 
   return (
     <div className="table-elements-container">
+      {isModalOpen && (
+        <CommentModal
+          isOpen={isModalOpen}
+          onClose={() => setIsModalOpen(false)}
+          onSave={handleSaveComment}
+        />
+      )}
       <div className="pagination-and-searchbar-container">
         <div className="pagination-buttons-container">
           <button
@@ -117,14 +159,18 @@ export default function TableRenderer({ data, columns }) {
             }`}
             disabled={!table.getCanPreviousPage()}
             onClick={() => table.setPageIndex(0)}
-          ></button>
+          >
+            <i className="fa-solid fa-angles-left"></i>
+          </button>
           <button
             className={`pagination-button ${
               !table.getCanPreviousPage() && "disabled"
             }`}
             disabled={!table.getCanPreviousPage()}
             onClick={() => table.previousPage()}
-          ></button>
+          >
+            <i className="fa-solid fa-angle-left"></i>
+          </button>
 
           <strong>
             {table.getState().pagination.pageIndex + 1} of{" "}
@@ -166,14 +212,18 @@ export default function TableRenderer({ data, columns }) {
             onClick={() => {
               table.nextPage();
             }}
-          ></button>
+          >
+            <i className="fa-solid fa-angle-right"></i>
+          </button>
           <button
             className={`pagination-button ${
               !table.getCanNextPage() && "disabled"
             }`}
             disabled={!table.getCanNextPage()}
             onClick={() => table.setPageIndex(table.getPageCount() - 1)}
-          ></button>
+          >
+            <i className="fa-solid fa-angles-right"></i>
+          </button>
         </div>
         <div className="table-search-bar">
           <div className="icon"></div>
@@ -189,7 +239,7 @@ export default function TableRenderer({ data, columns }) {
 
       <div className="table-container">
         <table
-          className="table"
+          className="table relative"
           cellSpacing={0}
           style={{
             width: `${
@@ -204,7 +254,6 @@ export default function TableRenderer({ data, columns }) {
                   <th
                     className="table-head-cell"
                     key={header.id}
-                    onClick={header.column.getToggleSortingHandler()}
                     data-column-name={header.id} // useEffect depends on that !
                     colSpan={header.colSpan}
                     style={{ width: header.getSize() }}
@@ -225,11 +274,6 @@ export default function TableRenderer({ data, columns }) {
                             header.column.columnDef.header,
                           header.getContext()
                         )}
-                        {
-                          { asc: "🔼", desc: "🔽" }[
-                            header.column.getIsSorted() ?? null
-                          ]
-                        }
                       </div>
                     )}
                   </th>
@@ -238,25 +282,30 @@ export default function TableRenderer({ data, columns }) {
             ))}
           </thead>
 
-          <tbody className="table-body">
+          <tbody className="table-body ">
             {table.getRowModel().rows.map((row) => (
-              <tr className="table-body-row" key={row.id}>
-                {row.getVisibleCells().map((cell) => (
-                  <td
-                    id={cell.id}
-                    className="table-body-cell"
-                    key={cell.id}
-                    onClick={() => handleCellClick(cell)}
-                    style={{ width: cell.column.getSize() }}
-                  >
-                    <div>
-                      {flexRender(
-                        cell.column.columnDef.cell,
-                        cell.getContext()
-                      )}
-                    </div>
-                  </td>
-                ))}
+              <tr className={`table-body-row`} key={row.id}>
+                {row.getVisibleCells().map((cell) => {
+                  const isDone =
+                    cell.column.id === "status" && cell.getValue() === "done";
+
+                  return (
+                    <td
+                      id={cell.id}
+                      className={`table-body-cell ${isDone ? "done-cell" : ""}`}
+                      key={cell.id}
+                      onClick={() => handleCellClick(cell)}
+                      style={{ width: cell.column.getSize() }}
+                    >
+                      <div>
+                        {flexRender(
+                          cell.column.columnDef.cell,
+                          cell.getContext()
+                        )}
+                      </div>
+                    </td>
+                  );
+                })}
               </tr>
             ))}
           </tbody>

@@ -1,0 +1,34 @@
+.table-search-bar {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  border-radius: 10px;
+  padding: 5px 10px;
+  border: 2px solid black;
+
+  .icon {
+    width: fit-content;
+    margin-bottom: -5px;
+    color: black;
+  }
+
+  input {
+    width: 10rem;
+    background-color: transparent;
+    border: black;
+    outline: $theme-color-light;
+    color: black;
+    font-weight: 500;
+    font-size: 1rem;
+
+    &::placeholder {
+      color: gray;
+      font-size: 0.9rem;
+    }
+  }
+
+  &:hover {
+    cursor: text;
+  }
+}

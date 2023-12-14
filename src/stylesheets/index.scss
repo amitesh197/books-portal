@@ -48,8 +48,20 @@
   padding: 0;
   margin: 0;
 }
+
+//vars for the apps theme color
+$theme-color-dark: #ff8e00;
+$theme-color: #ff8e00;
+$theme-color-light: rgb(253, 152, 25);
+$theme-gray: #d9d9d9;
+$accent-color-1-light: #18bed4;
+$button-background-color: #19bed5;
+$button-background-color-hover: rgba(25, 190, 213, 0.82);
+
 body {
-  font-family: "Roboto", sans-serif;
-  padding: 0;
-  margin: 0;
+  min-height: 100vh;
+  font-family: "Inter", sans-serif;
 }
+@import "./loading-spinner.scss";
+@import "./modal";
+@import "./query_table/table_renderer";
