@@ -2,7 +2,6 @@ import React, { useEffect, useState } from "react";
 import { useGlobalContext } from "../context/globalContext";
 import { Toaster, toast } from "react-hot-toast";
 import Navbar from "../components/navbar";
-import { supabase } from "../supabaseClient";
 
 function Home() {
   const { userInfo, queryType, setQueryType } = useGlobalContext();
@@ -70,26 +69,31 @@ function Home() {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
+    setLoading(true);
+    // console.log("formData", formData);
+    // console.log("queryType", queryType);
     try {
-      setLoading(true);
-      console.log("formData", formData);
-      console.log("queryType", queryType);
-
-      // send the data to the db
-      const { data, error } = await supabase.from("queries").insert([formData]);
-
-      if (error) {
-        toast.error(error.message);
-        console.error("Supabaseee error:", error);
-      } else {
-        toast.success("Query submitted successfully");
-        // console.log("data", data);
-        setFormData({});
-        clearInput();
+      // Send a delete query to Supabase
+      const response = await fetch(
+        "https://g87ruzy4zl.execute-api.ap-south-1.amazonaws.com/dev/queries/",
+        {
+          method: "POST",
+          body: JSON.stringify(formData),
+          // or 'POST' or other HTTP methods
+        }
+      );
+      if (!response.ok) {
+        let err = response.json();
+        throw new Error(`${err} \n Status: ${response.status}`);
       }
+      clearInput();
+      toast.dismiss();
+      toast.success("Query added !");
     } catch (error) {
+      //clear toast
+      toast.dismiss();
       toast.error(error.message);
-      console.error("Supabase error:", error);
+      console.error("error:", error);
     }
 
     setLoading(false);

@@ -3,7 +3,6 @@ import { useGlobalContext } from "../context/globalContext";
 import { Toaster, toast } from "react-hot-toast";
 import Loading from "../components/Loading";
 import Navbar from "../components/navbar";
-import { supabase } from "../supabaseClient";
 import TableRenderer from "../components/TableRenderer";
 
 function checkDone(str) {
@@ -128,30 +127,28 @@ function All() {
   };
 
   const handleDelete = async (rowId) => {
-    toast.loading("Deleting row...");
+    toast.loading("Deleting row", rowId);
     try {
       // Send a delete query to Supabase
-      const { data: deletedRow, error } = await supabase
-        .from("queries")
-        .delete()
-        .eq("id", rowId);
-
-      if (error) {
-        toast.error(error.message);
-        console.error("Supabase error:", error);
-      } else {
-        // Update the data state accordingly (remove the deleted row)
-        //clear toast
-        getData();
-
-        toast.dismiss();
-        toast.success("Row deleted successfully");
+      const response = await fetch(
+        "https://g87ruzy4zl.execute-api.ap-south-1.amazonaws.com/dev/queries/",
+        {
+          method: "DELETE",
+          body: JSON.stringify({ id: rowId }),
+          // or 'POST' or other HTTP methods
+        }
+      );
+      if (!response.ok) {
+        throw new Error(`${response.type} error! Status: ${response.status}`);
       }
+      getData();
+      toast.dismiss();
+      toast.success("Deleted !");
     } catch (error) {
       //clear toast
       toast.dismiss();
       toast.error(error.message);
-      console.error("Supabase error:", error);
+      console.error("error:", error);
     }
   };
 
@@ -163,22 +160,21 @@ function All() {
       console.log("Fetching data...");
 
       const response = await fetch(
-        "https://5lwnsl394l.execute-api.ap-south-1.amazonaws.com/dev",
+        "https://g87ruzy4zl.execute-api.ap-south-1.amazonaws.com/dev/queries/",
         {
-          method: "GET", // or 'POST' or other HTTP methods
+          method: "GET",
+          // or 'POST' or other HTTP methods
         }
       );
 
       // Check if the response is successful (status code 200-299)
       if (!response.ok) {
-        throw new Error(`HTTP error! Status: ${response.status}`);
+        throw new Error(`${response.type} error! Status: ${response.status}`);
       }
 
       // Parse the response as JSON
       let data = await response.json();
-      data = JSON.parse(data.body);
-      // Continue processing the data as needed
-      console.log("All data:", data);
+      // console.log("All data:", data);
 
       let sortedData = sortData(data);
       const processedData = sortedData.map((each) => {
