@@ -11,6 +11,7 @@
     "deploy": "npm run build && firebase deploy"
   },
   "dependencies": {
+    "@aws-sdk/client-dynamodb": "^3.476.0",
     "@supabase/supabase-js": "^2.38.4",
     "@tanstack/react-table": "^8.9.3",
     "firebase": "^9.23.0",

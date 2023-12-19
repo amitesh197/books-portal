@@ -159,37 +159,50 @@ function All() {
     setLoading(true);
 
     try {
-      const { data, err } = await supabase
-        .from("queries")
-        .select("*")
-        .eq("query_type", queryType);
-      if (err) {
-        toast.error(err.message);
-        console.error("Supabase error:", err);
-      } else {
-        // console.log("all data", data);
-        let sortedData = sortData(data);
-        const processedData = sortedData.map((each) => {
-          const dateObject = new Date(each.date);
-          const day = String(dateObject.getDate()).padStart(2, "0");
-          const month = String(dateObject.getMonth() + 1).padStart(2, "0");
-          const year = String(dateObject.getFullYear()).slice(2);
-          each.date = `${day}/${month}/${year}`;
-          return each;
-        });
+      // Display a loading message or spinner if needed
+      console.log("Fetching data...");
 
-        setColumns(getFilteredColumns(processedData));
-        setData(processedData);
-        // console.log("data", processedData);
-        // console.log("unique columns", uniqueColumns);
+      const response = await fetch(
+        "https://5lwnsl394l.execute-api.ap-south-1.amazonaws.com/dev",
+        {
+          method: "GET", // or 'POST' or other HTTP methods
+        }
+      );
 
-        toast.dismiss();
-        toast.success("Fetched");
+      // Check if the response is successful (status code 200-299)
+      if (!response.ok) {
+        throw new Error(`HTTP error! Status: ${response.status}`);
       }
+
+      // Parse the response as JSON
+      let data = await response.json();
+      data = JSON.parse(data.body);
+      // Continue processing the data as needed
+      console.log("All data:", data);
+
+      let sortedData = sortData(data);
+      const processedData = sortedData.map((each) => {
+        const dateObject = new Date(each.date);
+        const day = String(dateObject.getDate()).padStart(2, "0");
+        const month = String(dateObject.getMonth() + 1).padStart(2, "0");
+        const year = String(dateObject.getFullYear()).slice(2);
+        each.date = `${day}/${month}/${year}`;
+        return each;
+      });
+
+      setColumns(getFilteredColumns(processedData));
+      setData(processedData);
+
+      // Display a success message or handle the data as needed
+      console.log("Processed data:", processedData);
+      toast.dismiss();
+      toast.success("Fetched");
     } catch (err) {
+      // Display an error message or handle the error as needed
       toast.error(err.message);
-      console.error("Supabase error:", err);
+      console.error("Error:", err);
     } finally {
+      // Set loading state to false
       setLoading(false);
     }
   };
@@ -273,11 +286,7 @@ function All() {
       ) : (
         data &&
         columns && (
-          <TableRenderer
-            data={data}
-            columns={columns}
-            getData = {getData}
-          />
+          <TableRenderer data={data} columns={columns} getData={getData} />
         )
       )}
     </div>
