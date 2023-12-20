@@ -66,7 +66,7 @@ export default function TableRenderer({ data, columns, getData }) {
   const handleSaveComment = async (comment) => {
     toast.loading("Adding comment", selectedRowId);
     try {
-      // Send a delete query to Supabase
+      // Send a delete query to dynamodb
       console.log({ id: selectedRowId, comment: comment });
       const response = await fetch(
         "https://g87ruzy4zl.execute-api.ap-south-1.amazonaws.com/dev/queries/",
@@ -97,7 +97,7 @@ export default function TableRenderer({ data, columns, getData }) {
   const handleChangeStatus = async (status) => {
     toast.loading("changing status", selectedRowId);
     try {
-      // Send a delete query to Supabase
+      // Send a delete query to dynamodb
       console.log({ id: selectedRowId, status: status });
       const response = await fetch(
         "https://g87ruzy4zl.execute-api.ap-south-1.amazonaws.com/dev/queries/",

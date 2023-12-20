@@ -75,7 +75,7 @@ function Home() {
     // console.log("formData", formData);
     // console.log("queryType", queryType);
     try {
-      // Send a delete query to Supabase
+      // Send a delete query to dynamodb
       const response = await fetch(
         "https://g87ruzy4zl.execute-api.ap-south-1.amazonaws.com/dev/queries/",
         {
