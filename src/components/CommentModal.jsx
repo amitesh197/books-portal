@@ -19,7 +19,9 @@ const CommentModal = ({ isOpen, onClose, onSave, currComment }) => {
           autoFocus
           onFocus={(e) => e.target.select()}
         />
-        <button onClick={handleSave}>Save</button>
+        <button className="bg-green-500" onClick={handleSave}>
+          Save
+        </button>
         <button onClick={onClose}>Cancel</button>
       </div>
     </div>

@@ -10,15 +10,18 @@ import { Toaster, toast } from "react-hot-toast";
 
 import React, { useEffect, useState } from "react";
 import CommentModal from "./CommentModal";
+import ChangeStatusModal from "./ChangeStatusModal";
 
 export default function TableRenderer({ data, columns, getData }) {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedRowId, setSelectedRowId] = useState(null);
   const [selectedComment, setSelectedComment] = useState(null);
+  const [currentStatus, setCurrentStatus] = useState(null);
   const [columnSizing, setColumnSizing] = useState({});
   const [sorting, setSorting] = useState([]);
   const [filtering, setFiltering] = useState("");
   const [selectedCellValue, setSelectedCellValue] = useState({});
+  const [changeStatusModal, setChangeStatusModal] = useState(false);
 
   const columnMapping = {
     id: "ID",
@@ -46,23 +49,17 @@ export default function TableRenderer({ data, columns, getData }) {
   };
 
   const handleCellClick = (cell) => {
-    const cellValue = cell.getValue(cell.column.id);
-    setSelectedCellValue({
-      value: cellValue,
-    });
-    // console.log({
-    //   value: cellValue,
-    //   x: eleCoordinates.x,
-    //   y: eleCoordinates.y,
-    // });
-    // Check if the clicked cell is in the "comment" column
     if (cell.column.id === "comment") {
-      const rowId = cell.row.original.id;
-      const comment = cell.row.original.comment;
       // console.log("Clicked on comment cell in row with ID:", rowId);
-      setSelectedRowId(rowId);
-      setSelectedComment(comment);
+      setSelectedRowId(cell.row.original.id);
+      setSelectedComment(cell.row.original.comment);
       setIsModalOpen(true);
+    }
+    if (cell.column.id === "status") {
+      // console.log("Clicked on comment cell in row with ID:", rowId);
+      setSelectedRowId(cell.row.original.id);
+      setCurrentStatus(cell.row.original.status);
+      setChangeStatusModal(true);
     }
   };
 
@@ -75,7 +72,11 @@ export default function TableRenderer({ data, columns, getData }) {
         "https://g87ruzy4zl.execute-api.ap-south-1.amazonaws.com/dev/queries/",
         {
           method: "PUT",
-          body: JSON.stringify({ id: selectedRowId, comment: comment }),
+          body: JSON.stringify({
+            id: selectedRowId,
+            comment: comment,
+            toUpdate: "comment",
+          }),
           // or 'POST' or other HTTP methods
         }
       );
@@ -85,6 +86,37 @@ export default function TableRenderer({ data, columns, getData }) {
       getData({ withToast: false });
       toast.dismiss();
       toast.success("Comment added!");
+    } catch (error) {
+      //clear toast
+      toast.dismiss();
+      toast.error(error.message);
+      console.error("error:", error);
+    }
+  };
+
+  const handleChangeStatus = async (status) => {
+    toast.loading("changing status", selectedRowId);
+    try {
+      // Send a delete query to Supabase
+      console.log({ id: selectedRowId, status: status });
+      const response = await fetch(
+        "https://g87ruzy4zl.execute-api.ap-south-1.amazonaws.com/dev/queries/",
+        {
+          method: "PUT",
+          body: JSON.stringify({
+            id: selectedRowId,
+            status_: status,
+            toUpdate: "status",
+          }),
+          // or 'POST' or other HTTP methods
+        }
+      );
+      if (!response.ok) {
+        throw new Error(`${response.type} error! Status: ${response.status}`);
+      }
+      toast.dismiss();
+      toast.success("Status updated!");
+      getData({ withToast: false });
     } catch (error) {
       //clear toast
       toast.dismiss();
@@ -143,7 +175,6 @@ export default function TableRenderer({ data, columns, getData }) {
 ]
     */
   }, [data, columns]);
-  var isDone = false;
 
   return (
     <div className="table-elements-container">
@@ -153,6 +184,13 @@ export default function TableRenderer({ data, columns, getData }) {
           onClose={() => setIsModalOpen(false)}
           onSave={handleSaveComment}
           currComment={selectedComment}
+        />
+      )}
+      {changeStatusModal && (
+        <ChangeStatusModal
+          onClose={() => setChangeStatusModal(false)}
+          handleChangeStatus={handleChangeStatus}
+          currentStatus={currentStatus}
         />
       )}
       <div className="pagination-and-searchbar-container">
@@ -315,9 +353,6 @@ export default function TableRenderer({ data, columns, getData }) {
           </tbody>
         </table>
       </div>
-      {selectedCellValue && (
-        <div className="selected-cell-popup">{selectedCellValue.value}</div>
-      )}
     </div>
   );
 }

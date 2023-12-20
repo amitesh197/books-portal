@@ -221,6 +221,9 @@ body {
   opacity: 0;
   pointer-events: none;
 }
+.table-elements-container .modal .red-btn {
+  background-color: rgb(251, 83, 83);
+}
 .table-elements-container .modal .modal-content {
   background: #fff;
   padding: 20px;
@@ -238,13 +241,13 @@ body {
   min-height: 100px;
 }
 .table-elements-container .modal .modal-content button {
+  margin-top: 20px;
   cursor: pointer;
   padding: 8px 12px;
   margin-right: 10px;
   border: none;
   border-radius: 4px;
-  background-color: #4caf50;
-  color: #fff;
+  color: black;
 }
 .table-elements-container .modal .modal-content button:last-child {
   background-color: #ccc;

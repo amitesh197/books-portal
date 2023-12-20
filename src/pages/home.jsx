@@ -47,7 +47,7 @@ function Home() {
       [e.target.name]: e.target.value,
       id: dataId,
       date: todaysdate,
-      status: "pending",
+      status: "Pending",
       taken_by: userInfo.email,
       query_type: queryType,
       comment: " ",
