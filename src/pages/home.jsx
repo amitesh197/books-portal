@@ -50,7 +50,8 @@ function Home() {
       status: "Pending",
       taken_by: userInfo.email,
       query_type: queryType,
-      comment: " ",
+      comment: "",
+      query_desc: "",
     }));
     // this is the data that will be sent to the db.
   };
@@ -165,6 +166,7 @@ function Home() {
                 name="name"
                 className="text-black rounded-md p-2 outline-theme-yellow-dark border border-theme-dark"
                 onChange={handleInput}
+                required
               />
             </div>
           )}
@@ -270,6 +272,7 @@ function Home() {
                 className="text-black rounded-md p-2 outline-theme-yellow-dark border border-theme-dark"
                 onChange={handleInput}
                 min={0}
+                required
               />
             </div>
           )}

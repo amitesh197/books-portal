@@ -15,7 +15,7 @@ const ChangeStatusModal = ({
 
   return (
     <div className={`modal `}>
-      {currentStatus === "pending" ? (
+      {currentStatus === "Pending" ? (
         <div className="modal-content">
           Are you sure you want to change the status ?
           <button

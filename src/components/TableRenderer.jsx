@@ -329,7 +329,7 @@ export default function TableRenderer({ data, columns, getData }) {
               <tr className={`table-body-row`} key={row.id}>
                 {row.getVisibleCells().map((cell) => {
                   const isDone =
-                    cell.column.id === "status" && cell.getValue() === "done";
+                    cell.column.id === "status" && cell.getValue() === "Done";
 
                   return (
                     <td

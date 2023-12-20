@@ -10,19 +10,6 @@ function checkDone(str) {
   return regex.test(str); // returns boolean
 }
 
-const sortData = (data) => {
-  var notdoneArr = [];
-  var doneArr = [];
-  data.forEach((element) => {
-    if (!checkDone(element.status)) {
-      notdoneArr.push(element);
-    } else {
-      doneArr.push(element);
-    }
-  });
-  return [...notdoneArr, ...doneArr];
-};
-
 function All() {
   const { userInfo, queryType, setQueryType } = useGlobalContext();
   const [data, setData] = useState(null);
@@ -31,8 +18,33 @@ function All() {
 
   const getFilteredColumns = (data) => {
     // Columns to always show
+
+    /* data  [
+        {
+          "date": "20/12/23",
+          "number": "123",
+          "status": "Pending",
+          "comment": " asdfa",
+          "id": 1703096061744,
+          "email": "eknaths2000@gmail.com",
+          "name": "awf",
+          "query_type": "batchShift"
+        },
+        {
+          "date": "21/12/23",
+          "taken_by": "shantanuesakpal1420@gmail.com",
+          "number": "123",
+          "new_batch": "nsrt",
+          "status": "Done",
+          "comment": " newwew",
+          "current_batch": "cuee",
+          "id": 1703097206261,
+          "email": "eknaths2000@gmail.com",
+          "name": "newewewew",
+          "query_type": "batchShift"
+        }
+      ] */
     const alwaysShowColumns = [
-      "id",
       "date",
       "name",
       "email",
@@ -44,6 +56,7 @@ function All() {
     ];
     const columnOrder = [
       "status",
+      "query_type",
       "id",
       "date",
       "name",
@@ -82,32 +95,18 @@ function All() {
       (a, b) => columnOrder.indexOf(a.id) - columnOrder.indexOf(b.id)
     );
 
-    // Sort data based on the "status" column and id, putting "done" values at the end
-    const sortedData = data.sort((a, b) => {
-      if (a.status === b.status) {
-        return b.id - a.id; // If statuses are the same, sort by id in descending order
-      }
-      if (a.status === "done" && b.status !== "done") {
-        return 1; // "done" values go at the end
-      }
-      if (a.status !== "done" && b.status === "done") {
-        return -1; // "done" values go at the end
-      }
-      return 0; // All other cases
-    });
-
-    // Filter out 'query_type' and "id" columns and sort the rest based on the desired order
-    const filteredColumns = sortedColumns
-      .filter((column) => column.id !== "query_type" && column.id !== "id")
-      .sort((a, b) => columnOrder.indexOf(a.id) - columnOrder.indexOf(b.id));
-
-    // Filter columns based on criteria
-    const finalColumns = filteredColumns.filter(
+    // Filter out columns that are not in the "alwaysShowColumns" array and have all values null
+    let filteredColumns = sortedColumns.filter(
       (column) =>
-        alwaysShowColumns.includes(column.id) || // Always show specific columns
-        sortedData.some((row) => row[column.id] !== null) // Show if at least one cell is not null
+        alwaysShowColumns.includes(column.id) ||
+        data.some((response) => response[column.id] !== null)
     );
 
+    //remove the id column and query type column
+    filteredColumns = filteredColumns.filter(
+      (column) => column.id !== "id" && column.id !== "query_type"
+    );
+    console.log(filteredColumns);
     // Add a "Delete" column at the end
     const deleteColumn = {
       id: "delete",
@@ -123,7 +122,7 @@ function All() {
       ),
     };
 
-    return [...finalColumns, deleteColumn];
+    return [...filteredColumns, deleteColumn];
   };
 
   const handleDelete = async (rowId) => {
@@ -174,10 +173,9 @@ function All() {
 
       // Parse the response as JSON
       let data = await response.json();
-      console.log("All data:", data);
+      // console.log("All data:", data);
 
-      let sortedData = sortData(data);
-      const processedData = sortedData.map((each) => {
+      const processedData = data.map((each) => {
         const dateObject = new Date(each.date);
         const day = String(dateObject.getDate()).padStart(2, "0");
         const month = String(dateObject.getMonth() + 1).padStart(2, "0");
@@ -185,12 +183,30 @@ function All() {
         each.date = `${day}/${month}/${year}`;
         return each;
       });
+      // Sort data based on the "status" column and id, putting "done" values at the end
+      let sortedData = processedData.sort((a, b) => {
+        console.log(a, b);
+        const statusA = a.status.toLowerCase();
+        const statusB = b.status.toLowerCase();
 
-      setColumns(getFilteredColumns(processedData));
-      setData(processedData);
+        if (statusA === "done" && statusB !== "done") {
+          return 1; // "Done" values go at the end
+        }
+        if (statusA !== "done" && statusB === "done") {
+          return -1; // "Done" values go at the end
+        }
 
-      // Display a success message or handle the data as needed
-      // console.log("Processed data:", processedData);
+        if (statusA === statusB) {
+          return b.id - a.id; // If statuses are the same, sort by id in descending order
+        }
+      });
+
+      //filter out the data based on the query type
+      sortedData = sortedData.filter((row) => row.query_type === queryType);
+
+      setData(sortedData);
+
+      setColumns(getFilteredColumns(sortedData));
 
       if (withToast) {
         toast.dismiss();
