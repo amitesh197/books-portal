@@ -216,7 +216,7 @@ function All() {
       setQueryType("nameChange");
       localStorage.setItem("queryType", "nameChange");
     }
-    // if (userInfo?.email) getData({ withToast: true });
+    if (userInfo?.email) getData({ withToast: true });
   }, [userInfo?.email, queryType]);
 
   return (
@@ -284,10 +284,9 @@ function All() {
         </p>
       ) : (
         data &&
-        columns &&
-        {
-          /* <TableRenderer data={data} columns={columns} getData={getData} /> */
-        }
+        columns && (
+          <TableRenderer data={data} columns={columns} getData={getData} />
+        )
       )}
     </div>
   );

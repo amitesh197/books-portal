@@ -6,6 +6,8 @@ export const GlobalContextProvider = ({ children }) => {
   const [userInfo, setUserInfo] = useState({
     email: "",
     isAdmin: false,
+    userName: "",
+    token: "",
   });
 
   const [queryType, setQueryType] = useState("numberchange");

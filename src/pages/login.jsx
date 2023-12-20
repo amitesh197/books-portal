@@ -42,7 +42,7 @@ function Login() {
 
       user.authenticateUser(authDetails, {
         onSuccess: (data) => {
-          console.log("onSuccess:", data);
+          // console.log("onSuccess:", data);
           /* data = {
                 "idToken": {
                   "jwtToken": "",
@@ -87,8 +87,8 @@ function Login() {
           let isAdmin = false;
           setUserInfo({
             username: data.accessToken.payload.username,
+            email: data.idToken.payload.email,
             token: data.accessToken.jwtToken,
-            email: data.accessToken.payload.email,
             isAdmin: isAdmin,
           });
           sessionStorage.setItem(
@@ -96,7 +96,7 @@ function Login() {
             JSON.stringify({
               username: data.accessToken.payload.username,
               token: data.accessToken.jwtToken,
-              email: data.accessToken.payload.email,
+              email: data.idToken.payload.email,
               isAdmin: isAdmin,
             })
           );
@@ -130,9 +130,24 @@ function Login() {
         {},
         {
           onSuccess: (data) => {
-            console.log("onSuccess:", data);
-
+            let isAdmin = false;
+            setUserInfo({
+              username: data.accessToken.payload.username,
+              email: data.idToken.payload.email,
+              token: data.accessToken.jwtToken,
+              isAdmin: isAdmin,
+            });
+            sessionStorage.setItem(
+              "userInfo",
+              JSON.stringify({
+                username: data.accessToken.payload.username,
+                email: data.idToken.payload.email,
+                token: data.accessToken.jwtToken,
+                isAdmin: isAdmin,
+              })
+            );
             setLoading(false);
+
             navigate("/");
           },
           onFailure: (err) => {
