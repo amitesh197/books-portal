@@ -141,7 +141,7 @@ function All() {
       if (!response.ok) {
         throw new Error(`${response.type} error! Status: ${response.status}`);
       }
-      getData();
+      getData({ withToast: false });
       toast.dismiss();
       toast.success("Deleted !");
     } catch (error) {
@@ -152,7 +152,7 @@ function All() {
     }
   };
 
-  const getData = async () => {
+  const getData = async ({ withToast }) => {
     setLoading(true);
 
     try {
@@ -190,9 +190,12 @@ function All() {
       setData(processedData);
 
       // Display a success message or handle the data as needed
-      console.log("Processed data:", processedData);
-      toast.dismiss();
-      toast.success("Fetched");
+      // console.log("Processed data:", processedData);
+
+      if (withToast) {
+        toast.dismiss();
+        toast.success();
+      }
     } catch (err) {
       // Display an error message or handle the error as needed
       toast.error(err.message);
@@ -213,7 +216,7 @@ function All() {
       setQueryType("nameChange");
       localStorage.setItem("queryType", "nameChange");
     }
-    if (userInfo?.email) getData();
+    if (userInfo?.email) getData({ withToast: true });
   }, [userInfo?.email, queryType]);
 
   return (

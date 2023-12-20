@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useGlobalContext } from "../context/globalContext";
 import logo from "../assets/edsarrthi-logo.webp";
-import { supabase } from "../supabaseClient";
 import { useNavigate } from "react-router-dom";
 
 function SignUp() {
@@ -31,11 +30,11 @@ function SignUp() {
     setLoading(true);
     if (loginData.email && loginData.password) {
       try {
-        const { data, error } = await supabase.auth.signUp({
-          email: loginData.email,
-          password: loginData.password,
-        });
-        console.log("data", data);
+        // const { data, error } = await supabase.auth.signUp({
+        //   email: loginData.email,
+        //   password: loginData.password,
+        // });
+        // console.log("data", data);
         /* data: 
         {
             "user": {
@@ -53,6 +52,7 @@ function SignUp() {
             }
         }
         */
+
         setUserInfo({ email: data.user.email, isAdmin: false });
         sessionStorage.setItem(
           "userInfo",

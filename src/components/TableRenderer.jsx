@@ -6,7 +6,7 @@ import {
   getSortedRowModel,
   useReactTable,
 } from "@tanstack/react-table";
-import { supabase } from "../supabaseClient";
+import { Toaster, toast } from "react-hot-toast";
 
 import React, { useEffect, useState } from "react";
 import CommentModal from "./CommentModal";
@@ -14,6 +14,7 @@ import CommentModal from "./CommentModal";
 export default function TableRenderer({ data, columns, getData }) {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedRowId, setSelectedRowId] = useState(null);
+  const [selectedComment, setSelectedComment] = useState(null);
   const [columnSizing, setColumnSizing] = useState({});
   const [sorting, setSorting] = useState([]);
   const [filtering, setFiltering] = useState("");
@@ -57,36 +58,38 @@ export default function TableRenderer({ data, columns, getData }) {
     // Check if the clicked cell is in the "comment" column
     if (cell.column.id === "comment") {
       const rowId = cell.row.original.id;
+      const comment = cell.row.original.comment;
       // console.log("Clicked on comment cell in row with ID:", rowId);
-      setIsModalOpen(true);
       setSelectedRowId(rowId);
+      setSelectedComment(comment);
+      setIsModalOpen(true);
     }
   };
 
   const handleSaveComment = async (comment) => {
+    toast.loading("Adding comment", selectedRowId);
     try {
-      // Assuming 'comments' is the column you want to update
-      const { data, error } = await supabase
-        .from("queries") // Replace with your actual table name
-        .update({ comment })
-        .eq("id", selectedRowId);
-
-      if (error) {
-        console.error("Supabase error:", error.message);
-        // Handle error as needed
-      } else {
-        // console.log(
-        //   `Comment updated for row with ID ${selectedRowId}:`,
-        //   comment
-        // );
-        // Close the modal or perform other actions
-        getData();
-        setIsModalOpen(false);
-        setSelectedRowId(null);
+      // Send a delete query to Supabase
+      console.log({ id: selectedRowId, comment: comment });
+      const response = await fetch(
+        "https://g87ruzy4zl.execute-api.ap-south-1.amazonaws.com/dev/queries/",
+        {
+          method: "PUT",
+          body: JSON.stringify({ id: selectedRowId, comment: comment }),
+          // or 'POST' or other HTTP methods
+        }
+      );
+      if (!response.ok) {
+        throw new Error(`${response.type} error! Status: ${response.status}`);
       }
+      getData({ withToast: false });
+      toast.dismiss();
+      toast.success("Comment added!");
     } catch (error) {
-      console.error("Supabase error:", error.message);
-      // Handle error as needed
+      //clear toast
+      toast.dismiss();
+      toast.error(error.message);
+      console.error("error:", error);
     }
   };
 
@@ -149,6 +152,7 @@ export default function TableRenderer({ data, columns, getData }) {
           isOpen={isModalOpen}
           onClose={() => setIsModalOpen(false)}
           onSave={handleSaveComment}
+          currComment={selectedComment}
         />
       )}
       <div className="pagination-and-searchbar-container">

@@ -1,7 +1,6 @@
 import { useEffect, useState } from "react";
 import { Navigate, Route, Routes, useNavigate } from "react-router-dom";
 import { useGlobalContext } from "./context/globalContext";
-import { supabase } from "./supabaseClient";
 
 import Home from "./pages/home";
 import Login from "./pages/login";

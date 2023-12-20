@@ -2,7 +2,6 @@ import React, { useEffect, useState } from "react";
 import { useGlobalContext } from "../context/globalContext";
 import { Link, useNavigate } from "react-router-dom";
 import logo from "../assets/edsarrthi-logo.webp";
-import { supabase } from "../supabaseClient";
 
 function Login() {
   const { setUserInfo } = useGlobalContext();
@@ -23,55 +22,54 @@ function Login() {
 
   const checkIfAdmin = async (email) => {
     //supabase query to select the email from the users table
-    const { data, error } = await supabase
-      .from("users")
-      .select("isAdmin")
-      .eq("email", email);
-
-    console.log("isAdmin is ", data);
-    if (error) {
-      console.log("error is ", error);
-    } else if (data.length === 0) {
-      return false;
-    } else {
-      return data[0].isAdmin;
-    }
+    // const { data, error } = await supabase
+    //   .from("users")
+    //   .select("isAdmin")
+    //   .eq("email", email);
+    // console.log("isAdmin is ", data);
+    // if (error) {
+    //   console.log("error is ", error);
+    // } else if (data.length === 0) {
+    //   return false;
+    // } else {
+    //   return data[0].isAdmin;
+    // }
   };
 
   const loginHandler = async (e) => {
     e.preventDefault();
-    setLoginError(null);
-    setLoading(true);
-    if (loginData.email && loginData.password) {
-      //supabase query to sign in with email and password
-      const { data, error } = await supabase.auth.signInWithPassword({
-        email: loginData.email,
-        password: loginData.password,
-      });
-      if (error) {
-        console.log("error is ", error);
-        setLoginError(error.message);
-        setLoading(false);
-      } else {
-        // console.log("data is ", data);
-        let isAdmin = await checkIfAdmin(data?.user.email);
-        if (isAdmin === undefined) {
-          isAdmin = false;
-        }
-        setUserInfo({ email: data?.user.email, isAdmin: isAdmin });
-        sessionStorage.setItem(
-          "userInfo",
-          JSON.stringify({
-            token: data?.session.access_token,
-            email: data?.user.email,
-            isAdmin: isAdmin,
-          })
-        );
-        setLoading(false);
+    // setLoginError(null);
+    // setLoading(true);
+    // if (loginData.email && loginData.password) {
+    //   //supabase query to sign in with email and password
+    //   const { data, error } = await supabase.auth.signInWithPassword({
+    //     email: loginData.email,
+    //     password: loginData.password,
+    //   });
+    //   if (error) {
+    //     console.log("error is ", error);
+    //     setLoginError(error.message);
+    //     setLoading(false);
+    //   } else {
+    //     // console.log("data is ", data);
+    //     let isAdmin = await checkIfAdmin(data?.user.email);
+    //     if (isAdmin === undefined) {
+    //       isAdmin = false;
+    //     }
+    //     setUserInfo({ email: data?.user.email, isAdmin: isAdmin });
+    //     sessionStorage.setItem(
+    //       "userInfo",
+    //       JSON.stringify({
+    //         token: data?.session.access_token,
+    //         email: data?.user.email,
+    //         isAdmin: isAdmin,
+    //       })
+    //     );
+    //     setLoading(false);
 
-        navigate("/");
-      }
-    }
+    //     navigate("/");
+    //   }
+    // }
   };
 
   useEffect(() => {
