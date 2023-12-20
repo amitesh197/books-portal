@@ -155,9 +155,9 @@ function All() {
   const getData = async ({ withToast }) => {
     setLoading(true);
 
+    console.log("Fetching data...");
     try {
       // Display a loading message or spinner if needed
-      console.log("Fetching data...");
 
       const response = await fetch(
         "https://g87ruzy4zl.execute-api.ap-south-1.amazonaws.com/dev/queries/",
@@ -174,7 +174,7 @@ function All() {
 
       // Parse the response as JSON
       let data = await response.json();
-      // console.log("All data:", data);
+      console.log("All data:", data);
 
       let sortedData = sortData(data);
       const processedData = sortedData.map((each) => {
@@ -216,7 +216,7 @@ function All() {
       setQueryType("nameChange");
       localStorage.setItem("queryType", "nameChange");
     }
-    if (userInfo?.email) getData({ withToast: true });
+    // if (userInfo?.email) getData({ withToast: true });
   }, [userInfo?.email, queryType]);
 
   return (
@@ -284,9 +284,10 @@ function All() {
         </p>
       ) : (
         data &&
-        columns && (
-          <TableRenderer data={data} columns={columns} getData={getData} />
-        )
+        columns &&
+        {
+          /* <TableRenderer data={data} columns={columns} getData={getData} /> */
+        }
       )}
     </div>
   );

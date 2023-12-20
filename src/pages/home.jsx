@@ -7,7 +7,7 @@ function Home() {
   const { userInfo, queryType, setQueryType } = useGlobalContext();
   const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState({});
-
+  // console.log(userInfo);
   /* 
   column names in the db:--
     id bigint not null,
@@ -127,7 +127,7 @@ function Home() {
       <div className="flex flex-col items-center justify-center text-black text-base  w-full">
         <h1 className="w-full block p-2 font-semibold text-xl">
           Welcome {userInfo.isAdmin && <span className="inline">Admin </span>}{" "}
-          {userInfo.email}
+          {userInfo.username}
         </h1>
         <form
           className="flex flex-col gap-5 rounded  justify-center w-full md:w-2/3 lg:w-1/2 m-2 mb-5"

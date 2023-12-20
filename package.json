@@ -13,6 +13,7 @@
   "dependencies": {
     "@aws-sdk/client-dynamodb": "^3.476.0",
     "@tanstack/react-table": "^8.9.3",
+    "amazon-cognito-identity-js": "^6.3.7",
     "firebase": "^9.23.0",
     "firebase-tools": "^12.4.7",
     "font-awesome": "^4.7.0",

@@ -21,6 +21,7 @@ function Navbar() {
     if (
       navbarRef.current &&
       !navbarRef.current.contains(event.target) &&
+      dashboardRef.current && // Check if dashboardRef.current is not null
       !dashboardRef.current.contains(event.target)
     ) {
       setIsOpen(false);

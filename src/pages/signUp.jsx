@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useGlobalContext } from "../context/globalContext";
 import logo from "../assets/edsarrthi-logo.webp";
 import { useNavigate } from "react-router-dom";
+import UserPool from "../UserPool";
 
 function SignUp() {
   const navigate = useNavigate();
@@ -30,38 +31,32 @@ function SignUp() {
     setLoading(true);
     if (loginData.email && loginData.password) {
       try {
-        // const { data, error } = await supabase.auth.signUp({
-        //   email: loginData.email,
-        //   password: loginData.password,
-        // });
-        // console.log("data", data);
-        /* data: 
-        {
-            "user": {
-                "id",
-                "email",
-                ...
-            },
-            "session": {
-                "access_token",
-                "user": {
-                    "id",
-                    "email",
-                    ...
-                }
+        UserPool.signUp(
+          loginData.email,
+          loginData.password,
+          [],
+          null,
+          (err, data) => {
+            if (err) {
+              console.log(err);
+              setLoginError(err.message);
+              return;
             }
-        }
-        */
-
-        setUserInfo({ email: data.user.email, isAdmin: false });
-        sessionStorage.setItem(
-          "userInfo",
-          JSON.stringify({
-            token: data.session.access_token,
-            email: data.user.email,
-            isAdmin: false,
-          })
+            console.log(data);
+            setLoginError(null);
+            navigate("/");
+          }
         );
+
+        // setUserInfo({ email: data.user.email, isAdmin: false });
+        // sessionStorage.setItem(
+        //   "userInfo",
+        //   JSON.stringify({
+        //     token: data.session.access_token,
+        //     email: data.user.email,
+        //     isAdmin: false,
+        //   })
+        // );
 
         navigate("/");
       } catch (err) {
