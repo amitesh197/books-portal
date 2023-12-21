@@ -106,7 +106,7 @@ function All() {
     filteredColumns = filteredColumns.filter(
       (column) => column.id !== "id" && column.id !== "query_type"
     );
-    console.log(filteredColumns);
+    // console.log(filteredColumns);
     // Add a "Delete" column at the end
     const deleteColumn = {
       id: "delete",
@@ -185,7 +185,6 @@ function All() {
       });
       // Sort data based on the "status" column and id, putting "done" values at the end
       let sortedData = processedData.sort((a, b) => {
-        console.log(a, b);
         const statusA = a.status.toLowerCase();
         const statusB = b.status.toLowerCase();
 

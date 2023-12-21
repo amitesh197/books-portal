@@ -111,8 +111,10 @@ export default function TableRenderer({ data, columns, getData }) {
           // or 'POST' or other HTTP methods
         }
       );
+      let data = await response.json();
+      console.log("data", data);
       if (!response.ok) {
-        throw new Error(`${response.type} error! Status: ${response.status}`);
+        throw new Error(`${response.type} error status: ${response.status}`);
       }
       toast.dismiss();
       toast.success("Status updated!");

@@ -17,7 +17,8 @@ const ChangeStatusModal = ({
     <div className={`modal `}>
       {currentStatus === "Pending" ? (
         <div className="modal-content">
-          Are you sure you want to change the status ?
+          Are you sure you want to change the status?
+          <br /> This will send an email to the student.
           <button
             onClick={() => {
               handleSave({ status: "Done" });
