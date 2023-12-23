@@ -76,6 +76,12 @@ function Resolved() {
     filteredColumns = filteredColumns.filter(
       (column) => column.id !== "id" && column.id !== "query_type"
     );
+    if (!userInfo?.isAdmin) {
+      //remove the taken_by column
+      filteredColumns = filteredColumns.filter(
+        (column) => column.id !== "taken_by"
+      );
+    }
     // console.log(filteredColumns);
     // Add a "Delete" column at the end
     const deleteColumn = {
@@ -130,7 +136,7 @@ function Resolved() {
   const getData = async ({ withToast }) => {
     setLoading(true);
     // toast.loading("Fetching...");
-
+    setData(null);
     console.log("Fetching data...");
     try {
       // Display a loading message or spinner if needed

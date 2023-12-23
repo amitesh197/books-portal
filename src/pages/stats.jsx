@@ -6,59 +6,110 @@ import Loading from "../components/Loading";
 import { useNavigate } from "react-router-dom";
 
 function Stats() {
-  const { userInfo } = useGlobalContext();
-  const [fecthingData, setFetchingData] = useState(false);
-  const [statsData, setStatsData] = useState();
+  const { userInfo, queryType, setQueryType } = useGlobalContext();
+  const [loading, setLoading] = useState(true);
+  const [statsData, setStatsData] = useState(null);
   const navigate = useNavigate();
 
-  const getData = async () => {
-    setFetchingData(true);
-    const paramsData = {
-      userEmail: userInfo.isAdmin ? "admin" : userInfo.email,
-      action: "getstats",
-    };
+  const calculateStats = (data) => {
+    // Initialize an object to store stats
+    const stats = {};
 
-    const queryParams = new URLSearchParams(paramsData);
+    // Iterate through the data array
+    data.forEach((query) => {
+      // Get the query type from each query object
+      const queryType = query.query_type;
 
-    try {
-      const result = await fetch(`${import.meta.env.VITE_URL}?${queryParams}`);
-      const data = await result.json();
-      setStatsData(data.data);
-    } catch (err) {
-      console.log(err);
-    } finally {
-      setFetchingData(false);
-    }
+      // If the query type is not already in the stats object, initialize it
+      if (!stats[queryType]) {
+        stats[queryType] = {
+          total: 0,
+          done: 0,
+        };
+      }
+
+      // Increment the total count for the query type
+      stats[queryType].total++;
+
+      // Check if the query is marked as "Done" and increment the "done" count
+      if (query.status === "Done") {
+        stats[queryType].done++;
+      }
+    });
+
+    // Set the calculated stats to the component state
+    setStatsData(stats);
   };
 
-  const camelCaseToSentenceCase = (str) => {
-    if (str === "numberchange") {
-      return "Number Change";
-    } else if (str === "emailchange") {
-      return "Email Change";
-    } else if (str === "contentmissing") {
-      return "Content Missing";
-    } else if (str === "coursenotvisible") {
-      return "Course Not Visible";
-    } else if (str === "UPIpayment") {
-      return "UPI Payment";
-    } else if (str === "grpnotalloted") {
-      return "Group Not Alloted";
-    } else if (str === "misc") {
-      return "Miscellanous";
-    } else {
-      return str;
+  const camelCaseToSentenceCase = (camelCaseString) => {
+    // Split camelCaseString into words using regex
+    const words = camelCaseString.split(/(?=[A-Z])/);
+
+    // Capitalize the first word and join the rest with a space
+    const sentenceCaseString = words
+      .map((word) => {
+        return word.charAt(0).toUpperCase() + word.slice(1);
+      })
+      .join(" ");
+
+    return sentenceCaseString;
+  };
+
+  const getData = async ({ withToast }) => {
+    setLoading(true);
+    // toast.loading("Fetching...");
+    console.log("Fetching data...");
+    try {
+      // Display a loading message or spinner if needed
+
+      const response = await fetch(
+        "https://g87ruzy4zl.execute-api.ap-south-1.amazonaws.com/dev/queries/",
+        {
+          method: "GET",
+          // or 'POST' or other HTTP methods
+        }
+      );
+
+      // Check if the response is successful (status code 200-299)
+      if (!response.ok) {
+        throw new Error(`${response.type} error! Status: ${response.status}`);
+      }
+
+      // Parse the response as JSON
+      let data = await response.json();
+      console.log("All data:", data);
+      /*  data = [{
+        "date": "2023-12-21T07:59:23.369Z",
+        "taken_by": "shantanuesakpal1420@gmail.com",
+        "new_name": "new name",
+        "number": "12314",
+        "status": "Done",
+        "comment": "ha bhai ho gaya query solve",
+        "id": 1703145563369,
+        "email": "shantanuesakpal1420@gmail.com",
+        "name": "shantanu sakpal",
+        "query_type": "nameChange",
+        "query_desc": ""
+      },...]
+*/
+      calculateStats(data);
+    } catch (err) {
+      // Display an error message or handle the error as needed
+      toast.error(err.message);
+      console.error("Error:", err);
+    } finally {
+      // Set loading state to false
+      setLoading(false);
     }
   };
 
   useEffect(() => {
-    setStatsData(null);
     if (userInfo?.isAdmin === false) {
       toast.error("You are not authorized to view this page");
       navigate("/");
     }
     if (userInfo.email) {
-      getData();
+      getData({ withToast: false });
     }
   }, [userInfo]);
 
@@ -88,7 +139,7 @@ function Stats() {
           }}
         />
 
-        {fecthingData ? (
+        {loading ? (
           <Loading />
         ) : (
           <div className="flex justify-center w-full flex-wrap">
@@ -126,18 +177,6 @@ function Stats() {
               })}
           </div>
         )}
-        <div className="flex justify-center font-semibold my-5">
-          <button
-            className="px-3 py-2 font-semibold rounded-lg text-theme-dark bg-theme-yellow-dark transition duration-300 ease-in-out"
-            onClick={() => {
-              if (userInfo.email) {
-                getData();
-              }
-            }}
-          >
-            REFRESH
-          </button>
-        </div>
       </div>
     </>
   );

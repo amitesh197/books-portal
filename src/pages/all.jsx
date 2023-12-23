@@ -101,6 +101,13 @@ function All() {
     filteredColumns = filteredColumns.filter(
       (column) => column.id !== "id" && column.id !== "query_type"
     );
+
+    if (!userInfo?.isAdmin) {
+      //remove the taken_by column
+      filteredColumns = filteredColumns.filter(
+        (column) => column.id !== "taken_by"
+      );
+    }
     // console.log(filteredColumns);
     // Add a "Delete" column at the end
     const deleteColumn = {
@@ -153,6 +160,7 @@ function All() {
 
   const getData = async ({ withToast }) => {
     setLoading(true);
+    setData(null);
     // toast.loading("Fetching...");
 
     console.log("Fetching data...");
@@ -201,7 +209,7 @@ function All() {
         }
       });
 
-      //filter out the data based on the query type and
+      //filter out the data based on the query type
       sortedData = sortedData.filter((row) => row.query_type === queryType);
 
       if (!userInfo?.isAdmin) {
