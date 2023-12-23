@@ -84,13 +84,20 @@ function Login() {
                 },
                 "clockDrift": -4
               }  */
-          let isAdmin = false;
+          const accessTokenPayload = data.getAccessToken().payload;
+
+          // Check if the user has the admin role
+          const isAdmin =
+            accessTokenPayload["cognito:groups"]?.includes("admins");
+
           setUserInfo({
             username: data.accessToken.payload.username,
             email: data.idToken.payload.email,
             token: data.accessToken.jwtToken,
             isAdmin: isAdmin,
           });
+
+          // Store the user info in the session storage (storing the isAdmin is a bad idea, but i am doing it for now, please change it later. )
           sessionStorage.setItem(
             "userInfo",
             JSON.stringify({

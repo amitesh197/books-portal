@@ -1,875 +1,294 @@
 import React, { useEffect, useState } from "react";
 import { useGlobalContext } from "../context/globalContext";
 import { Toaster, toast } from "react-hot-toast";
-import ReactModal from "react-modal";
-import trashIcon from "../assets/trash-icon.png";
 import Loading from "../components/Loading";
-import Navbar from "../components/Navbar.jsx";
-
-const isLink = (str) => {
-  if (str) {
-    if (typeof str !== "string") {
-      return false;
-    }
-    return str.slice(0, 4) === "http";
-  }
-};
-
-const customStyles = {
-  overlay: {
-    backgroundColor: "rgba(0, 0, 0, 0.5)", // Shadow background color
-  },
-  content: {
-    position: "absolute",
-    top: "50%",
-    left: "50%",
-    transform: "translate(-50%, -50%)",
-    height: "fit-content",
-
-    padding: "20px",
-    border: "none",
-    display: "flex",
-    flexDirection: "column",
-    justifyContent: "center",
-    alignItems: "center",
-    gap: "20px",
-    width: "30rem",
-  },
-};
+import Navbar from "../components/navbar";
+import TableRenderer from "../components/TableRenderer";
 
 function Unresolved() {
-  const [tableData, setTableData] = useState();
-  const [loading, setLoading] = useState(false);
-
-  // values can be rowNumber or null
-  const [commentModal, setCommentModal] = useState(null);
-  const [commentText, setCommentText] = useState(null);
-
   const { userInfo, queryType, setQueryType } = useGlobalContext();
+  const [data, setData] = useState(null);
+  const [columns, setColumns] = useState([]);
+  const [loading, setLoading] = useState(true);
 
-  const getData = async () => {
-    setLoading(true);
-    const paramsData = {
-      userEmail: userInfo.isAdmin ? "admin" : userInfo.email,
-      action: "getsheetdata",
-      status: "notdone",
-      sheetname: queryType,
+  const getFilteredColumns = (data) => {
+    // Columns to always show
+
+    const alwaysShowColumns = [
+      "date",
+      "name",
+      "email",
+      "number",
+      "query_desc",
+      "taken_by",
+      "comment",
+      "status",
+    ];
+    const columnOrder = [
+      "status",
+      "query_type",
+      "id",
+      "date",
+      "name",
+      "new_name",
+      "email",
+      "new_email",
+      "number",
+      "new_number",
+      "current_batch",
+      "new_batch",
+      "current_course",
+      "new_course",
+      "content_desc",
+      "reason",
+      "feedback",
+      "first_installment",
+      "second_installment",
+      "file_link",
+      "query_desc",
+      "taken_by",
+      "comment",
+    ];
+
+    // Get unique columns from the data
+    const uniqueColumns = Array.from(
+      new Set(data.flatMap((response) => Object.keys(response)))
+    ).map((key) => ({
+      id: key,
+      header: key,
+      accessorKey: key,
+      footer: key,
+    }));
+
+    // Sort columns based on the desired order
+    const sortedColumns = uniqueColumns.sort(
+      (a, b) => columnOrder.indexOf(a.id) - columnOrder.indexOf(b.id)
+    );
+
+    // Filter out columns that are not in the "alwaysShowColumns" array and have all values null
+    let filteredColumns = sortedColumns.filter(
+      (column) =>
+        alwaysShowColumns.includes(column.id) ||
+        data.some((response) => response[column.id] !== null)
+    );
+
+    //remove the id column and query type column
+    filteredColumns = filteredColumns.filter(
+      (column) => column.id !== "id" && column.id !== "query_type"
+    );
+    // console.log(filteredColumns);
+    // Add a "Delete" column at the end
+    const deleteColumn = {
+      id: "delete",
+      header: "Delete",
+      accessorKey: "delete",
+      footer: "Delete",
+      cell: ({ row }) => (
+        <td className="delete-cell" key={`delete-${row.id}`}>
+          <button onClick={() => handleDelete(row.original.id)}>
+            <i className="fa-solid fa-trash-can"></i>
+          </button>
+        </td>
+      ),
     };
 
-    const queryParams = new URLSearchParams(paramsData);
+    let finalColumns;
+    if (userInfo?.isAdmin) {
+      finalColumns = [...filteredColumns, deleteColumn];
+    } else {
+      finalColumns = [...filteredColumns];
+    }
+    return finalColumns;
+  };
 
+  const handleDelete = async (rowId) => {
+    toast.loading("Deleting row", rowId);
     try {
-      const result = await fetch(`${import.meta.env.VITE_URL}?${queryParams}`);
-      const data = await result.json();
+      // Send a delete query to dynamodb
+      const response = await fetch(
+        "https://g87ruzy4zl.execute-api.ap-south-1.amazonaws.com/dev/queries/",
+        {
+          method: "DELETE",
+          body: JSON.stringify({ id: rowId }),
+          // or 'POST' or other HTTP methods
+        }
+      );
+      if (!response.ok) {
+        throw new Error(`${response.type} error! Status: ${response.status}`);
+      }
+      getData({ withToast: false });
       toast.dismiss();
-      // //sort data in ascending order of id
-      // let sortedData = data.data.sort((a, b) => b.id - a.id);
-      //remove the id from the data and fix the date format
-      let sortedData = data.data.map((each) => {
-        delete each.id;
-        each.date = new Date(each.date).toLocaleDateString();
+      toast.success("Deleted !");
+    } catch (error) {
+      //clear toast
+      toast.dismiss();
+      toast.error(error.message);
+      console.error("error:", error);
+    }
+  };
+
+  const getData = async ({ withToast }) => {
+    setLoading(true);
+    // toast.loading("Fetching...");
+
+    console.log("Fetching data...");
+    try {
+      // Display a loading message or spinner if needed
+
+      const response = await fetch(
+        "https://g87ruzy4zl.execute-api.ap-south-1.amazonaws.com/dev/queries/",
+        {
+          method: "GET",
+          // or 'POST' or other HTTP methods
+        }
+      );
+
+      // Check if the response is successful (status code 200-299)
+      if (!response.ok) {
+        throw new Error(`${response.type} error! Status: ${response.status}`);
+      }
+
+      // Parse the response as JSON
+      let data = await response.json();
+      // console.log("All data:", data);
+
+      const processedData = data.map((each) => {
+        const dateObject = new Date(each.date);
+        const day = String(dateObject.getDate()).padStart(2, "0");
+        const month = String(dateObject.getMonth() + 1).padStart(2, "0");
+        const year = String(dateObject.getFullYear()).slice(2);
+        each.date = `${day}/${month}/${year}`;
         return each;
       });
-      setTableData(sortedData);
-      toast.success("Fetched");
-    } catch (err) {
-      toast.dismiss();
-      toast.error("Failed to Fetch Data");
-      console.log(err);
-    } finally {
-      setLoading(false);
-    }
-  };
+      // Sort data based on the "status" column and id, putting "done" values at the end
+      let sortedData = processedData.sort((a, b) => {
+        const statusA = a.status.toLowerCase();
+        const statusB = b.status.toLowerCase();
 
-  const handleToggleStatus = async (rowNumber, state) => {
-    // if state 0. make cell not done
-    // if state 1. make cell done
-    if (!state) {
-      toast.loading("removing done");
-      setLoading(true);
-    } else {
-      toast.loading("putting done");
-      setLoading(true);
-    }
-    try {
-      const response = await fetch(`${import.meta.env.VITE_URL}`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "text/plain",
-        },
-        body: JSON.stringify({
-          sheetname: queryType,
-          action: "toggleStatus",
-          state: state,
-          rowNumber: rowNumber + 1,
-        }),
+        if (statusA === "done" && statusB !== "done") {
+          return 1; // "Done" values go at the end
+        }
+        if (statusA !== "done" && statusB === "done") {
+          return -1; // "Done" values go at the end
+        }
+
+        if (statusA === statusB) {
+          return b.id - a.id; // If statuses are the same, sort by id in descending order
+        }
       });
-      const result = await response.json();
-      if (result.successMessage == "done removed") {
-        console.log("done removed");
-        toast.dismiss();
-        toast.success("done removed");
-      } else if (result.successMessage == "status set to done") {
-        console.log("done added");
-        toast.dismiss();
-        toast.success("status set to done");
-      } else if (result.errorMessage) {
-        toast.dismiss();
-        toast.error(result.errorMessage);
-        toast.success("done");
+
+      // Filter out the data based on the query type if status is "Pending"
+
+      sortedData = sortedData.filter(
+        (row) => row.query_type === queryType && row.status === "Pending"
+      );
+      // If the user is not an admin, further filter based on taken_by = userInfo.email
+      if (!userInfo?.isAdmin) {
+        sortedData = sortedData.filter(
+          (row) => row.taken_by === userInfo.email
+        );
       }
-      if (userInfo.email) {
-        getData();
+      setData(sortedData);
+
+      setColumns(getFilteredColumns(sortedData));
+
+      if (withToast) {
+        toast.dismiss();
+        toast.success();
       }
     } catch (err) {
-      console.log(err);
-      toast.dismiss();
-      toast.error("something went wrong. see console.");
+      // Display an error message or handle the error as needed
+      toast.error(err.message);
+      console.error("Error:", err);
     } finally {
+      // Set loading state to false
       setLoading(false);
-    }
-  };
-
-  const addComment = async (e) => {
-    // comment modal holds the rowNumber of the cell
-    if (commentModal) {
-      toast.loading("updating comment");
-      setLoading(true);
-      try {
-        const response = await fetch(`${import.meta.env.VITE_URL}`, {
-          method: "POST",
-          headers: {
-            "Content-Type": "text/plain",
-          },
-          body: JSON.stringify({
-            sheetname: queryType,
-            action: "addComment",
-            rowNumber: commentModal + 1,
-            commentText: commentText,
-          }),
-        });
-        const result = await response.json();
-        if (result.successMessage == "Comment updated") {
-          toast.dismiss();
-          setCommentModal(null);
-          setCommentText(null);
-          toast.success("Comment updated");
-          if (userInfo.email) {
-            getData();
-          }
-        }
-      } catch (err) {
-        console.log(err);
-        toast.dismiss();
-        toast.error("something went wrong. see console.");
-      } finally {
-        setLoading(false);
-      }
-    } else {
-      toast.dismiss();
-      toast.error("please retry");
-      setCommentModal(null);
-    }
-  };
-
-  const deleteRow = async (rowNumber) => {
-    if (rowNumber) {
-      toast.loading("deleting query");
-      setLoading(true);
-      try {
-        const response = await fetch(`${import.meta.env.VITE_URL}`, {
-          method: "POST",
-          headers: {
-            "Content-Type": "text/plain",
-          },
-          body: JSON.stringify({
-            sheetname: queryType,
-            action: "deleteRow",
-            rowNumber: rowNumber,
-          }),
-        });
-        const result = await response.json();
-        if (result.successMessage == "Row Deleted") {
-          toast.dismiss();
-          toast.success("Query Deleted");
-          if (userInfo.email) {
-            getData();
-          }
-        } else {
-          toast.dismiss();
-        }
-      } catch (err) {
-        console.log(err);
-        toast.dismiss();
-        toast.error("something went wrong. see console.");
-      } finally {
-        setLoading(false);
-      }
-    } else {
-      toast.dismiss();
-      toast.error("please refresh and retry");
     }
   };
 
   useEffect(() => {
-    setTableData();
-    if (userInfo.email) {
-      getData();
+    //set the query type to the query in local storage
+    const query = localStorage.getItem("queryType");
+    //if query is not null then set the query type to the query in local storage
+    if (query) {
+      setQueryType(query);
+    } else {
+      setQueryType("nameChange");
+      localStorage.setItem("queryType", "nameChange");
     }
-  }, [userInfo, queryType]);
-
-  const closeModal = () => {
-    setCommentModal(null);
-    setCommentText(null);
-  };
+    if (userInfo?.email) getData({ withToast: true });
+  }, [userInfo?.email, queryType]);
 
   return (
-    <>
+    <div className="p-2 ">
       <Navbar />
-      <div className=" flex flex-col p-2">
-        <Toaster
-          position="bottom-left"
-          toastOptions={{
-            // Define default options
-            className: "",
-
-            style: {
-              background: "#ff8e00",
-              color: "#2e2c2d",
-            },
-
-            // Default options for specific types
-            success: {
-              duration: 2000,
-              theme: {
-                primary: "green",
-                secondary: "black",
-              },
-            },
-          }}
-        />
-        <div className="flex flex-row gap-3 items-center justify-center  w-fit">
-          <label
-            htmlFor="query-type "
-            className="w-fit text-left pl-1 text-lg font-semibold "
-          >
-            Select Query type:
-          </label>
-
-          <select
-            className="float-left  border-2 border-theme-yellow-dark inline px-3 py-2 rounded-md  text-black outline-none w-fit  cursor-pointer"
-            value={queryType}
-            onChange={(e) => setQueryType(e.target.value)}
-          >
-            <option value="nameChange">Name Change</option>
-            <option value="batchShift">Batch Shift</option>
-            <option value="emi">EMI</option>
-            <option value="refund">Refund</option>
-            <option value="removeCourseAccess">Remove Course Access</option>
-            <option value="feedback">Feedback</option>
-
-            <option value="numberchange">Number change</option>
-            <option value="emailchange">Email change</option>
-            <option value="contentmissing">Content Missing</option>
-            <option value="coursenotvisible">Course Not Visible</option>
-            <option value="UPIpayment">UPI Payment</option>
-            <option value="grpnotalloted">Group not alloted</option>
-            <option value="misc">Misc</option>
-          </select>
-        </div>
-        <ReactModal
-          isOpen={commentModal}
-          onRequestClose={closeModal}
-          style={customStyles}
-          contentLabel="Example Modal"
+      <div className="flex flex-row gap-3 items-center justify-center  w-fit ">
+        <label
+          htmlFor="query-type "
+          className="w-fit text-left pl-1 text-lg font-semibold "
         >
-          <textarea
-            className="text-black p-2 border border-theme-dark-gray rounded-md w-full outline-none focus:border-theme-yellow-dark"
-            type="text"
-            placeholder="Add comment..."
-            onChange={(e) => setCommentText(e.target.value)}
-            onKeyDown={(e) => {
-              if (e.key === "Enter") {
-                addComment();
-              }
-            }}
-            rows={3}
-            autoFocus
-          />
-          <button
-            className="bg-theme-yellow-dark hover:bg-theme-dark text-theme-dark hover:text-theme-yellow-dark border border-theme-dark px-2 py-1 cursor-pointer rounded-md w-20 "
-            onClick={() => {
-              addComment();
-            }}
-          >
-            {loading ? (
-              <i className="fa-solid fa-spinner animate-spin "></i>
-            ) : (
-              "Add"
-            )}
-          </button>
-        </ReactModal>
-        {loading ? (
-          <Loading />
-        ) : tableData?.length == 0 ? (
-          <p className="text-xl  mt-5 text-center w-full">
-            No Data of the selected type found.
-          </p>
-        ) : (
-          <div className=" mx-2 my-5 flex flex-col items-center ">
-            <table>
-              <thead className="bg-theme-yellow-dark border border-theme-dark-gray text-theme-dark px-2 py-1">
-                {queryType === "nameChange" && (
-                  <tr>
-                    <th className="px-3 py-2 text-sm border border-theme-dark-gray">
-                      DATE
-                    </th>
-                    <th className="px-3 py-2 text-sm border border-theme-dark-gray">
-                      OLD NAME
-                    </th>
-                    <th className="px-3 py-2 text-sm border border-theme-dark-gray">
-                      EMAIL
-                    </th>
-                    <th className="px-3 py-2 text-sm border border-theme-dark-gray">
-                      NUMBER
-                    </th>
-                    <th className="px-3 py-2 text-sm border border-theme-dark-gray">
-                      NEW NAME
-                    </th>
-                    <th className="px-3 py-2 text-sm border border-theme-dark-gray">
-                      QUERY
-                    </th>
-                    <th className="px-3 py-2 text-sm border border-theme-dark-gray">
-                      COMMENT
-                    </th>
-                    <th className="px-3 py-2 text-sm border border-theme-dark-gray">
-                      TAKEN BY
-                    </th>
-                    <th className="px-3 py-2 text-sm border border-theme-dark-gray">
-                      STATUS
-                    </th>
-                  </tr>
-                )}
-                {queryType === "batchShift" && (
-                  <tr>
-                    <th className="px-3 py-2 text-sm border border-theme-dark-gray">
-                      DATE
-                    </th>
-                    <th className="px-3 py-2 text-sm border border-theme-dark-gray">
-                      NAME
-                    </th>
-                    <th className="px-3 py-2 text-sm border border-theme-dark-gray">
-                      EMAIL
-                    </th>
-                    <th className="px-3 py-2 text-sm border border-theme-dark-gray">
-                      NUMBER
-                    </th>
-                    <th className="px-3 py-2 text-sm border border-theme-dark-gray">
-                      CURRENT BATCH
-                    </th>
-                    <th className="px-3 py-2 text-sm border border-theme-dark-gray">
-                      NEW BATCH
-                    </th>
-                    <th className="px-3 py-2 text-sm border border-theme-dark-gray">
-                      REASON
-                    </th>
-                    <th className="px-3 py-2 text-sm border border-theme-dark-gray">
-                      FILE
-                    </th>
-                    <th className="px-3 py-2 text-sm border border-theme-dark-gray">
-                      QUERY
-                    </th>
-                    <th className="px-3 py-2 text-sm border border-theme-dark-gray">
-                      COMMENT
-                    </th>
-                    <th className="px-3 py-2 text-sm border border-theme-dark-gray">
-                      TAKEN BY
-                    </th>
-                    <th className="px-3 py-2 text-sm border border-theme-dark-gray">
-                      STATUS
-                    </th>
-                  </tr>
-                )}
-                {queryType === "emi" && (
-                  <tr>
-                    <th className="px-3 py-2 text-sm border border-theme-dark-gray">
-                      DATE
-                    </th>
-                    <th className="px-3 py-2 text-sm border border-theme-dark-gray">
-                      NAME
-                    </th>
-                    <th className="px-3 py-2 text-sm border border-theme-dark-gray">
-                      EMAIL
-                    </th>
-                    <th className="px-3 py-2 text-sm border border-theme-dark-gray">
-                      NUMBER
-                    </th>
-                    <th className="px-3 py-2 text-sm border border-theme-dark-gray">
-                      COURSE NAME
-                    </th>
-                    <th className="px-3 py-2 text-sm border border-theme-dark-gray">
-                      FIRST INSTALLMENT
-                    </th>
-                    <th className="px-3 py-2 text-sm border border-theme-dark-gray">
-                      SECOND INSTALLMENT
-                    </th>
-                    <th className="px-3 py-2 text-sm border border-theme-dark-gray">
-                      FILE
-                    </th>
-                    <th className="px-3 py-2 text-sm border border-theme-dark-gray">
-                      QUERY
-                    </th>
-                    <th className="px-3 py-2 text-sm border border-theme-dark-gray">
-                      COMMENT
-                    </th>
-                    <th className="px-3 py-2 text-sm border border-theme-dark-gray">
-                      TAKEN BY
-                    </th>
-                    <th className="px-3 py-2 text-sm border border-theme-dark-gray">
-                      STATUS
-                    </th>
-                  </tr>
-                )}
-                {queryType === "refund" && (
-                  <tr>
-                    <th className="px-3 py-2 text-sm border border-theme-dark-gray">
-                      DATE
-                    </th>
-                    <th className="px-3 py-2 text-sm border border-theme-dark-gray">
-                      NAME
-                    </th>
-                    <th className="px-3 py-2 text-sm border border-theme-dark-gray">
-                      EMAIL
-                    </th>
-                    <th className="px-3 py-2 text-sm border border-theme-dark-gray">
-                      NUMBER
-                    </th>
-                    <th className="px-3 py-2 text-sm border border-theme-dark-gray">
-                      COURSE NAME
-                    </th>
-                    <th className="px-3 py-2 text-sm border border-theme-dark-gray">
-                      REASON
-                    </th>
-                    <th className="px-3 py-2 text-sm border border-theme-dark-gray">
-                      QUERY
-                    </th>
-                    <th className="px-3 py-2 text-sm border border-theme-dark-gray">
-                      COMMENT
-                    </th>
-                    <th className="px-3 py-2 text-sm border border-theme-dark-gray">
-                      TAKEN BY
-                    </th>
-                    <th className="px-3 py-2 text-sm border border-theme-dark-gray">
-                      STATUS
-                    </th>
-                  </tr>
-                )}
-                {queryType === "removeCourseAccess" && (
-                  <tr>
-                    <th className="px-3 py-2 text-sm border border-theme-dark-gray">
-                      DATE
-                    </th>
-                    <th className="px-3 py-2 text-sm border border-theme-dark-gray">
-                      NAME
-                    </th>
-                    <th className="px-3 py-2 text-sm border border-theme-dark-gray">
-                      EMAIL
-                    </th>
-                    <th className="px-3 py-2 text-sm border border-theme-dark-gray">
-                      NUMBER
-                    </th>
-                    <th className="px-3 py-2 text-sm border border-theme-dark-gray">
-                      COURSE NAME
-                    </th>
-                    <th className="px-3 py-2 text-sm border border-theme-dark-gray">
-                      REASON
-                    </th>
-                    <th className="px-3 py-2 text-sm border border-theme-dark-gray">
-                      QUERY
-                    </th>
-                    <th className="px-3 py-2 text-sm border border-theme-dark-gray">
-                      COMMENT
-                    </th>
-                    <th className="px-3 py-2 text-sm border border-theme-dark-gray">
-                      TAKEN BY
-                    </th>
-                    <th className="px-3 py-2 text-sm border border-theme-dark-gray">
-                      STATUS
-                    </th>
-                  </tr>
-                )}
-                {queryType === "feedback" && (
-                  <tr>
-                    <th className="px-3 py-2 text-sm border border-theme-dark-gray">
-                      DATE
-                    </th>
-                    <th className="px-3 py-2 text-sm border border-theme-dark-gray">
-                      NAME
-                    </th>
-                    <th className="px-3 py-2 text-sm border border-theme-dark-gray">
-                      EMAIL
-                    </th>
-                    <th className="px-3 py-2 text-sm border border-theme-dark-gray">
-                      NUMBER
-                    </th>
-                    <th className="px-3 py-2 text-sm border border-theme-dark-gray">
-                      COURSE NAME
-                    </th>
-                    <th className="px-3 py-2 text-sm border border-theme-dark-gray">
-                      FEEDBACK
-                    </th>
-                    <th className="px-3 py-2 text-sm border border-theme-dark-gray">
-                      FILE
-                    </th>
-                    <th className="px-3 py-2 text-sm border border-theme-dark-gray">
-                      QUERY
-                    </th>
-                    <th className="px-3 py-2 text-sm border border-theme-dark-gray">
-                      COMMENT
-                    </th>
-                    <th className="px-3 py-2 text-sm border border-theme-dark-gray">
-                      TAKEN BY
-                    </th>
-                    <th className="px-3 py-2 text-sm border border-theme-dark-gray">
-                      STATUS
-                    </th>
-                  </tr>
-                )}
-                {queryType == "numberchange" && (
-                  <tr>
-                    <th className="px-3 py-2 text-sm border border-theme-dark-gray">
-                      DATE
-                    </th>
-                    <th className="px-3 py-2 text-sm border border-theme-dark-gray">
-                      NAME
-                    </th>
-                    <th className="px-3 py-2 text-sm border border-theme-dark-gray">
-                      EMAIL
-                    </th>
-                    <th className="px-3 py-2 text-sm border border-theme-dark-gray">
-                      OLD NUMBER
-                    </th>
-                    <th className="px-3 py-2 text-sm border border-theme-dark-gray">
-                      NEW NUMBER
-                    </th>
-                    <th className="px-3 py-2 text-sm border border-theme-dark-gray">
-                      QUERY
-                    </th>
-                    <th className="px-3 py-2 text-sm border border-theme-dark-gray">
-                      COMMENT
-                    </th>
-                    <th className="px-3 py-2 text-sm border border-theme-dark-gray">
-                      TAKEN BY
-                    </th>
-                    <th className="px-3 py-2 text-sm border border-theme-dark-gray">
-                      STATUS
-                    </th>
-                  </tr>
-                )}
-                {queryType == "emailchange" && (
-                  <tr>
-                    <th className="px-3 py-2 text-sm border border-theme-dark-gray">
-                      DATE
-                    </th>
-                    <th className="px-3 py-2 text-sm border border-theme-dark-gray">
-                      NAME
-                    </th>
-                    <th className="px-3 py-2 text-sm border border-theme-dark-gray">
-                      NEW EMAIL
-                    </th>
-                    <th className="px-3 py-2 text-sm border border-theme-dark-gray">
-                      OLD EMAIL
-                    </th>
-                    <th className="px-3 py-2 text-sm border border-theme-dark-gray">
-                      NUMBER
-                    </th>
-                    <th className="px-3 py-2 text-sm border border-theme-dark-gray">
-                      QUERY
-                    </th>
-                    <th className="px-3 py-2 text-sm border border-theme-dark-gray">
-                      COMMENT
-                    </th>
-                    <th className="px-3 py-2 text-sm border border-theme-dark-gray">
-                      TAKEN BY
-                    </th>
-                    <th className="px-3 py-2 text-sm border border-theme-dark-gray">
-                      STATUS
-                    </th>
-                  </tr>
-                )}
-                {queryType == "contentmissing" && (
-                  <tr>
-                    <th className="px-3 py-2 text-sm border border-theme-dark-gray">
-                      DATE
-                    </th>
-                    <th className="px-3 py-2 text-sm border border-theme-dark-gray">
-                      NAME
-                    </th>
-                    <th className="px-3 py-2 text-sm border border-theme-dark-gray">
-                      EMAIL
-                    </th>
-                    <th className="px-3 py-2 text-sm border border-theme-dark-gray">
-                      NUMBER
-                    </th>
-                    <th className="px-3 py-2 text-sm border border-theme-dark-gray">
-                      COURSE NAME
-                    </th>
-                    <th className="px-3 py-2 text-sm border border-theme-dark-gray">
-                      CONTENT
-                    </th>
-                    <th className="px-3 py-2 text-sm border border-theme-dark-gray">
-                      QUERY
-                    </th>
-                    <th className="px-3 py-2 text-sm border border-theme-dark-gray">
-                      COMMENT
-                    </th>
-                    <th className="px-3 py-2 text-sm border border-theme-dark-gray">
-                      TAKEN BY
-                    </th>
-                    <th className="px-3 py-2 text-sm border border-theme-dark-gray">
-                      STATUS
-                    </th>
-                  </tr>
-                )}
-                {queryType == "coursenotvisible" && (
-                  <tr>
-                    <th className="px-3 py-2 text-sm border border-theme-dark-gray">
-                      DATE
-                    </th>
-                    <th className="px-3 py-2 text-sm border border-theme-dark-gray">
-                      NAME
-                    </th>
-                    <th className="px-3 py-2 text-sm border border-theme-dark-gray">
-                      EMAIL
-                    </th>
-                    <th className="px-3 py-2 text-sm border border-theme-dark-gray">
-                      NUMBER
-                    </th>
-                    <th className="px-3 py-2 text-sm border border-theme-dark-gray">
-                      COURSE NAME
-                    </th>
-                    <th className="px-3 py-2 text-sm border border-theme-dark-gray">
-                      CONTENT
-                    </th>
-                    <th className="px-3 py-2 text-sm border border-theme-dark-gray">
-                      LINK
-                    </th>
-                    <th className="px-3 py-2 text-sm border border-theme-dark-gray">
-                      QUERY
-                    </th>
-                    <th className="px-3 py-2 text-sm border border-theme-dark-gray">
-                      COMMENT
-                    </th>
-                    <th className="px-3 py-2 text-sm border border-theme-dark-gray">
-                      TAKEN BY
-                    </th>
-                    <th className="px-3 py-2 text-sm border border-theme-dark-gray">
-                      STATUS
-                    </th>
-                  </tr>
-                )}
-                {queryType == "UPIpayment" && (
-                  <tr>
-                    <th className="px-3 py-2 text-sm border border-theme-dark-gray">
-                      DATE
-                    </th>
-                    <th className="px-3 py-2 text-sm border border-theme-dark-gray">
-                      NAME
-                    </th>
-                    <th className="px-3 py-2 text-sm border border-theme-dark-gray">
-                      EMAIL
-                    </th>
-                    <th className="px-3 py-2 text-sm border border-theme-dark-gray">
-                      NUMBER
-                    </th>
-                    <th className="px-3 py-2 text-sm border border-theme-dark-gray">
-                      COURSE NAME
-                    </th>
-                    <th className="px-3 py-2 text-sm border border-theme-dark-gray">
-                      LINK
-                    </th>
-                    <th className="px-3 py-2 text-sm border border-theme-dark-gray">
-                      QUERY
-                    </th>
-                    <th className="px-3 py-2 text-sm border border-theme-dark-gray">
-                      CURRENT COURSE
-                    </th>
-                    <th className="px-3 py-2 text-sm border border-theme-dark-gray">
-                      UPGRADE TO WHICH COURSE
-                    </th>
-                    <th className="px-3 py-2 text-sm border border-theme-dark-gray">
-                      COMMENT
-                    </th>
-                    <th className="px-3 py-2 text-sm border border-theme-dark-gray">
-                      TAKEN BY
-                    </th>
-                    <th className="px-3 py-2 text-sm border border-theme-dark-gray">
-                      STATUS
-                    </th>
-                  </tr>
-                )}
-                {queryType == "grpnotalloted" && (
-                  <tr>
-                    <th className="px-3 py-2 text-sm border border-theme-dark-gray">
-                      DATE
-                    </th>
-                    <th className="px-3 py-2 text-sm border border-theme-dark-gray">
-                      NAME
-                    </th>
-                    <th className="px-3 py-2 text-sm border border-theme-dark-gray">
-                      EMAIL
-                    </th>
-                    <th className="px-3 py-2 text-sm border border-theme-dark-gray">
-                      NUMBER
-                    </th>
-                    <th className="px-3 py-2 text-sm border border-theme-dark-gray">
-                      COURSE NAME
-                    </th>
-                    <th className="px-3 py-2 text-sm border border-theme-dark-gray">
-                      QUERY
-                    </th>
-                    <th className="px-3 py-2 text-sm border border-theme-dark-gray">
-                      COMMENT
-                    </th>
-                    <th className="px-3 py-2 text-sm border border-theme-dark-gray">
-                      TAKEN BY
-                    </th>
-                    <th className="px-3 py-2 text-sm border border-theme-dark-gray">
-                      STATUS
-                    </th>
-                  </tr>
-                )}
-                {queryType == "misc" && (
-                  <tr>
-                    <th className="px-3 py-2 text-sm border border-theme-dark-gray">
-                      DATE
-                    </th>
-                    <th className="px-3 py-2 text-sm border border-theme-dark-gray">
-                      NAME
-                    </th>
-                    <th className="px-3 py-2 text-sm border border-theme-dark-gray">
-                      EMAIL
-                    </th>
-                    <th className="px-3 py-2 text-sm border border-theme-dark-gray">
-                      NUMBER
-                    </th>
-                    <th className="px-3 py-2 text-sm border border-theme-dark-gray">
-                      LINK
-                    </th>
-                    <th className="px-3 py-2 text-sm border border-theme-dark-gray">
-                      QUERY
-                    </th>
-                    <th className="px-3 py-2 text-sm border border-theme-dark-gray">
-                      CURRENT COURSE
-                    </th>
-                    <th className="px-3 py-2 text-sm border border-theme-dark-gray">
-                      UPGRADE TO WHICH COURSE
-                    </th>
-                    <th className="px-3 py-2 text-sm border border-theme-dark-gray">
-                      COMMENT
-                    </th>
-                    <th className="px-3 py-2 text-sm border border-theme-dark-gray">
-                      TAKEN BY
-                    </th>
-                    <th className="px-3 py-2 text-sm border border-theme-dark-gray">
-                      STATUS
-                    </th>
-                  </tr>
-                )}
-              </thead>
+          Select Query type:
+        </label>
 
-              <tbody className="border border-theme-dark-gray bg-theme-light-gray p-2">
-                {tableData?.map((each) => {
-                  // tableData is an array of objects
-                  // temp variable stores an array of <td></td>
-                  var temp = [];
-                  // iteration over the objects
-                  Object.keys(each).map((key, index) => {
-                    // condition to not make a td for rowNumber
-                    if (key !== "rowNumber") {
-                      // check if the text of the cell is a link or not
-                      if (isLink(each[key])) {
-                        temp.push(
-                          <td className="border border-theme-dark-gray bg-theme-light-gray p-2">
-                            <a
-                              className="text-blue-400 underline"
-                              target="_blank"
-                              href={each[key]}
-                            >
-                              Link
-                            </a>
-                          </td>
-                        );
-                      }
-                      // for admin to be able to edit comment
-                      else if (key == "comment" && userInfo.isAdmin) {
-                        temp.push(
-                          <td
-                            key={index}
-                            className="border border-theme-dark-gray hover:bg-theme-yellow-light p-2 cursor-pointer"
-                            onClick={() => setCommentModal(each["rowNumber"])}
-                          >
-                            {each[key]}
-                          </td>
-                        );
-                      }
-                      // if user is admin then enable him to toggle the status of the row in the excel sheet
-                      else if (key == "status" && userInfo.isAdmin) {
-                        temp.push(
-                          <td
-                            className={` cursor-pointer border border-theme-dark-gray bg-theme-light-gray p-2`}
-                            // onClick={() => handleToggleStatus(each["rowNumber"])}
-                          >
-                            {/* {each[key]} */}
-                            <select
-                              className="bg-theme-light-gray p-2 border border-theme-dark-gray rounded-lg cursor-pointer"
-                              value="not done"
-                              onChange={(e) => {
-                                const value = e.target.value;
-                                const isDone = value === "done";
-                                handleToggleStatus(
-                                  each["rowNumber"],
-                                  isDone ? 1 : 0
-                                );
-                              }}
-                            >
-                              <option value="done">Done</option>
-                              <option value="not done">Not done</option>
-                            </select>
-                          </td>
-                        );
-                      }
-                      // regular <td> cell
-                      else {
-                        temp.push(
-                          <td className="border border-theme-dark-gray bg-theme-light-gray p-2">
-                            {each[key]}
-                          </td>
-                        );
-                      }
-                    }
-                  });
+        <select
+          className="float-left  border-2 border-theme-yellow-dark inline px-3 py-2 rounded-md  text-black outline-none w-fit  cursor-pointer"
+          value={queryType}
+          onChange={(e) => {
+            setQueryType(e.target.value);
+            localStorage.setItem("queryType", e.target.value);
+          }}
+        >
+          <option value="nameChange">Name Change</option>
+          <option value="batchShift">Batch Shift</option>
+          <option value="emi">EMI</option>
+          <option value="refund">Refund</option>
+          <option value="removeCourseAccess">Remove Course Access</option>
+          <option value="feedback">Feedback</option>
 
-                  {
-                    // for the delete cell
-                    temp.push(
-                      <td
-                        onClick={() => deleteRow(each.rowNumber)}
-                        className="border border-theme-dark-gray bg-theme-light-gray p-2 text-red-400 hover:text-red-600 cursor-pointer"
-                      >
-                        <i className="fa-solid fa-trash-can"></i>
-                      </td>
-                    );
-                  }
-                  // return the whole row by passing the array of td as its child
-                  return <tr className="">{temp}</tr>;
-                })}
-              </tbody>
-            </table>
-          </div>
-        )}
+          <option value="numberchange">Number change</option>
+          <option value="emailchange">Email change</option>
+          <option value="contentmissing">Content Missing</option>
+          <option value="coursenotvisible">Course Not Visible</option>
+          <option value="UPIpayment">UPI Payment</option>
+          <option value="grpnotalloted">Group not alloted</option>
+          <option value="misc">Misc</option>
+        </select>
       </div>
-    </>
+      <Toaster
+        position="bottom-left"
+        toastOptions={{
+          // Define default options
+          className: "",
+
+          style: {
+            background: "#ff8e00",
+            color: "#2e2c2d",
+          },
+
+          // Default options for specific types
+          success: {
+            duration: 2000,
+            theme: {
+              primary: "green",
+              secondary: "black",
+            },
+          },
+        }}
+      />
+
+      {loading && !data ? (
+        <Loading />
+      ) : data?.length == 0 ? (
+        <p className="text-xl  mt-5 text-center w-full">
+          No Data of the selected type found.
+        </p>
+      ) : (
+        data &&
+        columns && (
+          <TableRenderer data={data} columns={columns} getData={getData} />
+        )
+      )}
+    </div>
   );
 }
 

@@ -3,642 +3,293 @@ import { useGlobalContext } from "../context/globalContext";
 import { Toaster, toast } from "react-hot-toast";
 import Loading from "../components/Loading";
 import Navbar from "../components/navbar";
-
-const isLink = (str) => {
-  if (str) {
-    if (typeof str !== "string") {
-      return false;
-    }
-    return str.slice(0, 4) === "http";
-  }
-};
+import TableRenderer from "../components/TableRenderer";
 
 function Resolved() {
-  const [tableData, setTableData] = useState();
-  const [loading, setLoading] = useState(false);
   const { userInfo, queryType, setQueryType } = useGlobalContext();
+  const [data, setData] = useState(null);
+  const [columns, setColumns] = useState([]);
+  const [loading, setLoading] = useState(true);
 
-  const getData = async () => {
-    setLoading(true);
-    const paramsData = {
-      userEmail: userInfo.isAdmin ? "admin" : userInfo.email,
-      action: "getsheetdata",
-      status: "done",
-      sheetname: queryType,
+  const getFilteredColumns = (data) => {
+    // Columns to always show
+
+    const alwaysShowColumns = [
+      "date",
+      "name",
+      "email",
+      "number",
+      "query_desc",
+      "taken_by",
+      "comment",
+      "status",
+    ];
+    const columnOrder = [
+      "status",
+      "query_type",
+      "id",
+      "date",
+      "name",
+      "new_name",
+      "email",
+      "new_email",
+      "number",
+      "new_number",
+      "current_batch",
+      "new_batch",
+      "current_course",
+      "new_course",
+      "content_desc",
+      "reason",
+      "feedback",
+      "first_installment",
+      "second_installment",
+      "file_link",
+      "query_desc",
+      "taken_by",
+      "comment",
+    ];
+
+    // Get unique columns from the data
+    const uniqueColumns = Array.from(
+      new Set(data.flatMap((response) => Object.keys(response)))
+    ).map((key) => ({
+      id: key,
+      header: key,
+      accessorKey: key,
+      footer: key,
+    }));
+
+    // Sort columns based on the desired order
+    const sortedColumns = uniqueColumns.sort(
+      (a, b) => columnOrder.indexOf(a.id) - columnOrder.indexOf(b.id)
+    );
+
+    // Filter out columns that are not in the "alwaysShowColumns" array and have all values null
+    let filteredColumns = sortedColumns.filter(
+      (column) =>
+        alwaysShowColumns.includes(column.id) ||
+        data.some((response) => response[column.id] !== null)
+    );
+
+    //remove the id column and query type column
+    filteredColumns = filteredColumns.filter(
+      (column) => column.id !== "id" && column.id !== "query_type"
+    );
+    // console.log(filteredColumns);
+    // Add a "Delete" column at the end
+    const deleteColumn = {
+      id: "delete",
+      header: "Delete",
+      accessorKey: "delete",
+      footer: "Delete",
+      cell: ({ row }) => (
+        <td className="delete-cell" key={`delete-${row.id}`}>
+          <button onClick={() => handleDelete(row.original.id)}>
+            <i className="fa-solid fa-trash-can"></i>
+          </button>
+        </td>
+      ),
     };
 
-    const queryParams = new URLSearchParams(paramsData);
+    let finalColumns;
+    if (userInfo?.isAdmin) {
+      finalColumns = [...filteredColumns, deleteColumn];
+    } else {
+      finalColumns = [...filteredColumns];
+    }
+    return finalColumns;
+  };
 
+  const handleDelete = async (rowId) => {
+    toast.loading("Deleting row", rowId);
     try {
-      const result = await fetch(`${import.meta.env.VITE_URL}?${queryParams}`);
-      const data = await result.json();
-      toast.dismiss();
-      /* data.data = [
+      // Send a delete query to dynamodb
+      const response = await fetch(
+        "https://g87ruzy4zl.execute-api.ap-south-1.amazonaws.com/dev/queries/",
         {
-          "date": "2023-04-08T18:30:00.000Z",
-          "name": "New User",
-          "email": "shantanuesakpal1420@gmail.com",
-          "oldnumber": 3,
-          "newnumber": 2,
-          "query": "",
-          "comment": "",
-          "querytakenby": "shantanuesakpal1420@gmail.com",
-          "status": "",
-          "rowNumber": 24
-        },
-      ...
-      ]
-      */
-      //sort data in descending order of id
-      let sortedData = data.data.sort((a, b) => b.id - a.id);
-      //remove the id from the data and fix the date format
-      sortedData = sortedData.map((each) => {
-        delete each.id;
-        each.date = new Date(each.date).toLocaleDateString();
+          method: "DELETE",
+          body: JSON.stringify({ id: rowId }),
+          // or 'POST' or other HTTP methods
+        }
+      );
+      if (!response.ok) {
+        throw new Error(`${response.type} error! Status: ${response.status}`);
+      }
+      getData({ withToast: false });
+      toast.dismiss();
+      toast.success("Deleted !");
+    } catch (error) {
+      //clear toast
+      toast.dismiss();
+      toast.error(error.message);
+      console.error("error:", error);
+    }
+  };
+
+  const getData = async ({ withToast }) => {
+    setLoading(true);
+    // toast.loading("Fetching...");
+
+    console.log("Fetching data...");
+    try {
+      // Display a loading message or spinner if needed
+
+      const response = await fetch(
+        "https://g87ruzy4zl.execute-api.ap-south-1.amazonaws.com/dev/queries/",
+        {
+          method: "GET",
+          // or 'POST' or other HTTP methods
+        }
+      );
+
+      // Check if the response is successful (status code 200-299)
+      if (!response.ok) {
+        throw new Error(`${response.type} error! Status: ${response.status}`);
+      }
+
+      // Parse the response as JSON
+      let data = await response.json();
+      // console.log("All data:", data);
+
+      const processedData = data.map((each) => {
+        const dateObject = new Date(each.date);
+        const day = String(dateObject.getDate()).padStart(2, "0");
+        const month = String(dateObject.getMonth() + 1).padStart(2, "0");
+        const year = String(dateObject.getFullYear()).slice(2);
+        each.date = `${day}/${month}/${year}`;
         return each;
       });
-      setTableData(sortedData);
-      toast.success("Fetched");
+      // Sort data based on the "status" column and id, putting "done" values at the end
+      let sortedData = processedData.sort((a, b) => {
+        const statusA = a.status.toLowerCase();
+        const statusB = b.status.toLowerCase();
+
+        if (statusA === "done" && statusB !== "done") {
+          return 1; // "Done" values go at the end
+        }
+        if (statusA !== "done" && statusB === "done") {
+          return -1; // "Done" values go at the end
+        }
+
+        if (statusA === statusB) {
+          return b.id - a.id; // If statuses are the same, sort by id in descending order
+        }
+      });
+
+      // Filter out the data based on the query type if status is "Done"
+      sortedData = sortedData.filter(
+        (row) => row.query_type === queryType && row.status === "Done"
+      );
+
+      // If the user is not an admin, further filter based on taken_by = userInfo.email
+      if (!userInfo?.isAdmin) {
+        sortedData = sortedData.filter(
+          (row) => row.taken_by === userInfo.email
+        );
+      }
+
+      setData(sortedData);
+
+      setColumns(getFilteredColumns(sortedData));
+
+      if (withToast) {
+        toast.dismiss();
+        toast.success();
+      }
     } catch (err) {
-      toast.dismiss();
-      toast.error("Failed to Fetch Data");
-      console.log(err);
+      // Display an error message or handle the error as needed
+      toast.error(err.message);
+      console.error("Error:", err);
     } finally {
+      // Set loading state to false
       setLoading(false);
     }
   };
 
   useEffect(() => {
-    setTableData(null);
-    if (userInfo.email) {
-      getData();
+    //set the query type to the query in local storage
+    const query = localStorage.getItem("queryType");
+    //if query is not null then set the query type to the query in local storage
+    if (query) {
+      setQueryType(query);
+    } else {
+      setQueryType("nameChange");
+      localStorage.setItem("queryType", "nameChange");
     }
-  }, [userInfo, queryType]);
+    if (userInfo?.email) getData({ withToast: true });
+  }, [userInfo?.email, queryType]);
 
   return (
-    <>
+    <div className="p-2 ">
       <Navbar />
-      <div className=" flex flex-col p-2">
-        <Toaster
-          position="bottom-left"
-          toastOptions={{
-            // Define default options
-            className: "",
+      <div className="flex flex-row gap-3 items-center justify-center  w-fit ">
+        <label
+          htmlFor="query-type "
+          className="w-fit text-left pl-1 text-lg font-semibold "
+        >
+          Select Query type:
+        </label>
 
-            style: {
-              background: "#ff8e00",
-              color: "#2e2c2d",
-            },
-
-            // Default options for specific types
-            success: {
-              duration: 2000,
-              theme: {
-                primary: "green",
-                secondary: "black",
-              },
-            },
+        <select
+          className="float-left  border-2 border-theme-yellow-dark inline px-3 py-2 rounded-md  text-black outline-none w-fit  cursor-pointer"
+          value={queryType}
+          onChange={(e) => {
+            setQueryType(e.target.value);
+            localStorage.setItem("queryType", e.target.value);
           }}
-        />
+        >
+          <option value="nameChange">Name Change</option>
+          <option value="batchShift">Batch Shift</option>
+          <option value="emi">EMI</option>
+          <option value="refund">Refund</option>
+          <option value="removeCourseAccess">Remove Course Access</option>
+          <option value="feedback">Feedback</option>
 
-        <div className="flex flex-row gap-3 items-center justify-center  w-fit">
-          <label
-            htmlFor="query-type "
-            className="w-fit text-left pl-1 text-lg font-semibold "
-          >
-            Select Query type:
-          </label>
-
-          <select
-            className="float-left  border-2 border-theme-yellow-dark inline px-3 py-2 rounded-md  text-black outline-none w-fit  cursor-pointer"
-            value={queryType}
-            onChange={(e) => setQueryType(e.target.value)}
-          >
-            <option value="nameChange">Name Change</option>
-            <option value="batchShift">Batch Shift</option>
-            <option value="emi">EMI</option>
-            <option value="refund">Refund</option>
-            <option value="removeCourseAccess">Remove Course Access</option>
-            <option value="feedback">Feedback</option>
-
-            <option value="numberchange">Number change</option>
-            <option value="emailchange">Email change</option>
-            <option value="contentmissing">Content Missing</option>
-            <option value="coursenotvisible">Course Not Visible</option>
-            <option value="UPIpayment">UPI Payment</option>
-            <option value="grpnotalloted">Group not alloted</option>
-            <option value="misc">Misc</option>
-          </select>
-        </div>
-        {loading && !tableData ? (
-          <Loading />
-        ) : tableData?.length == 0 ? (
-          <p className="text-xl  mt-5 text-center w-full">
-            No Data of the selected type found.
-          </p>
-        ) : (
-          <div className=" mx-2 my-5 flex flex-col items-center ">
-            <table>
-              <thead className="bg-theme-yellow-dark border border-theme-dark-gray text-theme-dark px-2 py-1">
-                {queryType === "nameChange" && (
-                  <tr>
-                    <th className="px-3 py-2 text-sm border border-theme-dark-gray">
-                      DATE
-                    </th>
-                    <th className="px-3 py-2 text-sm border border-theme-dark-gray">
-                      OLD NAME
-                    </th>
-                    <th className="px-3 py-2 text-sm border border-theme-dark-gray">
-                      EMAIL
-                    </th>
-                    <th className="px-3 py-2 text-sm border border-theme-dark-gray">
-                      NUMBER
-                    </th>
-                    <th className="px-3 py-2 text-sm border border-theme-dark-gray">
-                      NEW NAME
-                    </th>
-                    <th className="px-3 py-2 text-sm border border-theme-dark-gray">
-                      QUERY
-                    </th>
-                    <th className="px-3 py-2 text-sm border border-theme-dark-gray">
-                      COMMENT
-                    </th>
-                    <th className="px-3 py-2 text-sm border border-theme-dark-gray">
-                      TAKEN BY
-                    </th>
-                    <th className="px-3 py-2 text-sm border border-theme-dark-gray">
-                      STATUS
-                    </th>
-                  </tr>
-                )}
-                {queryType === "batchShift" && (
-                  <tr>
-                    <th className="px-3 py-2 text-sm border border-theme-dark-gray">
-                      DATE
-                    </th>
-                    <th className="px-3 py-2 text-sm border border-theme-dark-gray">
-                      NAME
-                    </th>
-                    <th className="px-3 py-2 text-sm border border-theme-dark-gray">
-                      EMAIL
-                    </th>
-                    <th className="px-3 py-2 text-sm border border-theme-dark-gray">
-                      NUMBER
-                    </th>
-                    <th className="px-3 py-2 text-sm border border-theme-dark-gray">
-                      CURRENT BATCH
-                    </th>
-                    <th className="px-3 py-2 text-sm border border-theme-dark-gray">
-                      NEW BATCH
-                    </th>
-                    <th className="px-3 py-2 text-sm border border-theme-dark-gray">
-                      REASON
-                    </th>
-                    <th className="px-3 py-2 text-sm border border-theme-dark-gray">
-                      FILE
-                    </th>
-                    <th className="px-3 py-2 text-sm border border-theme-dark-gray">
-                      QUERY
-                    </th>
-                    <th className="px-3 py-2 text-sm border border-theme-dark-gray">
-                      COMMENT
-                    </th>
-                    <th className="px-3 py-2 text-sm border border-theme-dark-gray">
-                      TAKEN BY
-                    </th>
-                    <th className="px-3 py-2 text-sm border border-theme-dark-gray">
-                      STATUS
-                    </th>
-                  </tr>
-                )}
-                {queryType === "emi" && (
-                  <tr>
-                    <th className="px-3 py-2 text-sm border border-theme-dark-gray">
-                      DATE
-                    </th>
-                    <th className="px-3 py-2 text-sm border border-theme-dark-gray">
-                      NAME
-                    </th>
-                    <th className="px-3 py-2 text-sm border border-theme-dark-gray">
-                      EMAIL
-                    </th>
-                    <th className="px-3 py-2 text-sm border border-theme-dark-gray">
-                      NUMBER
-                    </th>
-                    <th className="px-3 py-2 text-sm border border-theme-dark-gray">
-                      COURSE NAME
-                    </th>
-                    <th className="px-3 py-2 text-sm border border-theme-dark-gray">
-                      FIRST INSTALLMENT
-                    </th>
-                    <th className="px-3 py-2 text-sm border border-theme-dark-gray">
-                      SECOND INSTALLMENT
-                    </th>
-                    <th className="px-3 py-2 text-sm border border-theme-dark-gray">
-                      FILE
-                    </th>
-                    <th className="px-3 py-2 text-sm border border-theme-dark-gray">
-                      QUERY
-                    </th>
-                    <th className="px-3 py-2 text-sm border border-theme-dark-gray">
-                      COMMENT
-                    </th>
-                    <th className="px-3 py-2 text-sm border border-theme-dark-gray">
-                      TAKEN BY
-                    </th>
-                    <th className="px-3 py-2 text-sm border border-theme-dark-gray">
-                      STATUS
-                    </th>
-                  </tr>
-                )}
-                {queryType === "refund" && (
-                  <tr>
-                    <th className="px-3 py-2 text-sm border border-theme-dark-gray">
-                      DATE
-                    </th>
-                    <th className="px-3 py-2 text-sm border border-theme-dark-gray">
-                      NAME
-                    </th>
-                    <th className="px-3 py-2 text-sm border border-theme-dark-gray">
-                      EMAIL
-                    </th>
-                    <th className="px-3 py-2 text-sm border border-theme-dark-gray">
-                      NUMBER
-                    </th>
-                    <th className="px-3 py-2 text-sm border border-theme-dark-gray">
-                      COURSE NAME
-                    </th>
-                    <th className="px-3 py-2 text-sm border border-theme-dark-gray">
-                      REASON
-                    </th>
-                    <th className="px-3 py-2 text-sm border border-theme-dark-gray">
-                      QUERY
-                    </th>
-                    <th className="px-3 py-2 text-sm border border-theme-dark-gray">
-                      COMMENT
-                    </th>
-                    <th className="px-3 py-2 text-sm border border-theme-dark-gray">
-                      TAKEN BY
-                    </th>
-                    <th className="px-3 py-2 text-sm border border-theme-dark-gray">
-                      STATUS
-                    </th>
-                  </tr>
-                )}
-                {queryType === "removeCourseAccess" && (
-                  <tr>
-                    <th className="px-3 py-2 text-sm border border-theme-dark-gray">
-                      DATE
-                    </th>
-                    <th className="px-3 py-2 text-sm border border-theme-dark-gray">
-                      NAME
-                    </th>
-                    <th className="px-3 py-2 text-sm border border-theme-dark-gray">
-                      EMAIL
-                    </th>
-                    <th className="px-3 py-2 text-sm border border-theme-dark-gray">
-                      NUMBER
-                    </th>
-                    <th className="px-3 py-2 text-sm border border-theme-dark-gray">
-                      COURSE NAME
-                    </th>
-                    <th className="px-3 py-2 text-sm border border-theme-dark-gray">
-                      REASON
-                    </th>
-                    <th className="px-3 py-2 text-sm border border-theme-dark-gray">
-                      QUERY
-                    </th>
-                    <th className="px-3 py-2 text-sm border border-theme-dark-gray">
-                      COMMENT
-                    </th>
-                    <th className="px-3 py-2 text-sm border border-theme-dark-gray">
-                      TAKEN BY
-                    </th>
-                    <th className="px-3 py-2 text-sm border border-theme-dark-gray">
-                      STATUS
-                    </th>
-                  </tr>
-                )}
-                {queryType === "feedback" && (
-                  <tr>
-                    <th className="px-3 py-2 text-sm border border-theme-dark-gray">
-                      DATE
-                    </th>
-                    <th className="px-3 py-2 text-sm border border-theme-dark-gray">
-                      NAME
-                    </th>
-                    <th className="px-3 py-2 text-sm border border-theme-dark-gray">
-                      EMAIL
-                    </th>
-                    <th className="px-3 py-2 text-sm border border-theme-dark-gray">
-                      NUMBER
-                    </th>
-                    <th className="px-3 py-2 text-sm border border-theme-dark-gray">
-                      COURSE NAME
-                    </th>
-                    <th className="px-3 py-2 text-sm border border-theme-dark-gray">
-                      FEEDBACK
-                    </th>
-                    <th className="px-3 py-2 text-sm border border-theme-dark-gray">
-                      FILE
-                    </th>
-                    <th className="px-3 py-2 text-sm border border-theme-dark-gray">
-                      QUERY
-                    </th>
-                    <th className="px-3 py-2 text-sm border border-theme-dark-gray">
-                      COMMENT
-                    </th>
-                    <th className="px-3 py-2 text-sm border border-theme-dark-gray">
-                      TAKEN BY
-                    </th>
-                    <th className="px-3 py-2 text-sm border border-theme-dark-gray">
-                      STATUS
-                    </th>
-                  </tr>
-                )}
-                {queryType == "numberchange" && (
-                  <tr>
-                    <th className="px-3 py-2 text-sm border border-theme-dark-gray">
-                      DATE
-                    </th>
-                    <th className="px-3 py-2 text-sm border border-theme-dark-gray">
-                      NAME
-                    </th>
-                    <th className="px-3 py-2 text-sm border border-theme-dark-gray">
-                      EMAIL
-                    </th>
-                    <th className="px-3 py-2 text-sm border border-theme-dark-gray">
-                      OLD NUMBER
-                    </th>
-                    <th className="px-3 py-2 text-sm border border-theme-dark-gray">
-                      NEW NUMBER
-                    </th>
-                    <th className="px-3 py-2 text-sm border border-theme-dark-gray">
-                      QUERY
-                    </th>
-                    <th className="px-3 py-2 text-sm border border-theme-dark-gray">
-                      COMMENT
-                    </th>
-                    <th className="px-3 py-2 text-sm border border-theme-dark-gray">
-                      TAKEN BY
-                    </th>
-                    <th className="px-3 py-2 text-sm border border-theme-dark-gray">
-                      STATUS
-                    </th>
-                  </tr>
-                )}
-                {queryType == "emailchange" && (
-                  <tr>
-                    <th className="px-3 py-2 text-sm border border-theme-dark-gray">
-                      DATE
-                    </th>
-                    <th className="px-3 py-2 text-sm border border-theme-dark-gray">
-                      NAME
-                    </th>
-                    <th className="px-3 py-2 text-sm border border-theme-dark-gray">
-                      NEW EMAIL
-                    </th>
-                    <th className="px-3 py-2 text-sm border border-theme-dark-gray">
-                      OLD EMAIL
-                    </th>
-                    <th className="px-3 py-2 text-sm border border-theme-dark-gray">
-                      NUMBER
-                    </th>
-                    <th className="px-3 py-2 text-sm border border-theme-dark-gray">
-                      QUERY
-                    </th>
-                    <th className="px-3 py-2 text-sm border border-theme-dark-gray">
-                      COMMENT
-                    </th>
-                    <th className="px-3 py-2 text-sm border border-theme-dark-gray">
-                      TAKEN BY
-                    </th>
-                    <th className="px-3 py-2 text-sm border border-theme-dark-gray">
-                      STATUS
-                    </th>
-                  </tr>
-                )}
-                {queryType == "contentmissing" && (
-                  <tr>
-                    <th className="px-3 py-2 text-sm border border-theme-dark-gray">
-                      DATE
-                    </th>
-                    <th className="px-3 py-2 text-sm border border-theme-dark-gray">
-                      NAME
-                    </th>
-                    <th className="px-3 py-2 text-sm border border-theme-dark-gray">
-                      EMAIL
-                    </th>
-                    <th className="px-3 py-2 text-sm border border-theme-dark-gray">
-                      NUMBER
-                    </th>
-                    <th className="px-3 py-2 text-sm border border-theme-dark-gray">
-                      COURSE NAME
-                    </th>
-                    <th className="px-3 py-2 text-sm border border-theme-dark-gray">
-                      CONTENT
-                    </th>
-                    <th className="px-3 py-2 text-sm border border-theme-dark-gray">
-                      QUERY
-                    </th>
-                    <th className="px-3 py-2 text-sm border border-theme-dark-gray">
-                      COMMENT
-                    </th>
-                    <th className="px-3 py-2 text-sm border border-theme-dark-gray">
-                      TAKEN BY
-                    </th>
-                    <th className="px-3 py-2 text-sm border border-theme-dark-gray">
-                      STATUS
-                    </th>
-                  </tr>
-                )}
-                {queryType == "coursenotvisible" && (
-                  <tr>
-                    <th className="px-3 py-2 text-sm border border-theme-dark-gray">
-                      DATE
-                    </th>
-                    <th className="px-3 py-2 text-sm border border-theme-dark-gray">
-                      NAME
-                    </th>
-                    <th className="px-3 py-2 text-sm border border-theme-dark-gray">
-                      EMAIL
-                    </th>
-                    <th className="px-3 py-2 text-sm border border-theme-dark-gray">
-                      NUMBER
-                    </th>
-                    <th className="px-3 py-2 text-sm border border-theme-dark-gray">
-                      COURSE NAME
-                    </th>
-                    <th className="px-3 py-2 text-sm border border-theme-dark-gray">
-                      CONTENT
-                    </th>
-                    <th className="px-3 py-2 text-sm border border-theme-dark-gray">
-                      LINK
-                    </th>
-                    <th className="px-3 py-2 text-sm border border-theme-dark-gray">
-                      QUERY
-                    </th>
-                    <th className="px-3 py-2 text-sm border border-theme-dark-gray">
-                      COMMENT
-                    </th>
-                    <th className="px-3 py-2 text-sm border border-theme-dark-gray">
-                      TAKEN BY
-                    </th>
-                    <th className="px-3 py-2 text-sm border border-theme-dark-gray">
-                      STATUS
-                    </th>
-                  </tr>
-                )}
-                {queryType == "UPIpayment" && (
-                  <tr>
-                    <th className="px-3 py-2 text-sm border border-theme-dark-gray">
-                      DATE
-                    </th>
-                    <th className="px-3 py-2 text-sm border border-theme-dark-gray">
-                      NAME
-                    </th>
-                    <th className="px-3 py-2 text-sm border border-theme-dark-gray">
-                      EMAIL
-                    </th>
-                    <th className="px-3 py-2 text-sm border border-theme-dark-gray">
-                      NUMBER
-                    </th>
-                    <th className="px-3 py-2 text-sm border border-theme-dark-gray">
-                      COURSE NAME
-                    </th>
-                    <th className="px-3 py-2 text-sm border border-theme-dark-gray">
-                      LINK
-                    </th>
-                    <th className="px-3 py-2 text-sm border border-theme-dark-gray">
-                      QUERY
-                    </th>
-                    <th className="px-3 py-2 text-sm border border-theme-dark-gray">
-                      CURRENT COURSE
-                    </th>
-                    <th className="px-3 py-2 text-sm border border-theme-dark-gray">
-                      UPGRADE TO WHICH COURSE
-                    </th>
-                    <th className="px-3 py-2 text-sm border border-theme-dark-gray">
-                      COMMENT
-                    </th>
-                    <th className="px-3 py-2 text-sm border border-theme-dark-gray">
-                      TAKEN BY
-                    </th>
-                    <th className="px-3 py-2 text-sm border border-theme-dark-gray">
-                      STATUS
-                    </th>
-                  </tr>
-                )}
-                {queryType == "grpnotalloted" && (
-                  <tr>
-                    <th className="px-3 py-2 text-sm border border-theme-dark-gray">
-                      DATE
-                    </th>
-                    <th className="px-3 py-2 text-sm border border-theme-dark-gray">
-                      NAME
-                    </th>
-                    <th className="px-3 py-2 text-sm border border-theme-dark-gray">
-                      EMAIL
-                    </th>
-                    <th className="px-3 py-2 text-sm border border-theme-dark-gray">
-                      NUMBER
-                    </th>
-                    <th className="px-3 py-2 text-sm border border-theme-dark-gray">
-                      COURSE NAME
-                    </th>
-                    <th className="px-3 py-2 text-sm border border-theme-dark-gray">
-                      QUERY
-                    </th>
-                    <th className="px-3 py-2 text-sm border border-theme-dark-gray">
-                      COMMENT
-                    </th>
-                    <th className="px-3 py-2 text-sm border border-theme-dark-gray">
-                      TAKEN BY
-                    </th>
-                    <th className="px-3 py-2 text-sm border border-theme-dark-gray">
-                      STATUS
-                    </th>
-                  </tr>
-                )}
-                {queryType == "misc" && (
-                  <tr>
-                    <th className="px-3 py-2 text-sm border border-theme-dark-gray">
-                      DATE
-                    </th>
-                    <th className="px-3 py-2 text-sm border border-theme-dark-gray">
-                      NAME
-                    </th>
-                    <th className="px-3 py-2 text-sm border border-theme-dark-gray">
-                      EMAIL
-                    </th>
-                    <th className="px-3 py-2 text-sm border border-theme-dark-gray">
-                      NUMBER
-                    </th>
-                    <th className="px-3 py-2 text-sm border border-theme-dark-gray">
-                      LINK
-                    </th>
-                    <th className="px-3 py-2 text-sm border border-theme-dark-gray">
-                      QUERY
-                    </th>
-                    <th className="px-3 py-2 text-sm border border-theme-dark-gray">
-                      CURRENT COURSE
-                    </th>
-                    <th className="px-3 py-2 text-sm border border-theme-dark-gray">
-                      UPGRADE TO WHICH COURSE
-                    </th>
-                    <th className="px-3 py-2 text-sm border border-theme-dark-gray">
-                      COMMENT
-                    </th>
-                    <th className="px-3 py-2 text-sm border border-theme-dark-gray">
-                      TAKEN BY
-                    </th>
-                    <th className="px-3 py-2 text-sm border border-theme-dark-gray">
-                      STATUS
-                    </th>
-                  </tr>
-                )}
-              </thead>
-
-              <tbody>
-                {tableData?.map((each) => {
-                  // tableData is an array of objects
-                  var temp = [];
-                  Object.keys(each).map((key, index) => {
-                    // condition to not make a td for rowNumber
-                    if (key !== "rowNumber") {
-                      // check if the text of the cell is a link or not
-                      if (isLink(each[key])) {
-                        temp.push(
-                          <td className="border border-theme-dark-gray bg-theme-light-gray p-2">
-                            <a
-                              className="text-blue-400 underline"
-                              target="_blank"
-                              href={each[key]}
-                            >
-                              Link
-                            </a>
-                          </td>
-                        );
-                      }
-                      // regular <td> cell
-                      else {
-                        temp.push(
-                          <td className="border border-theme-dark-gray bg-theme-light-gray p-2">
-                            {each[key]}
-                          </td>
-                        );
-                      }
-                    }
-                  });
-                  // return the whole row by passing the array of td as its child
-                  return <tr className="bg-green-900">{temp}</tr>;
-                })}
-              </tbody>
-            </table>
-          </div>
-        )}
+          <option value="numberchange">Number change</option>
+          <option value="emailchange">Email change</option>
+          <option value="contentmissing">Content Missing</option>
+          <option value="coursenotvisible">Course Not Visible</option>
+          <option value="UPIpayment">UPI Payment</option>
+          <option value="grpnotalloted">Group not alloted</option>
+          <option value="misc">Misc</option>
+        </select>
       </div>
-    </>
+      <Toaster
+        position="bottom-left"
+        toastOptions={{
+          // Define default options
+          className: "",
+
+          style: {
+            background: "#ff8e00",
+            color: "#2e2c2d",
+          },
+
+          // Default options for specific types
+          success: {
+            duration: 2000,
+            theme: {
+              primary: "green",
+              secondary: "black",
+            },
+          },
+        }}
+      />
+
+      {loading && !data ? (
+        <Loading />
+      ) : data?.length == 0 ? (
+        <p className="text-xl  mt-5 text-center w-full">
+          No Data of the selected type found.
+        </p>
+      ) : (
+        data &&
+        columns && (
+          <TableRenderer data={data} columns={columns} getData={getData} />
+        )
+      )}
+    </div>
   );
 }
 

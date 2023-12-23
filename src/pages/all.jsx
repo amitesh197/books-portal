@@ -5,11 +5,6 @@ import Loading from "../components/Loading";
 import Navbar from "../components/navbar";
 import TableRenderer from "../components/TableRenderer";
 
-function checkDone(str) {
-  var regex = /done/i; // Case-insensitive regex pattern for "done"
-  return regex.test(str); // returns boolean
-}
-
 function All() {
   const { userInfo, queryType, setQueryType } = useGlobalContext();
   const [data, setData] = useState(null);
@@ -121,8 +116,13 @@ function All() {
         </td>
       ),
     };
-
-    return [...filteredColumns, deleteColumn];
+    let finalColumns;
+    if (userInfo?.isAdmin) {
+      finalColumns = [...filteredColumns, deleteColumn];
+    } else {
+      finalColumns = [...filteredColumns];
+    }
+    return finalColumns;
   };
 
   const handleDelete = async (rowId) => {
@@ -153,6 +153,7 @@ function All() {
 
   const getData = async ({ withToast }) => {
     setLoading(true);
+    // toast.loading("Fetching...");
 
     console.log("Fetching data...");
     try {
@@ -200,8 +201,15 @@ function All() {
         }
       });
 
-      //filter out the data based on the query type
+      //filter out the data based on the query type and
       sortedData = sortedData.filter((row) => row.query_type === queryType);
+
+      if (!userInfo?.isAdmin) {
+        //filter data based on taken_by = userInfo.email
+        sortedData = sortedData.filter(
+          (row) => row.taken_by === userInfo.email
+        );
+      }
 
       setData(sortedData);
 

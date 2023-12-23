@@ -7,6 +7,7 @@ import {
   useReactTable,
 } from "@tanstack/react-table";
 import { Toaster, toast } from "react-hot-toast";
+import { useGlobalContext } from "../context/globalContext";
 
 import React, { useEffect, useState } from "react";
 import CommentModal from "./CommentModal";
@@ -22,6 +23,7 @@ export default function TableRenderer({ data, columns, getData }) {
   const [filtering, setFiltering] = useState("");
   const [selectedCellValue, setSelectedCellValue] = useState({});
   const [changeStatusModal, setChangeStatusModal] = useState(false);
+  const { userInfo } = useGlobalContext();
 
   const columnMapping = {
     id: "ID",
@@ -49,17 +51,23 @@ export default function TableRenderer({ data, columns, getData }) {
   };
 
   const handleCellClick = (cell) => {
-    if (cell.column.id === "comment") {
-      // console.log("Clicked on comment cell in row with ID:", rowId);
-      setSelectedRowId(cell.row.original.id);
-      setSelectedComment(cell.row.original.comment);
-      setIsModalOpen(true);
-    }
-    if (cell.column.id === "status") {
-      // console.log("Clicked on comment cell in row with ID:", rowId);
-      setSelectedRowId(cell.row.original.id);
-      setCurrentStatus(cell.row.original.status);
-      setChangeStatusModal(true);
+    {
+      if (userInfo.isAdmin) {
+        if (cell.column.id === "comment") {
+          // console.log("Clicked on comment cell in row with ID:", rowId);
+          setSelectedRowId(cell.row.original.id);
+          setSelectedComment(cell.row.original.comment);
+          setIsModalOpen(true);
+        }
+        if (cell.column.id === "status") {
+          // console.log("Clicked on comment cell in row with ID:", rowId);
+          setSelectedRowId(cell.row.original.id);
+          setCurrentStatus(cell.row.original.status);
+          setChangeStatusModal(true);
+        }
+      } else {
+        console.log("Not an Admin :(");
+      }
     }
   };
 
