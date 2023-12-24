@@ -69,7 +69,7 @@ function All() {
       "feedback",
       "first_installment",
       "second_installment",
-      "file_link",
+      "file",
       "query_desc",
       "taken_by",
       "comment",

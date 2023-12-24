@@ -12,7 +12,6 @@ import Stats from "./pages/stats";
 import Profile from "./pages/profile";
 import History from "./pages/history";
 import UserHistory from "./pages/[userName]";
-import Loading from "./components/Loading";
 import TopPerformers from "./pages/topPerformers";
 import Announcements from "./pages/announcements";
 import MonthlyUserHistory from "./pages/monthlyUserHistory";

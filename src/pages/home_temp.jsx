@@ -1,86 +1,203 @@
 import React, { useEffect, useState } from "react";
 import { useGlobalContext } from "../context/globalContext";
 import { Toaster, toast } from "react-hot-toast";
-import Navbar from "../components/navbar";
-import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
 import { storage } from "../firebase.config";
+import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
+import Navbar from "../components/navbar";
 
 function Home() {
   const { userInfo, queryType, setQueryType } = useGlobalContext();
   const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState({});
-  const [fileObj, setFileObj] = useState(null);
 
-  /* 
-  column names in the db:--
-    id bigint not null,
-    date timestamp with time zone null,
-    email text null,
-    number bigint null,
-    query_desc text null,
-    comment text null,
-    taken_by text null,
-    status text null,
-    queryType text null,
-    name text null,
-    new_name text null,
-    current_batch text null,
-    new_batch text null,
-    current_course text null,
-    reason text null,
-    feedback text null,
-    new_number text null,
-    new_email text null,
-    content_desc text null,
-    file text null,
-    new_course text null, 
-    first_installment bigint null,
-    second_installment bigint null,
-   */
+  /* types of queries
+  nameChange: {
+    id: 0,
+    date: 1,
+    name: 2,
+    email: 3,
+    number: 4,
+    newName: 5,
+    query: 6,
+    comment: 7,
+    querytakenby: 8,
+    status: 9
+  },
 
-  //todays date in 13 digit format and use it as id, cause it will be unique
+  batchShift: {
+    id: 0,
+    date: 1,
+    name: 2,
+    email: 3,
+    number: 4,
+    currentBatch: 5,
+    newBatch: 6,
+    reason: 7,
+    file: 8,
+    query: 9,
+    comment: 10,
+    querytakenby: 11,
+    status: 12
+  },
+
+  emi: {
+    id: 0,
+    date: 1,
+    name: 2,
+    email: 3,
+    number: 4,
+    coursename: 5,
+    firstInstallment: 6,
+    secondInstallment: 7,
+    file: 8,
+    query: 9,
+    comment: 10,
+    querytakenby: 11,
+    status: 12
+  },
+
+  refund: {
+    id: 0,
+    date: 1,
+    name: 2,
+    email: 3,
+    number: 4,
+    coursename: 5,
+    reason: 6,
+    query: 7,
+    comment: 8,
+    querytakenby: 9,
+    status: 10
+  },
+
+  removeCourseAccess: {
+    id: 0,
+    date: 1,
+    name: 2,
+    email: 3,
+    number: 4,
+    coursename: 5,
+    reason: 6,
+    query: 7,
+    comment: 8,
+    querytakenby: 9,
+    status: 10
+  },
+
+  feedback: {
+    id: 0,
+    date: 1,
+    name: 2,
+    email: 3,
+    number: 4,
+    coursename: 5,
+    feedback: 6,
+    file: 7,
+    query: 8,
+    comment: 9,
+    querytakenby: 10,
+    status: 11
+  },
+
+  numberchange: {
+    id: 0,
+    date: 1,
+    name: 2,
+    email: 3,
+    oldnumber: 4,
+    newnumber: 5,
+    query: 6,
+    comment: 7,
+    querytakenby: 8,
+    status: 9
+  },
+  emailchange: {
+    id: 0,
+    date: 1,
+    name: 2,
+    newemail: 3,
+    oldemail: 4,
+    number: 5,
+    query: 6,
+    comment: 7,
+    querytakenby: 8,
+    status: 9
+  },
+  contentmissing: {
+    id: 0,
+    date: 1,
+    name: 2,
+    email: 3,
+    number: 4,
+    coursename: 5,
+    content: 6,
+    query: 7,
+    comment: 8,
+    querytakenby: 9,
+    status: 10
+  },
+  coursenotvisible: {
+    id: 0,
+    date: 1,
+    name: 2,
+    email: 3,
+    number: 4,
+    coursename: 5,
+    content: 6,
+    file: 7,
+    query: 8,
+    comment: 9,
+    querytakenby: 10,
+    status: 11
+  },
+  UPIpayment: {
+    id: 0,
+    date: 1,
+    name: 2,
+    email: 3,
+    number: 4,
+    coursename: 5,
+    file: 6,
+    query: 7,
+    currentcourse: 8,
+    upgradetowhichcourse: 9,
+    comment: 10,
+    querytakenby: 11,
+    status: 12
+  },
+  grpnotalloted: {
+    id: 0,
+    date: 1,
+    name: 2,
+    email: 3,
+    number: 4,
+    coursename: 5,
+    query: 6,
+    comment: 7,
+    querytakenby: 8,
+    status: 9
+  },
+  misc: {
+    id: 0,
+    date: 1,
+    name: 2,
+    email: 3,
+    number: 4,
+    file: 5,
+    query: 6,
+    currentcourse: 7,
+    upgradetowhichcourse: 8,
+    comment: 9,
+    querytakenby: 10,
+    status: 11
+  }
+  */
+
+  //todays data in 13 digit format and use it as id, cause it will be unique
   const dataId = Date.now();
   // Get current date, month, and year in format day/month/year
   const now = new Date(dataId);
   const todaysdate = now;
-
-  const handleFileChange = (event) => {
-    setFileObj(event.target.files[0]);
-    // console.log(event.target.files[0]);
-  };
-
-  const uploadFiletoCloud = async () => {
-    const now = new Date();
-    const monthYear = `${now.getMonth() + 1}-${now.getFullYear()}`;
-    const dayTime = `${now.getDate()}/${now.toLocaleTimeString("en-IN", {
-      hour12: false,
-    })}`;
-    const storageRef = ref(
-      storage,
-      // the path of the file
-      `${monthYear}/${dayTime}-${fileObj.name} `
-    );
-
-    try {
-      toast.loading("Uploading File");
-      setLoading(true);
-
-      // Use await to wait for the Promise to be fulfilled
-      const snapshot = await uploadBytes(storageRef, fileObj);
-      const fileurl = await getDownloadURL(storageRef);
-
-      toast.dismiss();
-      toast.success("File Uploaded");
-
-      return fileurl;
-    } catch (err) {
-      console.error(err);
-      toast.dismiss();
-      toast.error("Problem while uploading file");
-    } finally {
-      setLoading(false);
-    }
-  };
 
   const handleInput = (e) => {
     setFormData((prev) => ({
@@ -88,13 +205,11 @@ function Home() {
       [e.target.name]: e.target.value,
       id: dataId,
       date: todaysdate,
-      status: "Pending",
-      taken_by: userInfo.email,
-      query_type: queryType,
-      comment: "",
-      query_desc: "",
+      status: "",
+      querytakenby: userInfo.email,
+      sheetname: queryType,
+      action: "addQuery",
     }));
-    // this is the data that will be sent to the db.
   };
 
   const clearInput = () => {
@@ -109,11 +224,64 @@ function Home() {
     });
   };
 
+  const handleFileChange = (event) => {
+    setFormData((prev) => ({
+      ...prev,
+      file: event.target.files[0],
+    }));
+  };
+
+  const uploadFiletoCloud = async () => {
+    const now = new Date();
+    const monthYear = `${now.getMonth() + 1}-${now.getFullYear()}`;
+    const dayTime = `${now.getDate()}/${now.toLocaleTimeString("en-IN", {
+      hour12: false,
+    })}`;
+    var storageRef = ref(
+      storage,
+      // the path of the file
+      `${monthYear}/${dayTime}-${formData.file.name} `
+    );
+    try {
+      toast.loading("Uploading File");
+      setLoading(true);
+      const snapshot = await uploadBytes(storageRef, formData.file);
+      const fileurl = getDownloadURL(storageRef);
+      toast.dismiss();
+      toast.success("File Uploaded");
+      return fileurl;
+    } catch (err) {
+      console.log(err);
+      toast.dismiss();
+      toast.error("problem while uploading file");
+    } finally {
+      setLoading(false);
+    }
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
+    console.log("form data is", formData);
+    /*
+    formData = 
+    {
+      "name": "hgjkgh",
+      "status": "",
+      "takenby": "test1@gmail.com",
+      "sheetname": "numberchange",
+      "email": "admin1@gmail.com",
+      "oldnumber": "12",
+      "newnumber": "12",
+      "query": "asdf",
+      "status": "",
+      "takenby": userInfo.email,
+      "sheetname": queryType,
+    }
+    
+    this is received as 
+    var jsonData = JSON.parse(e.postData.contents) in the google sheets script
 
-    setLoading(true);
-    let formDataWithFile = formData;
+    */
     if (
       queryType == "coursenotvisible" ||
       queryType == "UPIpayment" ||
@@ -122,75 +290,102 @@ function Home() {
       queryType == "emi" ||
       queryType == "feedback"
     ) {
-      const fileurl = await uploadFiletoCloud();
+      // upload the file to cloud storage and then take the url and upload to excell
 
-      formDataWithFile = {
-        ...formData,
-        file: {
-          link: fileurl,
-          name: fileObj.name,
-        },
-      };
-      // console.log("form data with link", formDataWithFile);
-      //add file url to the form data
-    }
+      var fileurl;
 
-    try {
-      // Send a delete query to dynamodb
-
-      const response = await fetch(
-        "https://g87ruzy4zl.execute-api.ap-south-1.amazonaws.com/dev/queries/",
-        {
-          method: "POST",
-          body: JSON.stringify(formDataWithFile),
-          // or 'POST' or other HTTP methods
-        }
-      );
-      if (!response.ok) {
-        let err = response.json();
-        throw new Error(`${err} \n Status: ${response.status}`);
+      if (formData.file) {
+        fileurl = await uploadFiletoCloud();
       }
-      clearInput();
-      toast.dismiss();
-      toast.success("Query added !");
-    } catch (error) {
-      //clear toast
-      toast.dismiss();
-      toast.error(error.message);
-      console.error("error:", error);
-    }
 
-    setLoading(false);
+      try {
+        toast.loading("Adding query...");
+        setLoading(true);
+        const response = await fetch(`${import.meta.env.VITE_URL}`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "text/plain",
+          },
+          body: JSON.stringify({ ...formData, file: fileurl }),
+        });
+        const result = await response.json();
+        console.log(result);
+        if (result.successMessage == "done") {
+          toast.dismiss();
+          toast.success("Entry made");
+          clearInput();
+        }
+      } catch (err) {
+        toast.dismiss();
+        console.log(err);
+        toast.error("Something went wrong");
+      } finally {
+        setLoading(false);
+      }
+    } else {
+      try {
+        toast.loading("Adding query...");
+        setLoading(true);
+        const response = await fetch(`${import.meta.env.VITE_URL}`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "text/plain",
+          },
+          body: JSON.stringify(formData),
+        });
+        const result = await response.json();
+        console.log(result);
+        if (result.successMessage == "done") {
+          toast.dismiss();
+          toast.success("Entry made");
+          clearInput();
+        }
+      } catch (err) {
+        toast.dismiss();
+        console.log(err);
+        toast.error("something went wrong. see console.");
+      } finally {
+        setLoading(false);
+      }
+    }
+    // setFormData({});
   };
+
+  useEffect(() => {
+    // clear the formData
+    setFormData({});
+    // clear all the input feilds
+    clearInput();
+  }, [queryType]);
 
   return (
     <>
       <Navbar />
-      <Toaster
-        position="bottom-left"
-        toastOptions={{
-          // Define default options
-          className: "",
-
-          style: {
-            background: "#ff8e00",
-            color: "#2e2c2d",
-          },
-
-          // Default options for specific types
-          success: {
-            duration: 2000,
-            theme: {
-              primary: "green",
-              secondary: "black",
-            },
-          },
-        }}
-      />
       <div className="flex flex-col items-center justify-center text-black text-base  w-full">
+        <Toaster
+          position="bottom-left"
+          toastOptions={{
+            // Define default options
+            className: "",
+
+            style: {
+              background: "#ff8e00",
+              color: "#2e2c2d",
+            },
+
+            // Default options for specific types
+            success: {
+              duration: 2000,
+              theme: {
+                primary: "green",
+                secondary: "black",
+              },
+            },
+          }}
+        />
         <h1 className="w-full block p-2 font-semibold text-xl">
           Welcome {userInfo.isAdmin && <span className="inline">Admin </span>}{" "}
-          {userInfo.username}
+          {userInfo.email}
         </h1>
         <form
           className="flex flex-col gap-5 rounded  justify-center w-full md:w-2/3 lg:w-1/2 m-2 mb-5"
@@ -228,7 +423,6 @@ function Home() {
                 name="name"
                 className="text-black rounded-md p-2 outline-theme-yellow-dark border border-theme-dark"
                 onChange={handleInput}
-                required
               />
             </div>
           )}
@@ -239,7 +433,7 @@ function Home() {
                 <label className=" mx-1 font-semibold">Old Name</label>
                 <input
                   placeholder="Old Name"
-                  name="name"
+                  name="oldName"
                   className="text-black rounded-md p-2 outline-theme-yellow-dark border border-theme-dark"
                   onChange={handleInput}
                   required
@@ -249,7 +443,7 @@ function Home() {
                 <label className=" mx-1 font-semibold">New Name</label>
                 <input
                   placeholder="New Name"
-                  name="new_name"
+                  name="newName"
                   className="text-black rounded-md p-2 outline-theme-yellow-dark border border-theme-dark"
                   onChange={handleInput}
                   required
@@ -266,7 +460,7 @@ function Home() {
                   type="email"
                   placeholder="Old email"
                   required
-                  name="email"
+                  name="oldemail"
                   className="text-black rounded-md p-2 outline-theme-yellow-dark border border-theme-dark"
                   onChange={handleInput}
                 />
@@ -277,7 +471,7 @@ function Home() {
                   type="email"
                   placeholder="New email"
                   required
-                  name="new_email"
+                  name="newemail"
                   className="text-black rounded-md p-2 outline-theme-yellow-dark border border-theme-dark"
                   onChange={handleInput}
                 />
@@ -305,7 +499,7 @@ function Home() {
                   type="number"
                   placeholder="Old number"
                   required
-                  name="number"
+                  name="oldnumber"
                   className="text-black rounded-md p-2 outline-theme-yellow-dark border border-theme-dark"
                   onChange={handleInput}
                   min={0}
@@ -317,7 +511,7 @@ function Home() {
                   type="number"
                   placeholder="New number"
                   required
-                  name="new_number"
+                  name="newnumber"
                   className="text-black rounded-md p-2 outline-theme-yellow-dark border border-theme-dark"
                   onChange={handleInput}
                   min={0}
@@ -334,7 +528,6 @@ function Home() {
                 className="text-black rounded-md p-2 outline-theme-yellow-dark border border-theme-dark"
                 onChange={handleInput}
                 min={0}
-                required
               />
             </div>
           )}
@@ -344,7 +537,7 @@ function Home() {
                 <label className=" mx-1 font-semibold">Current Batch</label>
                 <input
                   placeholder="Current batch"
-                  name="current_batch"
+                  name="currentBatch"
                   className="text-black rounded-md p-2 outline-theme-yellow-dark border border-theme-dark"
                   onChange={handleInput}
                 />
@@ -353,7 +546,7 @@ function Home() {
                 <label className=" mx-1 font-semibold">New Batch</label>
                 <input
                   placeholder="New batch"
-                  name="new_batch"
+                  name="newBatch"
                   className="text-black rounded-md p-2 outline-theme-yellow-dark border border-theme-dark"
                   onChange={handleInput}
                 />
@@ -368,7 +561,7 @@ function Home() {
               <label className=" mx-1 font-semibold">Course Name</label>
               <input
                 placeholder="Course name"
-                name="current_course"
+                name="coursename"
                 className="text-black rounded-md p-2 outline-theme-yellow-dark border border-theme-dark"
                 onChange={handleInput}
               />
@@ -395,7 +588,7 @@ function Home() {
                 <label className=" mx-1 font-semibold">Course Name</label>
                 <input
                   placeholder="Current course"
-                  name="current_course"
+                  name="coursename"
                   className="text-black rounded-md p-2 outline-theme-yellow-dark border border-theme-dark"
                   onChange={handleInput}
                 />
@@ -403,9 +596,8 @@ function Home() {
               <div className="flex flex-col ">
                 <label className=" mx-1 font-semibold">First Installment</label>
                 <input
-                  type="number"
                   placeholder="First Installment"
-                  name="first_installment"
+                  name="firstInstallment"
                   className="text-black rounded-md p-2 outline-theme-yellow-dark border border-theme-dark"
                   onChange={handleInput}
                 />
@@ -415,9 +607,8 @@ function Home() {
                   Second Installment
                 </label>
                 <input
-                  type="number"
                   placeholder="Second Installment"
-                  name="second_installment"
+                  name="secondInstallment"
                   className="text-black rounded-md p-2 outline-theme-yellow-dark border border-theme-dark"
                   onChange={handleInput}
                 />
@@ -432,7 +623,7 @@ function Home() {
                 <input
                   placeholder="Course name"
                   required
-                  name="current_course"
+                  name="coursename"
                   className="text-black rounded-md p-2 outline-theme-yellow-dark border border-theme-dark"
                   onChange={handleInput}
                 />
@@ -442,7 +633,7 @@ function Home() {
                 <input
                   placeholder="Content"
                   required
-                  name="content_desc"
+                  name="content"
                   className="text-black rounded-md p-2 outline-theme-yellow-dark border border-theme-dark"
                   onChange={handleInput}
                 />
@@ -457,7 +648,7 @@ function Home() {
                 <input
                   placeholder="Course name"
                   required
-                  name="current_course"
+                  name="coursename"
                   className="text-black rounded-md p-2 outline-theme-yellow-dark border border-theme-dark"
                   onChange={handleInput}
                 />
@@ -467,7 +658,7 @@ function Home() {
                 <input
                   placeholder="Content"
                   required
-                  name="content_desc"
+                  name="content"
                   className="text-black rounded-md p-2 outline-theme-yellow-dark border border-theme-dark"
                   onChange={handleInput}
                 />
@@ -482,7 +673,7 @@ function Home() {
                 <input
                   placeholder="Course name"
                   required
-                  name="current_course"
+                  name="coursename"
                   className="text-black rounded-md p-2 outline-theme-yellow-dark border border-theme-dark"
                   onChange={handleInput}
                 />
@@ -496,7 +687,7 @@ function Home() {
               <input
                 placeholder="Course name"
                 required
-                name="current_course"
+                name="coursename"
                 className="text-black rounded-md p-2 outline-theme-yellow-dark border border-theme-dark"
                 onChange={handleInput}
               />
@@ -521,7 +712,7 @@ function Home() {
             <textarea
               type="text"
               placeholder="Details about the query"
-              name="query_desc"
+              name="query"
               className="text-black rounded-md p-2 outline-theme-yellow-dark border border-theme-dark"
               onChange={handleInput}
             />
@@ -533,7 +724,7 @@ function Home() {
                 <label className=" mx-1 font-semibold">Current Course</label>
                 <input
                   placeholder="Current course"
-                  name="current_course"
+                  name="currentcourse"
                   className="text-black rounded-md p-2 outline-theme-yellow-dark border border-theme-dark"
                   onChange={handleInput}
                 />
@@ -544,7 +735,7 @@ function Home() {
                 </label>
                 <input
                   placeholder="Upgrade to which course"
-                  name="new_course"
+                  name="upgradetowhichcourse"
                   className="text-black rounded-md p-2 outline-theme-yellow-dark border border-theme-dark"
                   onChange={handleInput}
                 />

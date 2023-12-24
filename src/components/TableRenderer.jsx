@@ -43,12 +43,14 @@ export default function TableRenderer({ data, columns, getData }) {
     feedback: "Feedback",
     first_installment: "First Installment",
     second_installment: "Second Installment",
-    file_link: "File Link",
+    file: "File",
     query_desc: "Query Description",
     taken_by: "Taken By",
     comment: "Comment",
     status: "Status",
   };
+
+  /* file object= { "link" : { "S" : "https://firebasestorage.googleapis.com/v0/b/sales-query-e70c4.appspot.com/o/12-2023%2F24%2F12%3A21%3A38-intro.pdf%20?alt=media&token=a0cec592-ce49-499c-8376-841943801bfb" }, "name" : { "S" : "intro.pdf" } } */
 
   const handleCellClick = (cell) => {
     {
@@ -58,8 +60,7 @@ export default function TableRenderer({ data, columns, getData }) {
           setSelectedRowId(cell.row.original.id);
           setSelectedComment(cell.row.original.comment);
           setIsModalOpen(true);
-        }
-        if (cell.column.id === "status") {
+        } else if (cell.column.id === "status") {
           // console.log("Clicked on comment cell in row with ID:", rowId);
           setSelectedRowId(cell.row.original.id);
           setCurrentStatus(cell.row.original.status);
@@ -75,7 +76,7 @@ export default function TableRenderer({ data, columns, getData }) {
     toast.loading("Adding comment", selectedRowId);
     try {
       // Send a delete query to dynamodb
-      console.log({ id: selectedRowId, comment: comment });
+      // console.log({ id: selectedRowId, comment: comment });
       const response = await fetch(
         "https://g87ruzy4zl.execute-api.ap-south-1.amazonaws.com/dev/queries/",
         {
@@ -106,7 +107,7 @@ export default function TableRenderer({ data, columns, getData }) {
     toast.loading("changing status", selectedRowId);
     try {
       // Send a delete query to dynamodb
-      console.log({ id: selectedRowId, status: status });
+      // console.log({ id: selectedRowId, status: status });
       const response = await fetch(
         "https://g87ruzy4zl.execute-api.ap-south-1.amazonaws.com/dev/queries/",
         {
@@ -120,7 +121,7 @@ export default function TableRenderer({ data, columns, getData }) {
         }
       );
       let data = await response.json();
-      console.log("data", data);
+      // console.log("data", data);
       if (!response.ok) {
         throw new Error(`${response.type} error status: ${response.status}`);
       }
@@ -334,7 +335,7 @@ export default function TableRenderer({ data, columns, getData }) {
             ))}
           </thead>
 
-          <tbody className="table-body ">
+          <tbody className="table-body">
             {table.getRowModel().rows.map((row) => (
               <tr className={`table-body-row`} key={row.id}>
                 {row.getVisibleCells().map((cell) => {
@@ -350,9 +351,25 @@ export default function TableRenderer({ data, columns, getData }) {
                       style={{ width: cell.column.getSize() }}
                     >
                       <div>
-                        {flexRender(
-                          cell.column.columnDef.cell,
-                          cell.getContext()
+                        {cell.column.id === "file" ? (
+                          // If the column is "file", render a link
+                          <a
+                            href={row.original.file?.link}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            style={{
+                              color: "#007bff",
+                              textDecoration: "underline",
+                            }}
+                          >
+                            {row.original.file?.name}
+                          </a>
+                        ) : (
+                          // Render other cells as usual
+                          flexRender(
+                            cell.column.columnDef.cell,
+                            cell.getContext()
+                          )
                         )}
                       </div>
                     </td>
