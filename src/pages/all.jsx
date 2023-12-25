@@ -94,7 +94,7 @@ function All() {
     let filteredColumns = sortedColumns.filter(
       (column) =>
         alwaysShowColumns.includes(column.id) ||
-        data.some((response) => response[column.id] !== null)
+        data.some((response) => response[column.id] !== "")
     );
 
     //remove the id column and query type column

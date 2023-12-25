@@ -24,6 +24,7 @@ export default function TableRenderer({ data, columns, getData }) {
   const [selectedCellValue, setSelectedCellValue] = useState({});
   const [changeStatusModal, setChangeStatusModal] = useState(false);
   const { userInfo } = useGlobalContext();
+  console.log("data", data);
 
   const columnMapping = {
     id: "ID",
@@ -49,8 +50,6 @@ export default function TableRenderer({ data, columns, getData }) {
     comment: "Comment",
     status: "Status",
   };
-
-  /* file object= { "link" : { "S" : "https://firebasestorage.googleapis.com/v0/b/sales-query-e70c4.appspot.com/o/12-2023%2F24%2F12%3A21%3A38-intro.pdf%20?alt=media&token=a0cec592-ce49-499c-8376-841943801bfb" }, "name" : { "S" : "intro.pdf" } } */
 
   const handleCellClick = (cell) => {
     {
@@ -354,7 +353,7 @@ export default function TableRenderer({ data, columns, getData }) {
                         {cell.column.id === "file" ? (
                           // If the column is "file", render a link
                           <a
-                            href={row.original.file?.link}
+                            href={row.original.file}
                             target="_blank"
                             rel="noopener noreferrer"
                             style={{
@@ -362,7 +361,7 @@ export default function TableRenderer({ data, columns, getData }) {
                               textDecoration: "underline",
                             }}
                           >
-                            {row.original.file?.name}
+                            Click to open file
                           </a>
                         ) : (
                           // Render other cells as usual

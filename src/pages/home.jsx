@@ -43,6 +43,9 @@ function Home() {
   // Get current date, month, and year in format day/month/year
   const now = new Date(dataId);
   const todaysdate = now;
+  //convert dateId to string
+  const dataIdString = dataId.toString();
+  // console.log("dataIdString", dataIdString);
 
   const handleFileChange = (event) => {
     setFileObj(event.target.files[0]);
@@ -86,7 +89,7 @@ function Home() {
     setFormData((prev) => ({
       ...prev,
       [e.target.name]: e.target.value,
-      id: dataId,
+      id: dataIdString,
       date: todaysdate,
       status: "Pending",
       taken_by: userInfo.email,
@@ -123,19 +126,15 @@ function Home() {
       queryType == "feedback"
     ) {
       const fileurl = await uploadFiletoCloud();
-
+      //add file url to the form data
       formDataWithFile = {
         ...formData,
-        file: {
-          link: fileurl,
-          name: fileObj.name,
-        },
+        file: fileurl,
       };
-      // console.log("form data with link", formDataWithFile);
-      //add file url to the form data
     }
 
     try {
+      // console.log("form data with link", formDataWithFile);
       // Send a delete query to dynamodb
 
       const response = await fetch(
@@ -475,21 +474,6 @@ function Home() {
             </>
           ) : null}
 
-          {queryType == "UPIpayment" ? (
-            <>
-              <div className="flex flex-col ">
-                <label className=" mx-1 font-semibold">Course Name</label>
-                <input
-                  placeholder="Course name"
-                  required
-                  name="current_course"
-                  className="text-black rounded-md p-2 outline-theme-yellow-dark border border-theme-dark"
-                  onChange={handleInput}
-                />
-              </div>
-            </>
-          ) : null}
-
           {queryType == "grpnotalloted" ? (
             <div className="flex flex-col ">
               <label className=" mx-1 font-semibold">Course Name</label>
@@ -515,18 +499,6 @@ function Home() {
               />
             </div>
           ) : null}
-
-          <div className="flex flex-col ">
-            <label className=" mx-1 font-semibold">Query</label>
-            <textarea
-              type="text"
-              placeholder="Details about the query"
-              name="query_desc"
-              className="text-black rounded-md p-2 outline-theme-yellow-dark border border-theme-dark"
-              onChange={handleInput}
-            />
-          </div>
-
           {queryType == "UPIpayment" || queryType == "misc" ? (
             <>
               <div className="flex flex-col ">
@@ -551,6 +523,17 @@ function Home() {
               </div>
             </>
           ) : null}
+
+          <div className="flex flex-col ">
+            <label className=" mx-1 font-semibold">Query</label>
+            <textarea
+              type="text"
+              placeholder="Details about the query"
+              name="query_desc"
+              className="text-black rounded-md p-2 outline-theme-yellow-dark border border-theme-dark"
+              onChange={handleInput}
+            />
+          </div>
 
           {queryType == "coursenotvisible" ||
           queryType == "UPIpayment" ||

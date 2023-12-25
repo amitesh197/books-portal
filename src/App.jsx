@@ -33,7 +33,7 @@ function App() {
   }, []);
 
   return (
-    <div className=" pt-14 ">
+    <div className=" pt-14">
       <Routes>
         <Route path="/login" element={<Login />} />
         <Route path="/signup" element={<SignUp />} />

@@ -1,7 +1,7 @@
 .table-elements-container {
   padding: 10px;
   width: 100%;
-  height: calc(100vh - 3rem);
+  height: 100vh;
   box-sizing: border-box;
 
   .modal {
@@ -81,7 +81,7 @@
     margin: 10px;
     box-sizing: border-box;
     overflow: auto;
-    max-height: calc(100vh - 7rem);
+    max-height: 70%;
     position: relative;
     padding: 0 0 10px 0; /* Import styles for the response table scrollbar */
     @import "../scrollbars/response_table_scrollbar";
