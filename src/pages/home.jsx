@@ -94,7 +94,7 @@ function Home() {
       status: "Pending",
       taken_by: userInfo.email,
       query_type: queryType,
-      comment: "",
+      comment: " ",
       query_desc: "",
     }));
     // this is the data that will be sent to the db.

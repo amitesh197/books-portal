@@ -174,6 +174,11 @@ function Unresolved() {
         each.date = `${day}/${month}/${year}`;
         return each;
       });
+
+      //sort according to id
+      processedData.sort((a, b) => {
+        return b.id - a.id;
+      });
       // Sort data based on the "status" column and id, putting "done" values at the end
       let sortedData = processedData.sort((a, b) => {
         const statusA = a.status.toLowerCase();
