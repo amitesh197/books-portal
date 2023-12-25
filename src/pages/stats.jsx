@@ -77,7 +77,7 @@ function Stats() {
 
       // Parse the response as JSON
       let data = await response.json();
-      console.log("All data:", data);
+      // console.log("All data:", data);
       /*  data = [{
         "date": "2023-12-21T07:59:23.369Z",
         "taken_by": "shantanuesakpal1420@gmail.com",

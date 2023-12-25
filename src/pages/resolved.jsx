@@ -72,6 +72,14 @@ function Resolved() {
         data.some((response) => response[column.id] !== null)
     );
 
+    filteredColumns = filteredColumns.filter((column) => {
+      // Check if all values for this column are empty or null
+      const allValuesEmptyOrNull = data.every(
+        (response) => response[column.id] == "" || response[column.id] == null
+      );
+      return !allValuesEmptyOrNull;
+    });
+
     //remove the id column and query type column
     filteredColumns = filteredColumns.filter(
       (column) => column.id !== "id" && column.id !== "query_type"

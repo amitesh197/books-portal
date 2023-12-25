@@ -24,7 +24,7 @@ export default function TableRenderer({ data, columns, getData }) {
   const [selectedCellValue, setSelectedCellValue] = useState({});
   const [changeStatusModal, setChangeStatusModal] = useState(false);
   const { userInfo } = useGlobalContext();
-  console.log("data", data);
+  // console.log("data", data);
 
   const columnMapping = {
     id: "ID",
