@@ -118,12 +118,13 @@ function Home() {
     setLoading(true);
     let formDataWithFile = formData;
     if (
-      queryType == "coursenotvisible" ||
-      queryType == "UPIpayment" ||
-      queryType == "misc" ||
-      queryType == "batchShift" ||
-      queryType == "emi" ||
-      queryType == "feedback"
+      (queryType == "coursenotvisible" ||
+        queryType == "UPIpayment" ||
+        queryType == "misc" ||
+        queryType == "batchShift" ||
+        queryType == "emi" ||
+        queryType == "feedback") &&
+      fileObj
     ) {
       const fileurl = await uploadFiletoCloud();
       //add file url to the form data

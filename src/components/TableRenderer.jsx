@@ -351,18 +351,21 @@ export default function TableRenderer({ data, columns, getData }) {
                     >
                       <div>
                         {cell.column.id === "file" ? (
-                          // If the column is "file", render a link
-                          <a
-                            href={row.original.file}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            style={{
-                              color: "#007bff",
-                              textDecoration: "underline",
-                            }}
-                          >
-                            Click to open file
-                          </a>
+                          row.original.file ? ( // If the column is "file", render a link
+                            <a
+                              href={row.original.file}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              style={{
+                                color: "#007bff",
+                                textDecoration: "underline",
+                              }}
+                            >
+                              View file
+                            </a>
+                          ) : (
+                            <p>No file</p>
+                          )
                         ) : (
                           // Render other cells as usual
                           flexRender(
