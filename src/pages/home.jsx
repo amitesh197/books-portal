@@ -302,25 +302,23 @@ function Home() {
               <div className="flex flex-col ">
                 <label className=" mx-1 font-semibold">Old Number</label>
                 <input
-                  type="number"
+                  type="text"
                   placeholder="Old number"
                   required
                   name="number"
                   className="text-black rounded-md p-2 outline-theme-yellow-dark border border-theme-dark"
                   onChange={handleInput}
-                  min={0}
                 />
               </div>
               <div className="flex flex-col ">
                 <label className=" mx-1 font-semibold">New Number</label>
                 <input
-                  type="number"
+                  type="text"
                   placeholder="New number"
                   required
                   name="new_number"
                   className="text-black rounded-md p-2 outline-theme-yellow-dark border border-theme-dark"
                   onChange={handleInput}
-                  min={0}
                 />
               </div>
             </>
@@ -328,12 +326,11 @@ function Home() {
             <div className="flex flex-col ">
               <label className=" mx-1 font-semibold">Number</label>
               <input
-                type="number"
+                type="text"
                 placeholder="Number"
                 name="number"
                 className="text-black rounded-md p-2 outline-theme-yellow-dark border border-theme-dark"
                 onChange={handleInput}
-                min={0}
                 required
               />
             </div>
@@ -403,7 +400,7 @@ function Home() {
               <div className="flex flex-col ">
                 <label className=" mx-1 font-semibold">First Installment</label>
                 <input
-                  type="number"
+                  type="text"
                   placeholder="First Installment"
                   name="first_installment"
                   className="text-black rounded-md p-2 outline-theme-yellow-dark border border-theme-dark"
@@ -415,7 +412,7 @@ function Home() {
                   Second Installment
                 </label>
                 <input
-                  type="number"
+                  type="text"
                   placeholder="Second Installment"
                   name="second_installment"
                   className="text-black rounded-md p-2 outline-theme-yellow-dark border border-theme-dark"
