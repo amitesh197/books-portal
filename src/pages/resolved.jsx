@@ -107,11 +107,8 @@ function Resolved() {
     };
 
     let finalColumns;
-    if (userInfo?.isAdmin) {
-      finalColumns = [...filteredColumns, deleteColumn];
-    } else {
-      finalColumns = [...filteredColumns];
-    }
+    //add delete column
+    finalColumns = [...filteredColumns, deleteColumn];
     return finalColumns;
   };
 
