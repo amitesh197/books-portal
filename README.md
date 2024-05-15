@@ -66,5 +66,5 @@ This Lambda function essentially serves as an API endpoint to interact with a Dy
 10. Leave the phone number field empty.
 11. Set a temporary password; "Test@1234".
 
-when the user will first login, they will be asked to change their password. you can do it yourself for them, go to https://sales.edsarrthi.in/login and enter the password (Test@1234
+when the user will first login, they will be asked to change their password. you can do it yourself for them, go to https://sales.sarrthiias.in/login and enter the password (Test@1234
 ) then change it to something else, i keep it the same, and then once logged in, send the email and password to saurabh sir. <br/>

@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useGlobalContext } from "../context/globalContext";
 import { Link, useNavigate } from "react-router-dom";
-import logo from "../assets/edsarrthi-logo.webp";
+import logo from "../assets/sarrthiias-logo.png";
 import UserPool from "../UserPool";
 import { CognitoUser, AuthenticationDetails } from "amazon-cognito-identity-js";
 import { data } from "autoprefixer";
@@ -183,11 +183,11 @@ function Login() {
             src={logo}
             width="100"
             height="100"
-            alt="edsarrthi logo"
+            alt="sarrthi ias logo"
           />
           <div className="font-bold text-3xl mx-8 lg:mx-16 text-center my-20">
             Welcome to{" "}
-            <span className="text-theme-yellow-dark"> Edsarrthi's</span> Sales
+            <span className="text-theme-yellow-dark"> Sarrthi IAS's</span> Sales
             Query Portal!
           </div>
         </div>
@@ -256,11 +256,11 @@ function Login() {
             src={logo}
             width="100"
             height="100"
-            alt="edsarrthi logo"
+            alt="sarrthi ias logo"
           />
           <div className="font-bold text-3xl mx-2 text-center my-10">
             Welcome to{" "}
-            <span className="text-theme-yellow-dark"> Edsarrthi's</span>{" "}
+            <span className="text-theme-yellow-dark"> Sarrthi IAS's</span>{" "}
             Performance Portal!
           </div>
           <div className="my-5 mx-auto text-center text-xl font-semibold">
@@ -345,11 +345,11 @@ function Login() {
             src={logo}
             width="100"
             height="100"
-            alt="edsarrthi logo"
+            alt="sarrthi ias logo"
           />
           <div className="font-bold text-3xl mx-8 lg:mx-16 text-center my-20">
             Welcome to{" "}
-            <span className="text-theme-yellow-dark"> Edsarrthi's</span> Sales
+            <span className="text-theme-yellow-dark"> Sarrthi IAS's</span> Sales
             Query Portal!
           </div>
         </div>
@@ -430,11 +430,11 @@ function Login() {
             src={logo}
             width="100"
             height="100"
-            alt="edsarrthi logo"
+            alt="sarrthi ias logo"
           />
           <div className="font-bold text-3xl mx-2 text-center my-10">
             Welcome to{" "}
-            <span className="text-theme-yellow-dark"> Edsarrthi's</span>{" "}
+            <span className="text-theme-yellow-dark"> Sarrthi IAS's</span>{" "}
             Performance Portal!
           </div>
           <div className="my-5 mx-auto text-center text-xl font-semibold">

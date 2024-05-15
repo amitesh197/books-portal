@@ -3,7 +3,7 @@ import { useGlobalContext } from "../context/globalContext";
 import { Link } from "react-router-dom";
 import { auth } from "../firebase.config";
 import { signOut } from "firebase/auth";
-import logo from "../assets/edsarrthi-logo.webp";
+import logo from "../assets/sarrthiias-navlogo.png";
 import { useNavigate } from "react-router-dom";
 
 function Navbar() {
