@@ -58,9 +58,9 @@ function Navbar() {
         ref={navbarRef}
         className="flex items-center justify-between flex-wrap px-2 py-2 bg-theme-dark text-white fixed top-0 left-0 z-20 w-screen"
       >
-        <div className="flex items-center flex-shrink-0 text-white mr-6  w-1/4 lg:w-20">
+        <div className="flex items-center flex-shrink-0 text-white mr-6  w-1/3 lg:w-20 h-10">
           <Link to="/">
-            <img src={logo} className="w-100 h-10 mr-2" alt="Logo" />
+            <img src={logo} className="w-full mr-2" alt="Logo" />
           </Link>
         </div>
 
