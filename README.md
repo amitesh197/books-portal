@@ -65,6 +65,7 @@ This Lambda function essentially serves as an API endpoint to interact with a Dy
 9. Enter the user's email address.
 10. Leave the phone number field empty.
 11. Set a temporary password; "Test@1234".
+12. Don't forget to add a the first row of headers to the sheet which is created in google sheets. we are using sheets to store the call and chat data of the user.
 
 when the user will first login, they will be asked to change their password. you can do it yourself for them, go to https://sales.sarrthiias.in/login and enter the password (Test@1234
 ) then change it to something else, i keep it the same, and then once logged in, send the email and password to saurabh sir. <br/>
