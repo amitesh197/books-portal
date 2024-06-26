@@ -60,7 +60,7 @@ This Lambda function essentially serves as an API endpoint to interact with a Dy
 4. Click on "Users and groups" in the left-hand menu.
 5. Choose "Create user" to add a new user to the pool.
 6. For the alias, select "email"
-7. Ensure that the option to send an invitation is unchecked.
+7. Don't send an invitation.
 8. Set the username, typically using their name or a unique identifier.
 9. Enter the user's email address.
 10. Leave the phone number field empty.
