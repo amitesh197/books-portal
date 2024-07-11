@@ -7,7 +7,7 @@ cd to the project directory
 `npm run dev`
 
 # How to get data from dynamodb
-1. Log in to the AWS Management Console.
+1. Log in to the AWS Management Console using email: askvjupsc@gmail.com
 2. Navigate to the DynamoDB service.
 3. Once in the DynamoDB console, look to the left-hand menu, and select "Explore items."
 4. select the "queries" table.
