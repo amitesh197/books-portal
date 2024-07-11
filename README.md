@@ -6,8 +6,19 @@ cd to the project directory
 `npm install`
 `npm run dev`
 
-# About the database
+# How to get data from dynamodb
+1. Log in to the AWS Management Console.
+2. Navigate to the DynamoDB service.
+3. Once in the DynamoDB console, look to the left-hand menu, and select "Explore items."
+4. select the "queries" table.
+5.Click "Filters"
+6. Add the column name in attribute name and its type
+7. Add condition, value
+8. for example, to get queries of upi,set ->>> ![image](https://github.com/Saurabh2414/sales-query-portal/assets/108987556/85851137-9dda-48e0-99a4-75702e81912d)
+9. Click "run" button
+10.  to download as csv, click "actions" -> "download to csv"
 
+# About the database
 1. Log in to the AWS Management Console.
 2. Navigate to the DynamoDB service.
 3. Once in the DynamoDB console, look to the left-hand menu, and select "Explore items."
