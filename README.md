@@ -92,7 +92,4 @@ after making changesl
 1. git add .
 2. git commit -m "message"
 3. git push
-
-then to deploy the changes ,
-
-1. npm run deploy
+4. npm run deploy
