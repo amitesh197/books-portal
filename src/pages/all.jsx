@@ -169,7 +169,7 @@ function All() {
     setData(null);
     // toast.loading("Fetching...");
 
-    console.log("Fetching data...");
+    console.log("Fetching data...", queryType);
     try {
       // Display a loading message or spinner if needed
 

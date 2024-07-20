@@ -63,11 +63,11 @@ function Stats() {
       // Display a loading message or spinner if needed
 
       const response = await fetch(
-        "https://g87ruzy4zl.execute-api.ap-south-1.amazonaws.com/dev/queries/",
-        {
-          method: "GET",
-          // or 'POST' or other HTTP methods
-        }
+          "https://g87ruzy4zl.execute-api.ap-south-1.amazonaws.com/dev/queries/",
+          {
+            method: "POST",
+            body: JSON.stringify({type: "getData", queryType: "all"}),
+          }
       );
 
       // Check if the response is successful (status code 200-299)
