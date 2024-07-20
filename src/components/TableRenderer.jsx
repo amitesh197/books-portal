@@ -13,7 +13,8 @@ import React, { useEffect, useState } from "react";
 import CommentModal from "./CommentModal";
 import ChangeStatusModal from "./ChangeStatusModal";
 
-export default function TableRenderer({ data, columns, getData }) {
+// eslint-disable-next-line react/prop-types
+export default function TableRenderer({ data, columns, getData,updateRow }) {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedRowId, setSelectedRowId] = useState(null);
   const [selectedComment, setSelectedComment] = useState(null);
@@ -91,7 +92,10 @@ export default function TableRenderer({ data, columns, getData }) {
       if (!response.ok) {
         throw new Error(`${response.type} error! Status: ${response.status}`);
       }
-      getData({ withToast: false });
+      // getData({ withToast: false });
+      // Update the front end directly
+      updateRow(selectedRowId, { comment: comment });
+
       toast.dismiss();
       toast.success("Comment added!");
     } catch (error) {
@@ -124,9 +128,11 @@ export default function TableRenderer({ data, columns, getData }) {
       if (!response.ok) {
         throw new Error(`${response.type} error status: ${response.status}`);
       }
+      // Update the front end directly
+      updateRow(selectedRowId, { status: status });
       toast.dismiss();
       toast.success("Status updated!");
-      getData({ withToast: false });
+      // getData({ withToast: false });
     } catch (error) {
       //clear toast
       toast.dismiss();

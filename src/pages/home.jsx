@@ -135,9 +135,10 @@ function Home() {
     }
 
     try {
-      // console.log("form data with link", formDataWithFile);
+      console.log("form data with link", formDataWithFile);
       // Send a delete query to dynamodb
-
+  //add type to the form data
+        formDataWithFile.type = "addData";
       const response = await fetch(
         "https://g87ruzy4zl.execute-api.ap-south-1.amazonaws.com/dev/queries/",
         {
@@ -150,6 +151,7 @@ function Home() {
         let err = response.json();
         throw new Error(`${err} \n Status: ${response.status}`);
       }
+      console.log(response.json())
       clearInput();
       toast.dismiss();
       toast.success("Query added !");

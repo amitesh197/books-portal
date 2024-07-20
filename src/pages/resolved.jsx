@@ -82,8 +82,9 @@ function Resolved() {
 
     //remove the id column and query type column
     filteredColumns = filteredColumns.filter(
-      (column) => column.id !== "id" && column.id !== "query_type"
+        (column) => column.id !== "id" && column.id !== "query_type"  && column.id !== "type"  && column.id !== "createdAt"
     );
+
     if (!userInfo?.isAdmin) {
       //remove the taken_by column
       filteredColumns = filteredColumns.filter(
@@ -110,6 +111,13 @@ function Resolved() {
     //add delete column
     finalColumns = [...filteredColumns, deleteColumn];
     return finalColumns;
+  };
+  const updateRow = (rowId, updatedFields) => {
+    setData(prevData =>
+        prevData.map(row =>
+            row.id === rowId ? {...row, ...updatedFields} : row
+        )
+    );
   };
 
   const handleDelete = async (rowId) => {
@@ -147,11 +155,11 @@ function Resolved() {
       // Display a loading message or spinner if needed
 
       const response = await fetch(
-        "https://g87ruzy4zl.execute-api.ap-south-1.amazonaws.com/dev/queries/",
-        {
-          method: "GET",
-          // or 'POST' or other HTTP methods
-        }
+          "https://g87ruzy4zl.execute-api.ap-south-1.amazonaws.com/dev/queries/",
+          {
+            method: "POST",
+            body: JSON.stringify({type: "getData", queryType: queryType}),
+          }
       );
 
       // Check if the response is successful (status code 200-299)
@@ -196,7 +204,7 @@ function Resolved() {
 
       // Filter out the data based on the query type if status is "Done"
       sortedData = sortedData.filter(
-        (row) => row.query_type === queryType && row.status === "Done"
+        (row) =>  row.status === "Done"
       );
 
       // If the user is not an admin, further filter based on taken_by = userInfo.email
@@ -303,7 +311,9 @@ function Resolved() {
       ) : (
         data &&
         columns && (
-          <TableRenderer data={data} columns={columns} getData={getData} />
+          <TableRenderer
+              updateRow={updateRow}
+              data={data} columns={columns} getData={getData} />
         )
       )}
     </div>
