@@ -46,6 +46,8 @@ export default function TableRenderer({ data, columns, getData,updateRow }) {
     first_installment: "First Installment",
     second_installment: "Second Installment",
     file: "File",
+    deviceName: "Device Name",
+    deviceSpecs: "Device Specs",
     query_desc: "Query Description",
     taken_by: "Taken By",
     comment: "Comment",

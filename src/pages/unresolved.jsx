@@ -44,7 +44,10 @@ function Unresolved() {
             "feedback",
             "first_installment",
             "second_installment",
+            "deviceName",
+            "deviceSpecs",
             "file",
+
             "query_desc",
             "taken_by",
             "comment",
@@ -146,6 +149,7 @@ function Unresolved() {
         console.log("Fetching data...");
         try {
             // Display a loading message or spinner if needed
+            toast.loading("Fetching data...");
 
             const response = await fetch(
                 "https://g87ruzy4zl.execute-api.ap-south-1.amazonaws.com/dev/queries/",
@@ -276,6 +280,8 @@ function Unresolved() {
                     <option value="coursenotvisible">Course Not Visible</option>
                     <option value="UPIpayment">UPI Payment</option>
                     <option value="grpnotalloted">Group not alloted</option>
+                    <option value="technicalIssue">Technical Issue</option>
+
                     <option value="misc">Misc</option>
                 </select>
             </div>

@@ -44,7 +44,10 @@ function Resolved() {
       "feedback",
       "first_installment",
       "second_installment",
+      "deviceName",
+      "deviceSpecs",
       "file",
+
       "query_desc",
       "taken_by",
       "comment",
@@ -153,6 +156,7 @@ function Resolved() {
     console.log("Fetching data...");
     try {
       // Display a loading message or spinner if needed
+      toast.loading("Fetching data...");
 
       const response = await fetch(
           "https://g87ruzy4zl.execute-api.ap-south-1.amazonaws.com/dev/queries/",
@@ -257,12 +261,12 @@ function Resolved() {
         </label>
 
         <select
-          className="float-left  border-2 border-theme-yellow-dark inline px-3 py-2 rounded-md  text-black outline-none w-fit  cursor-pointer"
-          value={queryType}
-          onChange={(e) => {
-            setQueryType(e.target.value);
-            localStorage.setItem("queryType", e.target.value);
-          }}
+            className="float-left  border-2 border-theme-yellow-dark inline px-3 py-2 rounded-md  text-black outline-none w-fit  cursor-pointer"
+            value={queryType}
+            onChange={(e) => {
+              setQueryType(e.target.value);
+              localStorage.setItem("queryType", e.target.value);
+            }}
         >
           <option value="nameChange">Name Change</option>
           <option value="batchShift">Batch Shift</option>
@@ -277,12 +281,14 @@ function Resolved() {
           <option value="coursenotvisible">Course Not Visible</option>
           <option value="UPIpayment">UPI Payment</option>
           <option value="grpnotalloted">Group not alloted</option>
+          <option value="technicalIssue">Technical Issue</option>
+
           <option value="misc">Misc</option>
         </select>
       </div>
       <Toaster
-        position="bottom-left"
-        toastOptions={{
+          position="bottom-left"
+          toastOptions={{
           // Define default options
           className: "",
 

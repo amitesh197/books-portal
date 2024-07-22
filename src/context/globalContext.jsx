@@ -10,7 +10,7 @@ export const GlobalContextProvider = ({ children }) => {
     token: "",
   });
 
-  const [queryType, setQueryType] = useState("numberchange");
+  const [queryType, setQueryType] = useState("");
   // queryType can take following values.
   // this is also the sheetname in the spreadsheet
   // nameChange

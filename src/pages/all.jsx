@@ -69,6 +69,9 @@ function All() {
       "feedback",
       "first_installment",
       "second_installment",
+        "deviceName",
+        "deviceSpecs",
+
       "file",
       "query_desc",
       "taken_by",
@@ -170,6 +173,7 @@ function All() {
     // toast.loading("Fetching...");
 
     console.log("Fetching data...", queryType);
+    toast.loading("Fetching data...");
     try {
       // Display a loading message or spinner if needed
 
@@ -188,7 +192,7 @@ function All() {
 
       // Parse the response as JSON
       let data = await response.json();
-      // console.log("All data:", data);
+      console.log("All data:", data);
 
       const processedData = data.map((each) => {
         const dateObject = new Date(each.date);
@@ -276,12 +280,12 @@ function All() {
         </label>
 
         <select
-          className="float-left  border-2 border-theme-yellow-dark inline px-3 py-2 rounded-md  text-black outline-none w-fit  cursor-pointer"
-          value={queryType}
-          onChange={(e) => {
-            setQueryType(e.target.value);
-            localStorage.setItem("queryType", e.target.value);
-          }}
+            className="float-left  border-2 border-theme-yellow-dark inline px-3 py-2 rounded-md  text-black outline-none w-fit  cursor-pointer"
+            value={queryType}
+            onChange={(e) => {
+              setQueryType(e.target.value);
+              localStorage.setItem("queryType", e.target.value);
+            }}
         >
           <option value="nameChange">Name Change</option>
           <option value="batchShift">Batch Shift</option>
@@ -296,13 +300,15 @@ function All() {
           <option value="coursenotvisible">Course Not Visible</option>
           <option value="UPIpayment">UPI Payment</option>
           <option value="grpnotalloted">Group not alloted</option>
+          <option value="technicalIssue">Technical Issue</option>
+
           <option value="misc">Misc</option>
         </select>
       </div>
       <Toaster
-        position="bottom-left"
-        toastOptions={{
-          // Define default options
+          position="bottom-left"
+          toastOptions={{
+            // Define default options
           className: "",
 
           style: {
