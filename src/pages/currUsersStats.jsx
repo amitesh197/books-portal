@@ -25,7 +25,7 @@ export default function CurrUsersStats() {
       status: "all",
       sheetname: userInfo?.email,
     };
-    // console.log("params data is", paramsData);
+    console.log("params data is", paramsData);
 
     const queryParams = new URLSearchParams(paramsData);
 
@@ -35,6 +35,7 @@ export default function CurrUsersStats() {
       const result = await fetch(`${import.meta.env.VITE_URL}?${queryParams}`);
       const data = await result.json();
       toast.dismiss();
+      console.log("data", data);
       if ((data.message = "done")) {
         //sort data by total connected count
         data.data.sort((a, b) => {

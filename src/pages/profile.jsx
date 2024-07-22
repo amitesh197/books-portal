@@ -227,11 +227,13 @@ export default function Profile({ props }) {
                       <input
                         type="number"
                         id="count"
+                        min={0}
                         placeholder="Total calls made"
                         className="w-full p-2 outline-none  rounded-lg border border-theme-dark hover:border-theme-yellow-dark"
                         required
                       />
                       <input
+                          min={0}
                         type="number"
                         id="connected-calls"
                         name="connected-calls"
@@ -242,7 +244,9 @@ export default function Profile({ props }) {
                     </>
                   ) : (
                     <input
-                      type="number"
+                        min={0}
+
+                        type="number"
                       id="count"
                       placeholder="Count"
                       className="w-full p-2 outline-none  rounded-lg border border-theme-dark hover:border-theme-yellow-dark"
