@@ -63,7 +63,7 @@ function Stats() {
       // Display a loading message or spinner if needed
 
       const response = await fetch(
-          "https://vhwkobs58j.execute-api.ap-south-1.amazonaws.com/dev/queries/",
+          "https://446kx5s4a4.execute-api.ap-south-1.amazonaws.com/dev/queries/",
           {
             method: "POST",
             body: JSON.stringify({type: "getData", queryType: "all"}),

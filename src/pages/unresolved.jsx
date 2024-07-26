@@ -121,7 +121,7 @@ function Unresolved() {
         try {
             // Send a delete query to dynamodb
             const response = await fetch(
-                "https://vhwkobs58j.execute-api.ap-south-1.amazonaws.com/dev/queries/",
+                "https://446kx5s4a4.execute-api.ap-south-1.amazonaws.com/dev/queries/",
                 {
                     method: "DELETE",
                     body: JSON.stringify({id: rowId}),
@@ -152,7 +152,7 @@ function Unresolved() {
             toast.loading("Fetching data...");
 
             const response = await fetch(
-                "https://vhwkobs58j.execute-api.ap-south-1.amazonaws.com/dev/queries/",
+                "https://446kx5s4a4.execute-api.ap-south-1.amazonaws.com/dev/queries/",
                 {
                     method: "POST",
                     body: JSON.stringify({type: "getData", queryType: queryType}),
