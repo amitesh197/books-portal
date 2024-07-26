@@ -146,7 +146,7 @@ function All() {
     try {
       // Send a delete query to dynamodb
       const response = await fetch(
-        "https://g87ruzy4zl.execute-api.ap-south-1.amazonaws.com/dev/queries/",
+        "https://vhwkobs58j.execute-api.ap-south-1.amazonaws.com/dev/queries/",
         {
           method: "DELETE",
           body: JSON.stringify({ id: rowId }),
@@ -178,7 +178,7 @@ function All() {
       // Display a loading message or spinner if needed
 
       const response = await fetch(
-          "https://g87ruzy4zl.execute-api.ap-south-1.amazonaws.com/dev/queries/",
+          "https://vhwkobs58j.execute-api.ap-south-1.amazonaws.com/dev/queries/",
           {
             method: "POST",
             body: JSON.stringify({type: "getData", queryType: queryType}),

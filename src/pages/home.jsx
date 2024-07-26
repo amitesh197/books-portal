@@ -139,7 +139,7 @@ function Home() {
             formDataWithFile.type = "addData";
 
             const response = await fetch(
-                "https://g87ruzy4zl.execute-api.ap-south-1.amazonaws.com/dev/queries/",
+                "https://vhwkobs58j.execute-api.ap-south-1.amazonaws.com/dev/queries/",
                 {
                     method: "POST",
                     body: JSON.stringify(formDataWithFile),

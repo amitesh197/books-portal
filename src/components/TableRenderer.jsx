@@ -80,7 +80,7 @@ export default function TableRenderer({ data, columns, getData,updateRow }) {
       // Send a add comment query to dynamodb
       // console.log({ id: selectedRowId, comment: comment });
       const response = await fetch(
-        "https://g87ruzy4zl.execute-api.ap-south-1.amazonaws.com/dev/queries/",
+        "https://vhwkobs58j.execute-api.ap-south-1.amazonaws.com/dev/queries/",
         {
           method: "PUT",
           body: JSON.stringify({
@@ -114,7 +114,7 @@ export default function TableRenderer({ data, columns, getData,updateRow }) {
       // Send a delete query to dynamodb
       // console.log({ id: selectedRowId, status: status });
       const response = await fetch(
-        "https://g87ruzy4zl.execute-api.ap-south-1.amazonaws.com/dev/queries/",
+        "https://vhwkobs58j.execute-api.ap-south-1.amazonaws.com/dev/queries/",
         {
           method: "PUT",
           body: JSON.stringify({
