@@ -6,7 +6,7 @@ import { useNavigate } from "react-router-dom";
 
 function Stats() {
   const { userInfo, queryType, setQueryType } = useGlobalContext();
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
   const [statsData, setStatsData] = useState(null);
   const navigate = useNavigate();
 

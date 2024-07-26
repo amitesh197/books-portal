@@ -8,7 +8,7 @@ function All() {
   const { userInfo, queryType, setQueryType } = useGlobalContext();
   const [data, setData] = useState(null);
   const [columns, setColumns] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
 
   const getFilteredColumns = (data) => {
     // Columns to always show
@@ -59,6 +59,7 @@ function All() {
       "new_email",
       "number",
       "new_number",
+        "amount",
       "current_batch",
       "new_batch",
       "current_course",
@@ -172,7 +173,6 @@ function All() {
     // toast.loading("Fetching...");
 
     console.log("Fetching data...", queryType);
-    toast.loading("Fetching data...");
     try {
       // Display a loading message or spinner if needed
 
@@ -233,8 +233,8 @@ function All() {
 
       setColumns(getFilteredColumns(sortedData));
 
-      if (withToast) {
         toast.dismiss();
+      if (withToast) {
         toast.success();
       }
     } catch (err) {

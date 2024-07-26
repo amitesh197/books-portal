@@ -186,16 +186,14 @@ export default function Profile({ props }) {
           },
         }}
       />
-      <div className="w-full h-full box-border">
-        <h1 className="text-xl font-bold m-2">
-          Hello there {userInfo ? userInfo?.email : "Guest"}!
-        </h1>
+      <div className="w-full h-full box-border p-5">
+
         <div className="flex flex-row  h-full p-3">
           {/* div for form and todays progress */}
-          <div className="flex flex-col justify-between items-center  h-full  sm:w-1/2 md:px-10 md:gap-10 ">
+          <div className="flex flex-col justify-between items-center  h-fit  sm:w-1/2 md:px-10 md:gap-10 ">
             {/* div for form */}
             <div className="bg-theme-light-gray rounded-lg p-5 w-full lg:w-2/3 mx-auto">
-              <h3 className="font-semibold w-full text-center mb-5">
+              <h3 className="font-semibold w-full text-center">
                 Add data
               </h3>
 

@@ -57,7 +57,7 @@ export default function MonthProgressCard({ userData }) {
   const currentCount = Number(connectedCount) + Number(chatsCount);
 
   return (
-    <div className="h-full w-full p-5 rounded-lg bg-theme-light-gray">
+    <div className="h-fit w-full p-5 rounded-lg bg-theme-light-gray">
       <h1 className=" text-center w-full font-bold text-2xl">
         Your Month's Progress
       </h1>

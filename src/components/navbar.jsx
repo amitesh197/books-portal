@@ -42,7 +42,7 @@ function Navbar() {
                 <div className="p-4 pb-2 flex justify-between items-center mb-5">
                     <div className="w-full flex justify-center items-center">
                         <img
-                            className={`overflow-hidden transition-all ${expanded ? "w-32" : "w-10"}`}
+                            className={`overflow-hidden transition-all ${expanded ? "w-20" : "w-10"}`}
                             src={expanded ? brand : logo}
                             alt="Logo"
 
@@ -61,47 +61,37 @@ function Navbar() {
                 </div>
 
                 <ul className="flex-1 px-3">
-                    {userInfo?.isAdmin ? (
-                        <>
-                            <SidebarItem expanded={expanded} icon="fa-solid fa-home" text="Home" active={currentUrl === ""} link="/"/>
-                            <SidebarItem expanded={expanded} icon="fa-solid fa-list" text="All" active={currentUrl === "all"} link="/all"/>
-                            <SidebarItem expanded={expanded} icon="fa-solid fa-check-circle" text="Resolved"
-                                         active={currentUrl === "resolved"} link="/resolved"/>
-                            <SidebarItem expanded={expanded} icon="fa-solid fa-exclamation-circle" text="Unresolved"
-                                         active={currentUrl === "unresolved"} link="/unresolved"/>
-                            <SidebarItem expanded={expanded} icon="fa-solid fa-chart-bar" text="Stats" active={currentUrl === "stats"}
-                                         link="/stats"/>
-                            <SidebarItem expanded={expanded}
-                                icon="fa-solid fa-tachometer-alt"
-                                text="Dashboard"
-                                active={currentUrl === "dashboard" || currentUrl === "current-users-stats" || currentUrl === "monthly-user-history"}
-                                link="/dashboard"
-                                isDropdown={true}
-                                dropdownItems={[
-                                    {text: "Current Month Stats", link: "/current-users-stats"},
-                                    {text: "Monthly User's History", link: "/monthly-user-history"}
-                                ]}
-                            />
-                        </>
-                    ) : (
-                        <>
-                            <SidebarItem expanded={expanded} icon="fa-solid fa-home" text="Home" active={currentUrl === ""} link="/"/>
-                            <SidebarItem expanded={expanded} icon="fa-solid fa-list" text="All" active={currentUrl === "all"} link="/all"/>
-                            <SidebarItem expanded={expanded} icon="fa-solid fa-check-circle" text="Resolved"
-                                         active={currentUrl === "resolved"} link="/resolved"/>
-                            <SidebarItem expanded={expanded} icon="fa-solid fa-exclamation-circle" text="Unresolved"
-                                         active={currentUrl === "unresolved"} link="/unresolved"/>
-                            <SidebarItem expanded={expanded} icon="fa-solid fa-user" text="Profile" active={currentUrl === "profile"}
-                                         link="/profile"/>
-                            <SidebarItem expanded={expanded} icon="fa-solid fa-clock-rotate-left" text="History"
-                                         active={currentUrl === "history"} link="/history"/>
-                        </>
-                    )}
-                    <SidebarItem expanded={expanded} icon="fa-solid fa-trophy" text="Top Performers" active={currentUrl === "topperformers"}
-                                 link="/topperformers"/>
-                    <SidebarItem expanded={expanded} icon="fa-solid fa-bullhorn" text="Announcements"
-                                 active={currentUrl === "announcements"} link="/announcements"/>
-
+                    {[
+                        {icon: "fa-solid fa-home", text: "Home", link: "/"},
+                        {icon: "fa-solid fa-list", text: "All", link: "/all"},
+                        {icon: "fa-solid fa-check-circle", text: "Resolved", link: "/resolved"},
+                        {icon: "fa-solid fa-exclamation-circle", text: "Unresolved", link: "/unresolved"},
+                        ...(userInfo?.isAdmin ? [
+                            {icon: "fa-solid fa-chart-bar", text: "Stats", link: "/stats"},
+                            {icon: "fa-solid fa-tachometer-alt", text: "Dashboard", link: "/dashboard"},
+                            {
+                                icon: "fa-solid fa-clock-rotate-left",
+                                text: "Monthly user's history",
+                                link: "/monthly-user-history"
+                            },
+                            {icon: "fa-solid fa-calendar", text: "Current Month Stats", link: "/current-users-stats"}
+                        ] : [
+                            {icon: "fa-solid fa-user", text: "Profile", link: "/profile"},
+                            {icon: "fa-solid fa-clock-rotate-left", text: "History", link: "/history"}
+                        ]),
+                        {icon: "fa-solid fa-trophy", text: "Top Performers", link: "/topperformers"},
+                        {icon: "fa-solid fa-bullhorn", text: "Announcements", link: "/announcements"}
+                    ].map(({icon, text, link }) => (
+                        <SidebarItem
+                            key={link}
+                            expanded={expanded}
+                            icon={icon}
+                            text={text}
+                            active={currentUrl === link.slice(1)}
+                            link={link}
+                        />
+                    ))
+                    }
                 </ul>
 
                 <div className="border-t flex p-3">

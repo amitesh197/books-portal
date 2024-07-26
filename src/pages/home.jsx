@@ -340,6 +340,20 @@ function Home() {
                             />
                         </div>
                     )}
+
+                    {(queryType === "batchShift" ||
+                        queryType === "UPIpayment" ) ? (
+                        <div className="flex flex-col ">
+                            <label className=" mx-1 font-semibold">Amount</label>
+                            <input
+                                type="number"
+                                placeholder="Amount"
+                                name="amount"
+                                className="text-black rounded-md p-2 outline-theme-yellow-dark border border-theme-dark"
+                                onChange={handleInput}
+                            />
+                        </div>
+                    ) : null}
                     {queryType === "batchShift" ? (
                         <>
                             <div className="flex flex-col ">
@@ -376,6 +390,8 @@ function Home() {
                             />
                         </div>
                     ) : null}
+
+
 
                     {queryType === "batchShift" ||
                     queryType === "refund" ||

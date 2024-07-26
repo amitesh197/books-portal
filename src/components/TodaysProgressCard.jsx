@@ -53,7 +53,7 @@ export default function TodaysProgressCard({ userData }) {
     .reduce((acc, item) => acc + item.Connected, 0);
 
   return (
-    <div className="w-full my-5 bg-theme-light-gray rounded-lg p-5 h-full flex flex-col gap-5">
+    <div className="w-full my-5 bg-theme-light-gray rounded-lg p-5 h-fit flex flex-col gap-5">
       <h1 className="font-bold w-full text-center text-2xl ">
         Today's Progress
       </h1>

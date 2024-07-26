@@ -18,6 +18,7 @@ import MonthlyUserHistory from "./pages/monthlyUserHistory";
 import CurrUsersStats from "./pages/currUsersStats";
 import SignUp from "./pages/signUp";
 import Navbar from "./components/navbar.jsx";
+import Dashboard from "./pages/dashboard.jsx";
 
 
 function App() {
@@ -65,6 +66,9 @@ function App() {
                     <Route
                         path="/monthly-user-history"
                         element={userInfo?.isAdmin && <MonthlyUserHistory/>}
+                    /> <Route
+                        path="/dashboard"
+                        element={userInfo?.isAdmin && <Dashboard/>}
                     />
                     <Route path="/announcements" element={userInfo && <Announcements/>}/>
                     <Route

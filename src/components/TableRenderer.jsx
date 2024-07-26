@@ -36,6 +36,7 @@ export default function TableRenderer({ data, columns, getData,updateRow }) {
     new_email: "New Email",
     number: "Number",
     new_number: "New Number",
+    amount: "Amount",
     current_batch: "Current Batch",
     new_batch: "New Batch",
     current_course: "Current Course",

@@ -8,7 +8,7 @@ function Resolved() {
   const { userInfo, queryType, setQueryType } = useGlobalContext();
   const [data, setData] = useState(null);
   const [columns, setColumns] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
 
   const getFilteredColumns = (data) => {
     // Columns to always show
@@ -34,6 +34,7 @@ function Resolved() {
       "new_email",
       "number",
       "new_number",
+      "amount",
       "current_batch",
       "new_batch",
       "current_course",
@@ -46,7 +47,6 @@ function Resolved() {
       "deviceName",
       "deviceSpecs",
       "file",
-
       "query_desc",
       "taken_by",
       "comment",
@@ -155,7 +155,6 @@ function Resolved() {
     console.log("Fetching data...");
     try {
       // Display a loading message or spinner if needed
-      toast.loading("Fetching data...");
 
       const response = await fetch(
           "https://446kx5s4a4.execute-api.ap-south-1.amazonaws.com/dev/queries/",
