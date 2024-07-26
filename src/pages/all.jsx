@@ -192,7 +192,7 @@ function All() {
 
       // Parse the response as JSON
       let data = await response.json();
-      console.log("All data:", data);
+      // console.log("All data:", data);
 
       const processedData = data.map((each) => {
         const dateObject = new Date(each.date);
