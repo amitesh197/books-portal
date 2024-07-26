@@ -1,7 +1,6 @@
 import React, {useEffect, useState} from "react";
 import {useGlobalContext} from "../context/globalContext";
 import {Toaster, toast} from "react-hot-toast";
-import Navbar from "../components/navbar";
 import {getDownloadURL, ref, uploadBytes} from "firebase/storage";
 import {storage} from "../firebase.config";
 
@@ -168,7 +167,7 @@ function Home() {
 
     return (
         <>
-            <Navbar/>
+
             <Toaster
                 position="bottom-left"
                 toastOptions={{
@@ -190,10 +189,9 @@ function Home() {
                     },
                 }}
             />
-            <div className="flex flex-col items-center justify-center text-black text-base  w-full">
-                <h1 className="w-full block p-2 font-semibold text-xl">
-                    Welcome {userInfo.isAdmin && <span className="inline">Admin </span>}{" "}
-                    {userInfo.username}
+            <div className="h-screen overflow-scroll flex flex-col items-center  text-black text-base   w-full py-5">
+                <h1 className="w-full block p-2 font-semibold text-xl text-center">
+                    Add new query
                 </h1>
                 <form
                     className="flex flex-col gap-5 rounded  justify-center w-full md:w-2/3 lg:w-1/2 m-2 mb-5"

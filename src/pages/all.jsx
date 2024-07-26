@@ -2,7 +2,6 @@ import React, { useEffect, useState } from "react";
 import { useGlobalContext } from "../context/globalContext";
 import { Toaster, toast } from "react-hot-toast";
 import Loading from "../components/Loading";
-import Navbar from "../components/navbar";
 import TableRenderer from "../components/TableRenderer";
 
 function All() {
@@ -269,8 +268,7 @@ function All() {
   }, [userInfo?.email, queryType]);
 
   return (
-    <div className="p-2 ">
-      <Navbar />
+    <div className=" p-2 w-full">
       <div className="flex flex-row gap-3 items-center justify-center  w-fit ">
         <label
           htmlFor="query-type "

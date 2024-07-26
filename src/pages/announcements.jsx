@@ -1,5 +1,4 @@
 import Loading from "../components/Loading";
-import Navbar from "../components/navbar";
 import AnnouncementCard from "../components/AnnouncementCard";
 import FullAnnouncementContainer from "../components/FullAnnouncementContainer";
 import { useGlobalContext } from "../context/globalContext";
@@ -91,7 +90,6 @@ export default function Announcements({ data }) {
 
   return (
     <div className="w-full  box-border overflow-clip">
-      <Navbar />
       <div className=" m-2 text-lg font-semibold w-fit">
         Recent Announcements
       </div>

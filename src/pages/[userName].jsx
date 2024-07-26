@@ -1,5 +1,4 @@
 import { useEffect, useState } from "react";
-import Navbar from "../components/navbar";
 import { Toaster, toast } from "react-hot-toast";
 import Loading from "../components/Loading";
 import DataTable from "../components/DataTable";
@@ -271,7 +270,6 @@ export default function History() {
 
   return (
     <>
-      <Navbar />
 
       <div className=" flex items-center">
         <div

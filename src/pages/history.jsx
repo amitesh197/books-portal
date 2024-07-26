@@ -1,6 +1,5 @@
 import { useEffect, useState } from "react";
 import { useGlobalContext } from "../context/globalContext";
-import Navbar from "../components/navbar";
 import { Toaster, toast } from "react-hot-toast";
 import Loading from "../components/Loading";
 import DataTable from "../components/DataTable";
@@ -270,7 +269,6 @@ export default function History() {
 
   return (
     <>
-      <Navbar />
       <form className="m-2">
         <div className="flex items-center space-x-4">
           <label className="text-gray-600">Filter Type:</label>

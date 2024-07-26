@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useGlobalContext } from "../context/globalContext";
 import { Toaster, toast } from "react-hot-toast";
-import Navbar from "../components/navbar";
 import Loading from "../components/Loading";
 import { useNavigate } from "react-router-dom";
 
@@ -115,7 +114,6 @@ function Stats() {
 
   return (
     <>
-      <Navbar />
       <div className="flex flex-col justify-center w-full flex-wrap">
         <Toaster
           position="bottom-left"

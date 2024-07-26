@@ -1,4 +1,3 @@
-import Navbar from "../components/navbar";
 import Loading from "../components/Loading";
 import { useNavigate } from "react-router-dom";
 import { useEffect, useMemo } from "react";
@@ -71,7 +70,6 @@ export default function TopPerformers() {
 
   return (
     <>
-      <Navbar />
 
       <div className="w-full">
         <h1 className="text-center w-full my-2 font-semibold text-xl">

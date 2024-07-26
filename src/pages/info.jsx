@@ -1,10 +1,8 @@
 import React from "react";
-import Navbar from "../components/navbar";
 
 function Info() {
   return (
     <>
-      <Navbar />
       <div className="  flex justify-center">
         <ol className="mt-10 text-center font-semibold  text-red-600 w-4/5 md:w-3/4">
           <li className="my-10 font-bold text-3xl">POINTS TO BE REMEMBERED</li>

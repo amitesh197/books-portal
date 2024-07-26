@@ -5,7 +5,7 @@
   gap: 10px;
   border-radius: 10px;
   padding: 5px 10px;
-  border: 2px solid black;
+  border: 2px solid lightgray;
 
   .icon {
     width: fit-content;
@@ -17,7 +17,7 @@
     width: 10rem;
     background-color: transparent;
     border: black;
-    outline: $theme-color-light;
+    outline: lightgray;
     color: black;
     font-weight: 500;
     font-size: 1rem;

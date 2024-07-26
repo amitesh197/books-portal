@@ -2,7 +2,6 @@ import React, { useMemo } from "react";
 import { useGlobalContext } from "../context/globalContext";
 import { useEffect, useState } from "react";
 import { Toaster, toast } from "react-hot-toast";
-import Navbar from "../components/navbar";
 import Loading from "../components/Loading";
 import UserOverallStatsCard from "../components/UserOverallStatsCard";
 import { useNavigate } from "react-router-dom";
@@ -125,7 +124,6 @@ export default function MonthlyUserHistory() {
 
   return (
     <>
-      <Navbar />
       <div className="px-4 ">
         <h1 className="text-xl font-semibold w-full  my-2">
           Select Employee Email to view Monthly History

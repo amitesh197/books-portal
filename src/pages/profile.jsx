@@ -1,6 +1,5 @@
 import { useEffect, useState } from "react";
 import { useGlobalContext } from "../context/globalContext";
-import Navbar from "../components/navbar";
 import TodaysProgressCard from "../components/TodaysProgressCard";
 import MonthProgressCard from "../components/MonthProgressCard";
 import { Toaster, toast } from "react-hot-toast";
@@ -166,7 +165,6 @@ export default function Profile({ props }) {
 
   return (
     <>
-      <Navbar />
       <Toaster
         position="bottom-left"
         toastOptions={{
