@@ -141,8 +141,8 @@ function SidebarItem({icon, text, active, link, expanded}) {
         transition-colors group h-10
         ${
                 active
-                    ? "bg-gradient-to-tr from-indigo-200 to-indigo-100 text-indigo-800"
-                    : "hover:bg-indigo-50 text-gray-600"
+                    ? "bg-gradient-to-tr from-blue-200 to-blue-100 text-blue-800"
+                    : "hover:bg-blue-50 text-gray-600"
             }
     `}
         >

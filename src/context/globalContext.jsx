@@ -9,8 +9,9 @@ export const GlobalContextProvider = ({ children }) => {
     userName: "",
     token: "",
   });
-
-  const [queryType, setQueryType] = useState("");
+    //get query from local storage
+    const query = localStorage.getItem("queryType");
+  const [queryType, setQueryType] = useState(query || "nameChange");
   // queryType can take following values.
   // this is also the sheetname in the spreadsheet
   // nameChange

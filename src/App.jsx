@@ -25,7 +25,6 @@ function App() {
     const {userInfo, setUserInfo} = useGlobalContext();
     const navigate = useNavigate();
     const location = useLocation();
-    const [isAdmin, setIsAdmin] = useState(false);
 
     useEffect(() => {
         //get userInfo from session storage

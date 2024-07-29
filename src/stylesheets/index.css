@@ -268,10 +268,9 @@ body {
   gap: 10px;
   border-radius: 10px;
   padding: 5px 10px;
-  border: 2px solid black;
+  border: 2px solid lightgray;
 }
 .table-elements-container .pagination-and-searchbar-container .table-search-bar .icon {
-  width: -moz-fit-content;
   width: fit-content;
   margin-bottom: -5px;
   color: black;
@@ -280,14 +279,10 @@ body {
   width: 10rem;
   background-color: transparent;
   border: black;
-  outline: rgb(253, 152, 25);
+  outline: lightgray;
   color: black;
   font-weight: 500;
   font-size: 1rem;
-}
-.table-elements-container .pagination-and-searchbar-container .table-search-bar input::-moz-placeholder {
-  color: gray;
-  font-size: 0.9rem;
 }
 .table-elements-container .pagination-and-searchbar-container .table-search-bar input::placeholder {
   color: gray;
@@ -301,7 +296,6 @@ body {
   justify-content: space-evenly;
   gap: 5px;
   align-items: center;
-  width: -moz-fit-content;
   width: fit-content;
   margin: 10px 0 0px 0;
 }
@@ -322,7 +316,7 @@ body {
   padding: 2px;
   width: 2rem;
   background-color: white;
-  border: 1px solid rgb(253, 152, 25);
+  border: 1px solid #faba4c;
   border-radius: 10px;
   color: black;
   font-size: 1rem;
@@ -343,7 +337,7 @@ body {
 .table-elements-container .pagination-buttons-container .select-page-rows {
   padding: 5px;
   background-color: white;
-  border: 1px solid rgb(253, 152, 25);
+  border: 1px solid #faba4c;
   border-radius: 10px;
   color: black;
   font-size: 1rem;
@@ -357,7 +351,6 @@ body {
 .table-elements-container .pagination-buttons-container strong {
   font-size: 1rem;
   margin: 0 10px;
-  width: -moz-fit-content;
   width: fit-content;
 }
 .table-elements-container .pagination-buttons-container .pagination-button {
@@ -366,7 +359,7 @@ body {
   align-items: center;
   padding: 0 5px;
   background-color: white;
-  border: 1px solid rgb(253, 152, 25);
+  border: 1px solid #faba4c;
   border-radius: 10px;
   color: black;
   width: 1.5rem;
@@ -430,7 +423,7 @@ body {
   height: 2rem;
 }
 .table-elements-container .table-container .table .table-head .table-head-row .table-head-cell {
-  background-color: rgb(253, 152, 25);
+  background-color: #faba4c;
   border-width: 1px;
   border-style: solid;
   border-color: black;
@@ -452,16 +445,14 @@ body {
   top: 0;
   height: 100%;
   cursor: col-resize;
-  -webkit-user-select: none;
-     -moz-user-select: none;
-          user-select: none;
+  user-select: none;
   touch-action: none;
 }
 .table-elements-container .table-container .table .table-head .table-head-row .table-head-cell .resize-div .isResizing {
   background-color: black;
 }
 .table-elements-container .table-container .table .table-head .table-head-row .table-head-cell .resize-div:hover {
-  background-color: rgb(253, 152, 25);
+  background-color: #faba4c;
 }
 .table-elements-container .table-container .table .table-head .table-head-row .table-head-cell:last-child {
   border-right: 1px solid black;
@@ -473,7 +464,7 @@ body {
   border-width: 0 0 1px 1px;
   border-style: solid;
   border-color: black;
-  background-color: #d9d9d9;
+  background-color: white;
   padding: 5px 10px;
   width: 100%;
 }
@@ -482,7 +473,7 @@ body {
   overflow-wrap: break-word;
 }
 .table-elements-container .table-container .table .table-body .table-body-row .table-body-cell:last-child {
-  border-right: 1px solid rgb(253, 152, 25);
+  border-right: 1px solid #faba4c;
 }
 .table-elements-container .table-container .table .table-body .table-body-row .table-body-cell .delete-cell {
   color: red;
@@ -497,4 +488,6 @@ body {
 }
 .table-elements-container .table-container .table .table-body .table-body-row .done-cell {
   background-color: lightgreen;
-}/*# sourceMappingURL=index.css.map */
+}
+
+/*# sourceMappingURL=index.css.map */

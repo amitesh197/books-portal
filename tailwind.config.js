@@ -15,8 +15,8 @@ export default {
 
         "theme-light-gray": "rgb(210, 210, 210)",
         "theme-dark-gray": "rgb(112, 112, 112)",
-        "theme-yellow-dark": " #ffa812",
-        "theme-yellow-light": "rgb(253, 152, 25)",
+        "theme-yellow-dark": "#e39500",
+        "theme-yellow-light": "#ffa812",
         "theme-dark": " #2e2c2d",
         "banner-btn": "#17115c",
         "theme-gray": "#D9D9D9",

@@ -78,7 +78,7 @@ function Unresolved() {
         filteredColumns = filteredColumns.filter((column) => {
             // Check if all values for this column are empty or null
             const allValuesEmptyOrNull = data.every(
-                (response) => response[column.id] == "" || response[column.id] == null
+                (response) => response[column.id] === "" || response[column.id] == null
             );
             return !allValuesEmptyOrNull;
         });
@@ -179,26 +179,10 @@ function Unresolved() {
             processedData.sort((a, b) => {
                 return b.id - a.id;
             });
-            // Sort data based on the "status" column and id, putting "done" values at the end
-            let sortedData = processedData.sort((a, b) => {
-                const statusA = a.status.toLowerCase();
-                const statusB = b.status.toLowerCase();
 
-                if (statusA === "done" && statusB !== "done") {
-                    return 1; // "Done" values go at the end
-                }
-                if (statusA !== "done" && statusB === "done") {
-                    return -1; // "Done" values go at the end
-                }
-
-                if (statusA === statusB) {
-                    return b.id - a.id; // If statuses are the same, sort by id in descending order
-                }
-            });
 
             // Filter out the data based on the query type if status is "Pending"
-
-            sortedData = sortedData.filter(
+            let sortedData = processedData.filter(
                 (row) =>  row.status === "Pending"
             );
             // If the user is not an admin, further filter based on taken_by = userInfo.email
@@ -207,6 +191,7 @@ function Unresolved() {
                     (row) => row.taken_by === userInfo.email
                 );
             }
+            // console.log("Filtered data:", sortedData);
             setData(sortedData);
 
             setColumns(getFilteredColumns(sortedData));

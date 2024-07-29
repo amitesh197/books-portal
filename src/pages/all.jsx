@@ -156,18 +156,17 @@ function All() {
       if (!response.ok) {
         throw new Error(`${response.type} error! Status: ${response.status}`);
       }
-      getData({ withToast: false });
-      toast.dismiss();
+      toast.dismiss()
       toast.success("Deleted !");
+      await getData();
     } catch (error) {
-      //clear toast
-      toast.dismiss();
+      toast.dismiss()
       toast.error(error.message);
       console.error("error:", error);
     }
   };
 
-  const getData = async ({ withToast }) => {
+  const getData = async () => {
     setLoading(true);
     setData(null);
     // toast.loading("Fetching...");
@@ -228,15 +227,12 @@ function All() {
           (row) => row.taken_by === userInfo.email
         );
       }
-
+      // console.log("sortedData", sortedData);
       setData(sortedData);
-
       setColumns(getFilteredColumns(sortedData));
+      toast.success();
 
-        toast.dismiss();
-      if (withToast) {
-        toast.success();
-      }
+
     } catch (err) {
       // Display an error message or handle the error as needed
       toast.error(err.message);
@@ -246,6 +242,7 @@ function All() {
       setLoading(false);
     }
   };
+
   const updateRow = (rowId, updatedFields) => {
     setData(prevData =>
         prevData.map(row =>
@@ -254,8 +251,8 @@ function All() {
     );
   };
 
-  useEffect(() => {
-    //set the query type to the query in local storage
+  useEffect( () => {
+    //se the query type to the query in local storage
     const query = localStorage.getItem("queryType");
     //if query is not null then set the query type to the query in local storage
     if (query) {
@@ -264,7 +261,7 @@ function All() {
       setQueryType("nameChange");
       localStorage.setItem("queryType", "nameChange");
     }
-    if (userInfo?.email) getData({ withToast: true });
+    if (userInfo?.email) getData();
   }, [userInfo?.email, queryType]);
 
   return (
@@ -336,7 +333,7 @@ function All() {
         columns && (
           <TableRenderer
             updateRow={updateRow}
-              data={data} columns={columns} getData={getData} />
+              data={data} columns={columns}  />
         )
       )}
     </div>

@@ -14,7 +14,7 @@ import CommentModal from "./CommentModal";
 import ChangeStatusModal from "./ChangeStatusModal";
 
 // eslint-disable-next-line react/prop-types
-export default function TableRenderer({ data, columns, getData,updateRow }) {
+export default function TableRenderer({ data, columns,updateRow }) {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedRowId, setSelectedRowId] = useState(null);
   const [selectedComment, setSelectedComment] = useState(null);
@@ -53,6 +53,14 @@ export default function TableRenderer({ data, columns, getData,updateRow }) {
     taken_by: "Taken By",
     comment: "Comment",
     status: "Status",
+    "ic_missed": "Incoming Calls Missed",
+    "oc_missed": "Outgoing Calls Missed",
+    "agent_name": "Agent Name",
+    "total_calls": "Total Calls",
+    "ic_answered": "Incoming Calls Answered",
+    "oc_answered": "Outgoing Calls Answered",
+    "duration": "Duration (in seconds)"
+
   };
 
   const handleCellClick = (cell) => {
@@ -156,6 +164,10 @@ export default function TableRenderer({ data, columns, getData,updateRow }) {
       sorting: sorting,
       globalFilter: filtering,
       columnSizing,
+      pagination: {
+        pageIndex: 0,
+        pageSize: 20,
+      }
     },
     onSortingChange: setSorting,
     onGlobalFilterChange: setFiltering,
