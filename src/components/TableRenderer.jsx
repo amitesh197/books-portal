@@ -53,13 +53,13 @@ export default function TableRenderer({ data, columns,updateRow }) {
     taken_by: "Taken By",
     comment: "Comment",
     status: "Status",
-    "ic_missed": "Incoming Calls Missed",
-    "oc_missed": "Outgoing Calls Missed",
+    "oc_answered": "OC Answered",
+    "oc_missed": "OC Missed",
+    "ic_missed": "IC Missed",
+    "ic_answered": "IC Answered",
     "agent_name": "Agent Name",
     "total_calls": "Total Calls",
-    "ic_answered": "Incoming Calls Answered",
-    "oc_answered": "Outgoing Calls Answered",
-    "duration": "Duration (in seconds)"
+    "duration": "Duration in secs"
 
   };
 
@@ -161,17 +161,26 @@ export default function TableRenderer({ data, columns,updateRow }) {
     getFilteredRowModel: getFilteredRowModel(),
     columnResizeMode: "onChange",
     state: {
-      sorting: sorting,
       globalFilter: filtering,
       columnSizing,
-      pagination: {
-        pageIndex: 0,
-        pageSize: 20,
-      }
+
+      sorting,
     },
     onSortingChange: setSorting,
     onGlobalFilterChange: setFiltering,
     onColumnSizingChange: setColumnSizing,
+    initialState: {
+      sorting: [
+        {
+          id: 'date',
+          desc: true, // sort by date in descending order by default
+        },
+      ],
+      pagination: {
+        pageIndex: 0,
+        pageSize: 20,
+      },
+    },
   });
   useEffect(() => {
     // console.log("data", data);
@@ -324,55 +333,61 @@ export default function TableRenderer({ data, columns,updateRow }) {
             {table.getHeaderGroups().map((headerGroup) => (
               <tr className="table-head-row" key={headerGroup.id}>
                 {headerGroup.headers.map((header) => (
-                  <th
-                    className="table-head-cell"
-                    key={header.id}
-                    data-column-name={header.id} // useEffect depends on that !
-                    colSpan={header.colSpan}
-                    style={{ width: header.getSize() }}
-                  >
-                    {header.column.getCanResize() ? (
-                      <div
-                        onMouseDown={header.getResizeHandler()}
-                        onTouchStart={header.getResizeHandler()}
-                        className={` resize-div ${
-                          header.column.getIsResizing() ? "isResizing" : ""
-                        }`}
-                      />
-                    ) : null}
-                    {header.isPlaceholder ? null : (
-                      <div>
-                        {flexRender(
-                          columnMapping[header.id] ||
-                            header.column.columnDef.header,
-                          header.getContext()
-                        )}
-                      </div>
-                    )}
-                  </th>
+                    <th
+                        className="table-head-cell"
+                        key={header.id}
+                        data-column-name={header.id}
+                        colSpan={header.colSpan}
+                        style={{width: header.getSize()}}
+                    >
+                      {header.column.getCanResize() ? (
+                          <div
+                              onMouseDown={header.getResizeHandler()}
+                              onTouchStart={header.getResizeHandler()}
+                              className={`resize-div ${
+                                  header.column.getIsResizing() ? "isResizing" : ""
+                              }`}
+                          />
+                      ) : null}
+                      {header.isPlaceholder ? null : (
+                          <div
+                              className={header.column.getCanSort() ? "cursor-pointer select-none" : ""}
+                              onClick={header.column.getToggleSortingHandler()}
+                          >
+                            {flexRender(
+                                columnMapping[header.id] || header.column.columnDef.header,
+                                header.getContext()
+                            )}
+                            {{
+                              asc: ' 🔼',
+                              desc: ' 🔽',
+                            }[header.column.getIsSorted()] ?? null}
+                          </div>
+                      )}
+                    </th>
                 ))}
               </tr>
             ))}
           </thead>
 
           <tbody className="table-body">
-            {table.getRowModel().rows.map((row) => (
+          {table.getRowModel().rows.map((row) => (
               <tr className={`table-body-row`} key={row.id}>
                 {row.getVisibleCells().map((cell) => {
                   const isDone =
-                    cell.column.id === "status" && cell.getValue() === "Done";
+                      cell.column.id === "status" && cell.getValue() === "Done";
 
                   return (
-                    <td
-                      id={cell.id}
-                      className={`table-body-cell ${isDone ? "done-cell" : ""}`}
-                      key={cell.id}
-                      onClick={() => handleCellClick(cell)}
-                      style={{ width: cell.column.getSize() }}
-                    >
-                      <div>
-                        {cell.column.id === "file" ? (
-                          row.original.file ? ( // If the column is "file", render a link
+                      <td
+                          id={cell.id}
+                          className={`table-body-cell ${isDone ? "done-cell" : ""}`}
+                          key={cell.id}
+                          onClick={() => handleCellClick(cell)}
+                          style={{width: cell.column.getSize()}}
+                      >
+                        <div>
+                          {cell.column.id === "file" ? (
+                              row.original.file ? ( // If the column is "file", render a link
                             <a
                               href={row.original.file}
                               target="_blank"

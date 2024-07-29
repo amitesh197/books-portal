@@ -6,6 +6,7 @@ import TableRenderer from "../components/TableRenderer";
 import axios from "axios";
 import {DateRangePicker} from "react-date-range";
 import Modal from 'react-modal';
+import TotalsSummary from "../components/TotalsSummary.jsx";
 
 function Dashboard() {
     const {userInfo} = useGlobalContext();
@@ -20,7 +21,31 @@ function Dashboard() {
     });
     const [selectedAgent, setSelectedAgent] = useState('All');
     const [showCalendar, setShowCalendar] = useState(false);
+    const [totals, setTotals] = useState({});
 
+    const calculateTotals = (data) => {
+        const uniqueAgents = Array.from(new Set(data.map(row => row.agent_name)));
+        const agentCount = uniqueAgents.length;
+
+        return data.reduce((totals, row) => {
+            totals.total_calls += row.total_calls || 0;
+            totals.duration += row.duration || 0;
+            totals.oc_answered += row.oc_answered || 0;
+            totals.oc_missed += row.oc_missed || 0;
+            totals.ic_answered += row.ic_answered || 0;
+            totals.ic_missed += row.ic_missed || 0;
+            totals.agent_count = agentCount; // Add agentCount to the totals object
+            return totals;
+        }, {
+            total_calls: 0,
+            duration: 0,
+            oc_answered: 0,
+            oc_missed: 0,
+            ic_answered: 0,
+            ic_missed: 0,
+            agent_count: 0, // Add agentCount to the totals object
+        });
+    };
     const getFilteredColumns = (data) => {
         const columnOrder = [
             "date",
@@ -79,7 +104,12 @@ function Dashboard() {
         console.log(selectedAgent);
         getData(agent, selectionRange.startDate, selectionRange.endDate);
     }
-
+    const formatDuration = (seconds) => {
+        const hours = Math.floor(seconds / 3600);
+        const minutes = Math.floor((seconds % 3600) / 60);
+        const remainingSeconds = seconds % 60;
+        return `${seconds} (${hours.toString().padStart(2, '0')}h ${minutes.toString().padStart(2, '0')}m ${remainingSeconds.toString().padStart(2, '0')}s)`;
+    };
     const getData = async (agentName, startDate, endDate) => {
         setLoading(true);
         setData(null);
@@ -91,7 +121,7 @@ function Dashboard() {
             const formattedEndDate = istEndDate.toISOString().split('T')[0];
             const body = {
                 query_type: "getData",
-                agent_name: agentName.toString().toLowerCase(),
+                agent_name: agentName.toString().toLowerCase().replace(" ", "_"),
                 start_date: formattedStartDate,
                 end_date: formattedEndDate,
             };
@@ -126,15 +156,24 @@ function Dashboard() {
                 ...
             ]
              */
-            if(responseData.error){
+            if (responseData.error) {
                 toast.error("No data found for the selected date range or agent. Please try again.");
                 return;
             }
-            let sortedData = responseData.sort((a, b) => {
+
+            const formattedData = responseData.map(row => ({
+                ...row,
+                duration: formatDuration(row.duration)
+            }));
+
+            let sortedData = formattedData.sort((a, b) => {
                 return new Date(a.date) - new Date(b.date);
             });
-            setData(responseData);
+
+            setData(sortedData);
             setColumns(getFilteredColumns(sortedData));
+            const calculatedTotals = calculateTotals(responseData);
+            setTotals(calculatedTotals);
             toast.success();
 
         } catch (err) {
@@ -213,10 +252,11 @@ function Dashboard() {
                 <button className="bg-theme-yellow-light text-black rounded px-3 py-2 hover:bg-theme-yellow-dark"
                         onClick={toggleCalendar}>Show Calendar
                 </button>
-                <select className="mx-3 px-3 py-2 rounded border border-theme-yellow-light cursor-pointer" onChange={(e) => {
-                    handleSelectAgent(e.target.value)
-                    console.log(selectedAgent);
-                }}>
+                <select className="mx-3 px-3 py-2 rounded border border-theme-yellow-light cursor-pointer"
+                        onChange={(e) => {
+                            handleSelectAgent(e.target.value)
+                            console.log(selectedAgent);
+                        }}>
                     <option value="">Select Agent</option>
                     <option value="All">All</option>
                     <option value="Purusharth">Purusharth</option>
@@ -255,7 +295,11 @@ function Dashboard() {
                     No Data of the selected type found.
                 </p>
             ) : (
-                data && <TableRenderer data={data} columns={columns} updateRow={updateRow}/>
+                data && <>
+                    <TableRenderer data={data} columns={columns} updateRow={updateRow}/>
+                    <TotalsSummary totals={totals}/>
+                </>
+
             )}
         </div>
     );
