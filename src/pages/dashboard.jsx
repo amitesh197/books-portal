@@ -101,7 +101,7 @@ function Dashboard() {
 
     function handleSelectAgent(agent) {
         setSelectedAgent(agent);
-        console.log(selectedAgent);
+        // console.log(selectedAgent);
         getData(agent, selectionRange.startDate, selectionRange.endDate);
     }
     const formatDuration = (seconds) => {
@@ -127,7 +127,7 @@ function Dashboard() {
             };
 
 
-            console.log("Request body:", body);
+            // console.log("Request body:", body);
 
             const response = await axios.post(
                 AWS_API_ENDPOINT,
@@ -139,7 +139,7 @@ function Dashboard() {
                 }
             );
             const responseData = JSON.parse(response.data);
-            console.log("Response data:", responseData);
+            // console.log("Response data:", responseData);
             /*
             Response data format:
             [
@@ -255,7 +255,7 @@ function Dashboard() {
                 <select className="mx-3 px-3 py-2 rounded border border-theme-yellow-light cursor-pointer"
                         onChange={(e) => {
                             handleSelectAgent(e.target.value)
-                            console.log(selectedAgent);
+                            // console.log(selectedAgent);
                         }}>
                     <option value="">Select Agent</option>
                     <option value="All">All</option>

@@ -417,7 +417,6 @@ body {
   font-size: 1rem;
   position: sticky;
   top: 0;
-  z-index: 2;
 }
 .table-elements-container .table-container .table .table-head .table-head-row {
   height: 2rem;
