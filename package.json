@@ -16,6 +16,9 @@
     "amazon-cognito-identity-js": "^6.3.7",
     "aws-sdk": "^2.1525.0",
     "axios": "^1.7.2",
+    "cors": "^2.8.5",
+    "date-fns": "^3.6.0",
+    "express": "^4.19.2",
     "firebase": "^10.7.1",
     "firebase-tools": "^13.0.2",
     "font-awesome": "^4.7.0",
@@ -28,7 +31,9 @@
     "react-modal": "^3.16.1",
     "react-quill": "^2.0.0",
     "react-router-dom": "^6.21.1",
-    "sass": "^1.69.5"
+    "react-table": "^7.8.0",
+    "sass": "^1.69.5",
+    "xlsx": "^0.18.5"
   },
   "devDependencies": {
     "@types/react": "^18.2.45",

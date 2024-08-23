@@ -1,6 +1,7 @@
-import {useEffect, useState} from "react";
-import {useLocation, Route, Routes, useNavigate} from "react-router-dom";
-import {useGlobalContext} from "./context/globalContext";
+import { useEffect, useState } from "react";
+import { useLocation, Route, Routes, useNavigate } from "react-router-dom";
+import { useGlobalContext } from "./context/globalContext";
+import { Navigate } from "react-router-dom";
 
 import Home from "./pages/home";
 import Login from "./pages/login";
@@ -19,10 +20,10 @@ import CurrUsersStats from "./pages/currUsersStats";
 import SignUp from "./pages/signUp";
 import Navbar from "./components/navbar.jsx";
 import Dashboard from "./pages/dashboard.jsx";
-
+import Incentives from "./pages/incentives.jsx";
 
 function App() {
-    const {userInfo, setUserInfo} = useGlobalContext();
+    const { userInfo, setUserInfo } = useGlobalContext();
     const navigate = useNavigate();
     const location = useLocation();
 
@@ -41,40 +42,45 @@ function App() {
         <div className="flex  w-screen  h-screen">
             <div className="w-fit">{
                 showSidebar && (
-                    <Navbar/>
+                    <Navbar />
                 )
             }
             </div>
             <div className="w-full overflow-x-scroll overflow-y-scroll">
                 <Routes>
-                    <Route path="/login" element={<Login/>}/>
-                    <Route path="/signup" element={<SignUp/>}/>
+                    <Route path="/login" element={<Login />} />
+                    <Route path="/signup" element={<SignUp />} />
 
-                    <Route path="/" element={userInfo && <Home/>}/>
-                    <Route path="/all" element={userInfo && <All/>}/>
-                    <Route path="/resolved" element={userInfo && <Resolved/>}/>
-                    <Route path="/unresolved" element={userInfo && <Unresolved/>}/>
-                    <Route path="/topperformers" element={userInfo && <TopPerformers/>}/>
-                    <Route path="/profile" element={!userInfo?.isAdmin && <Profile/>}/>
-                    <Route path="/history" element={userInfo && <History/>}/>
-                    <Route path="/stats" element={userInfo?.isAdmin && <Stats/>}/>
+                    <Route path="/" element={userInfo && <Home />} />
+                    <Route path="/all" element={userInfo && <All />} />
+                    <Route path="/resolved" element={userInfo && <Resolved />} />
+                    <Route path="/unresolved" element={userInfo && <Unresolved />} />
+                    <Route path="/topperformers" element={userInfo && <TopPerformers />} />
+                    <Route path="/profile" element={!userInfo?.isAdmin && <Profile />} />
+                    <Route path="/history" element={userInfo && <History />} />
+                    <Route path="/stats" element={userInfo?.isAdmin && <Stats />} />
                     <Route
                         path="/current-users-stats"
-                        element={userInfo?.isAdmin && <CurrUsersStats/>}
+                        element={userInfo?.isAdmin && <CurrUsersStats />}
                     />
                     <Route
                         path="/monthly-user-history"
-                        element={userInfo?.isAdmin && <MonthlyUserHistory/>}
+                        element={userInfo?.isAdmin && <MonthlyUserHistory />}
                     /> <Route
                         path="/dashboard"
-                        element={userInfo?.isAdmin && <Dashboard/>}
+                        element={userInfo?.isAdmin && <Dashboard />}
                     />
-                    <Route path="/announcements" element={userInfo && <Announcements/>}/>
+                    <Route path="/announcements" element={userInfo && <Announcements />} />
+                    <Route
+                        path="/incentives"
+                        element={userInfo?.isAdmin && <Incentives />}
+                    />
+                    
                     <Route
                         path="/users/:userName"
-                        element={userInfo?.isAdmin && <UserHistory/>}
+                        element={userInfo?.isAdmin && <UserHistory />}
                     />
-                    <Route path="/info" element={userInfo && <Info/>}/>
+                    <Route path="/info" element={userInfo && <Info />} />
                 </Routes>
             </div>
         </div>

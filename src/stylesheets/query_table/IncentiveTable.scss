@@ -1,0 +1,162 @@
+/* Define color variables */
+$theme-yellow-light: #f3c32c; /* Lighter yellow color */
+$theme-yellow-dark: #f1b82e; /* Original dark yellow color */
+$theme-dark: #333; /* Dark text color */
+$theme-gray: #f0f0f0; /* Light gray background for table rows */
+$white: #ffffff; /* White color for table cells */
+
+/* Container styling */
+.table-container {
+  padding: 1rem;
+}
+
+/* Pagination and search bar styling */
+.pagination-search-container {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 1rem;
+
+  .pagination-buttons {
+    display: flex;
+    align-items: center;
+
+    button {
+      margin: 0 0.25rem;
+      background-color: transparent;
+      border: none;
+      color: $theme-dark;
+      cursor: pointer;
+
+      &:disabled {
+        color: #ccc;
+      }
+
+      i {
+        font-size: 1rem;
+      }
+    }
+
+    .page-info {
+      margin: 0 0.5rem;
+      font-size: 0.875rem;
+    }
+
+    .go-to-page {
+      display: inline-block;
+      margin: 0 0.5rem;
+      
+      p {
+        display: inline;
+        margin-right: 0.5rem;
+      }
+
+      input {
+        border: 1px solid $theme-yellow-dark;
+        border-radius: 0.25rem;
+        padding: 0.25rem;
+        width: 3rem;
+        text-align: center;
+      }
+    }
+
+    .select-page-rows {
+      border: 1px solid $theme-yellow-dark;
+      border-radius: 0.25rem;
+      padding: 0.25rem;
+      font-size: 0.875rem;
+    }
+  }
+
+  .search-bar {
+    display: flex;
+    align-items: center;
+    
+    .search-icon {
+      margin-right: 0.5rem;
+      color: $theme-dark;
+    }
+
+    input {
+      border: 1px solid $theme-dark;
+      border-radius: 0.25rem;
+      padding: 0.25rem;
+      width: 10rem;
+      outline: none;
+      
+      &:focus {
+        border-color: $theme-yellow-dark;
+      }
+    }
+  }
+}
+
+/* Table styling */
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  
+  thead {
+    tr {
+      th {
+        padding: 0.5rem;
+        text-align: left;
+        background-color: $theme-yellow-light;
+        color: $theme-dark;
+        border: 1px solid #ccc;
+        position: relative;
+
+        &:hover {
+          cursor: pointer;
+        }
+
+        .sorting-indicator {
+          position: absolute;
+          right: 0.5rem;
+          top: 0.5rem;
+        }
+      }
+    }
+  }
+
+  tbody {
+    tr {
+      td {
+        padding: 0.5rem;
+        border: 1px solid #ccc;
+        background-color: $white; /* Set background color to white */
+      }
+
+      &:nth-of-type(even) {
+        td {
+          background-color: $white; /* Ensure even rows also have white background */
+        }
+      }
+    }
+  }
+}
+
+/* Dropdown styling */
+.select-dropdown {
+  border: 1px solid $theme-yellow-dark; /* Same yellow color for dropdown borders */
+  border-radius: 0.25rem;
+  padding: 0.25rem;
+  font-size: 0.875rem;
+  background-color: $white; /* Ensure the dropdown background is white */
+}
+
+/* Edit and Previous Versions icons styling */
+.edit-icon, .prev-ver-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  color: $theme-dark;
+
+  &:hover {
+    color: $theme-yellow-dark;
+  }
+
+  i {
+    font-size: 1rem;
+  }
+}
