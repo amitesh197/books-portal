@@ -1,15 +1,15 @@
-import React, {useEffect, useState} from "react";
-import {useGlobalContext} from "../context/globalContext";
-import {toast, Toaster} from "react-hot-toast";
+import axios from "axios";
+import React, { useEffect, useState } from "react";
+import { DateRangePicker } from "react-date-range";
+import { toast, Toaster } from "react-hot-toast";
+import Modal from 'react-modal';
 import Loading from "../components/Loading";
 import TableRenderer from "../components/TableRenderer";
-import axios from "axios";
-import {DateRangePicker} from "react-date-range";
-import Modal from 'react-modal';
 import TotalsSummary from "../components/TotalsSummary.jsx";
+import { useGlobalContext } from "../context/globalContext";
 
 function Dashboard() {
-    const {userInfo} = useGlobalContext();
+    const { userInfo } = useGlobalContext();
     const [data, setData] = useState([]);
     const [columns, setColumns] = useState([]);
     const [loading, setLoading] = useState(false);
@@ -26,15 +26,16 @@ function Dashboard() {
     const calculateTotals = (data) => {
         const uniqueAgents = Array.from(new Set(data.map(row => row.agent_name)));
         const agentCount = uniqueAgents.length;
-
-        return data.reduce((totals, row) => {
+    
+        const totals = data.reduce((totals, row) => {
             totals.total_calls += row.total_calls || 0;
             totals.duration += row.duration || 0;
             totals.oc_answered += row.oc_answered || 0;
             totals.oc_missed += row.oc_missed || 0;
             totals.ic_answered += row.ic_answered || 0;
             totals.ic_missed += row.ic_missed || 0;
-            totals.agent_count = agentCount; // Add agentCount to the totals object
+            totals.agent_count = agentCount;
+            totals.total_rows += 1; // Increment the row count to calculate averages
             return totals;
         }, {
             total_calls: 0,
@@ -43,9 +44,16 @@ function Dashboard() {
             oc_missed: 0,
             ic_answered: 0,
             ic_missed: 0,
-            agent_count: 0, // Add agentCount to the totals object
+            agent_count: 0,
+            total_rows: 0 // Track the total number of rows
         });
+    
+        totals.avg_calls = totals.total_rows ? (totals.total_calls / totals.total_rows) : 0;
+        totals.avg_duration = totals.total_rows ? (totals.duration / totals.total_rows) : 0;
+    
+        return totals;
     };
+    
     const getFilteredColumns = (data) => {
         const columnOrder = [
             "date",
@@ -139,7 +147,7 @@ function Dashboard() {
                 }
             );
             const responseData = JSON.parse(response.data);
-            // console.log("Response data:", responseData);
+            console.log("Response data:", responseData);
             /*
             Response data format:
             [
@@ -187,7 +195,7 @@ function Dashboard() {
     const updateRow = (rowId, updatedFields) => {
         setData(prevData =>
             prevData.map(row =>
-                row.id === rowId ? {...row, ...updatedFields} : row
+                row.id === rowId ? { ...row, ...updatedFields } : row
             )
         );
     };
@@ -237,7 +245,7 @@ function Dashboard() {
                 }}
             />
             <Modal style={customStyles} appElement={document.getElementById('root')} isOpen={showCalendar}
-                   onRequestClose={toggleCalendar}>
+                onRequestClose={toggleCalendar}>
                 <DateRangePicker
                     ranges={[selectionRange]}
                     onChange={handleSelectDateRange}
@@ -250,13 +258,13 @@ function Dashboard() {
                 <h1 className="text-2xl font-bold w-full text-center">Dashboard</h1>
 
                 <button className="bg-theme-yellow-light text-black rounded px-3 py-2 hover:bg-theme-yellow-dark"
-                        onClick={toggleCalendar}>Show Calendar
+                    onClick={toggleCalendar}>Show Calendar
                 </button>
                 <select className="mx-3 px-3 py-2 rounded border border-theme-yellow-light cursor-pointer"
-                        onChange={(e) => {
-                            handleSelectAgent(e.target.value)
-                            // console.log(selectedAgent);
-                        }}>
+                    onChange={(e) => {
+                        handleSelectAgent(e.target.value)
+                        // console.log(selectedAgent);
+                    }}>
                     <option value="">Select Agent</option>
                     <option value="All">All</option>
                     <option value="Purusharth">Purusharth</option>
@@ -289,15 +297,15 @@ function Dashboard() {
                 </div>
             </div>
             {loading && !data ? (
-                <Loading/>
+                <Loading />
             ) : data?.length === 0 ? (
                 <p className="text-xl  mt-5 text-center w-full">
                     No Data of the selected type found.
                 </p>
             ) : (
                 data && <>
-                    <TableRenderer data={data} columns={columns} updateRow={updateRow}/>
-                    <TotalsSummary totals={totals}/>
+                    <TableRenderer data={data} columns={columns} updateRow={updateRow} />
+                    <TotalsSummary totals={totals} />
                 </>
 
             )}

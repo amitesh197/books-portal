@@ -1,6 +1,6 @@
 import React from 'react';
 
-function TotalsSummary({totals}) {
+function TotalsSummary({ totals }) {
     const formatDuration = (seconds) => {
         const hours = Math.floor(seconds / 3600);
         const minutes = Math.floor((seconds % 3600) / 60);
@@ -40,8 +40,17 @@ function TotalsSummary({totals}) {
                     <p className="font-semibold">Total agents working:</p>
                     <p>{totals.agent_count}</p>
                 </div>
+                <div>
+                    <p className="font-semibold">Average Calls:</p>
+                    <p>{totals.avg_calls.toFixed(2)}</p>
+                </div>
+                <div>
+                    <p className="font-semibold">Average Call Duration:</p>
+                    <p>{formatDuration(totals.avg_duration.toFixed(0))}</p>
+                </div>
             </div>
-        </div>);
+        </div>
+    );
 }
 
 export default TotalsSummary;

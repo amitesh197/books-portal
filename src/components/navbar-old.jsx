@@ -175,6 +175,7 @@ function Navbar() {
                     >
                       Current Month Stats
                     </Link>
+                    
                     <Link
                       to="/monthly-user-history"
                       className="block px-4 py-2 text-sm border border-theme-yellow-dark capitalize hover:bg-theme-yellow-dark hover:text-white"
