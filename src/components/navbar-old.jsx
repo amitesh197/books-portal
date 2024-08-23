@@ -175,6 +175,7 @@ function Navbar() {
                     >
                       Current Month Stats
                     </Link>
+                    
                     <Link
                       to="/incentives"
                       className="block px-4 py-2 border border-theme-yellow-dark text-sm capitalize hover:bg-theme-yellow-dark hover:text-white "

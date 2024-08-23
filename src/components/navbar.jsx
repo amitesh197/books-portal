@@ -75,7 +75,11 @@ function Navbar() {
                                 link: "/monthly-user-history"
                             },
                             {icon: "fa-solid fa-calendar", text: "Current Month Stats", link: "/current-users-stats"},
+<<<<<<< HEAD
                             {icon: "fa fa-gift", text: "Incentives", link: "/incentives"}
+=======
+                            
+>>>>>>> 5518310d4b6d10b7c15645e9c972a194777b0b43
                         ] : [
                             {icon: "fa-solid fa-user", text: "Profile", link: "/profile"},
                             {icon: "fa-solid fa-clock-rotate-left", text: "History", link: "/history"}
