@@ -75,12 +75,13 @@ function Navbar() {
                                 link: "/monthly-user-history"
                             },
                             {icon: "fa-solid fa-calendar", text: "Current Month Stats", link: "/current-users-stats"},
-                            {icon: "fa fa-gift", text: "Incentives", link: "/incentives"}
+                            
                             
                         ] : [
                             {icon: "fa-solid fa-user", text: "Profile", link: "/profile"},
                             {icon: "fa-solid fa-clock-rotate-left", text: "History", link: "/history"}
                         ]),
+                        {icon: "fa fa-gift", text: "Incentives", link: "/incentives"},
                         {icon: "fa-solid fa-trophy", text: "Top Performers", link: "/topperformers"},
                         {icon: "fa-solid fa-bullhorn", text: "Announcements", link: "/announcements"}
                     ].map(({icon, text, link }) => (

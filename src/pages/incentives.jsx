@@ -11,7 +11,32 @@ export default function Incentives() {
   const [selectedMonth, setSelectedMonth] = useState('All');
   const [agents, setAgents] = useState([]);
   const [months, setMonths] = useState([]);
+  const [isAdmin, setIsAdmin] = useState(false);
+  const [currentAgent, setCurrentAgent] = useState(null);
 
+  // Email to agent name mapping
+  const emailToAgentMapping = {
+    "amiteshs197@gmail.com": "AMI",
+    "manishabansal788@gmail.com": "MBM",
+    "rkpandey817@gmail.com": "RAM",
+    "irfanmindbrink@gmail.com": "IRF",
+    "sristiverma.rbj@gmail.com": "SRI",
+    "vermaanchalkumari@gmail.com": "ANC",
+    "mohitvats01@gmail.com": "MOH",
+    "harshmishra363@gmail.com": "HAR",
+    "sanjaysinghrajawat23#gmail.com": "THI",
+    "shiavni.sharma.719@gmail.com" : "RKS",
+    "apurva000730@gmail.com" : "APU",
+    "advaitsajal@gmail.com" : "SAR",
+    "sonam.edsarrthi99@gmail.com" : "KCV",
+    "ravikumartanti2@gmail.com" : "RKT",
+    "nikhil2906kumar@gmail.com" : "NIK",
+    "puru.attrish24@gmail.com" : "PUR",
+    "iabhaysingh15@gmail.com" : "APS"
+    // Add other email to agent mappings here
+  };
+
+  // Define agent mapping
   const agentMapping = {
     AKR: 'AKR',
     MBM: 'Manisha',
@@ -35,10 +60,29 @@ export default function Incentives() {
     shivin: 'shivin',
     oldstudent: 'oldstudent',
     STUDENTPOWER: 'STUDENTPOWER',
-    MMP: 'MMP'
+    MMP: 'MMP',
+    AMI: "AMI"
   };
 
   useEffect(() => {
+    const getUserInfo = () => {
+      const userInfoString = sessionStorage.getItem('userInfo');
+      const userInfo = userInfoString ? JSON.parse(userInfoString) : {};
+      
+      const email = userInfo.email || 'unknown';
+      const isAdmin = userInfo.isAdmin || false;
+
+      console.log('Fetched Email:', email);
+      console.log('Is Admin:', isAdmin);
+
+      setIsAdmin(isAdmin);
+      if (!isAdmin) {
+        const agentName = emailToAgentMapping[email];
+        setCurrentAgent(agentName);
+        console.log('Mapped Agent Name:', agentName);
+      }
+    };
+
     const getData = async () => {
       try {
         const fetchedData = await fetchGoogleSheetData();
@@ -107,6 +151,7 @@ export default function Incentives() {
       setMonths(['All', ...Array.from(monthsSet)]); // Include 'All' option
     };
 
+    getUserInfo();
     getData();
   }, []);
 
@@ -119,7 +164,8 @@ export default function Incentives() {
   };
 
   const filteredData = incentivesData
-    .filter(item => (selectedAgent === 'All' || item.agentName === selectedAgent) &&
+    .filter(item => (isAdmin || item.agentName === currentAgent) &&
+                     (selectedAgent === 'All' || item.agentName === selectedAgent) &&
                      (selectedMonth === 'All' || item.month === selectedMonth));
 
   // Calculate totals
@@ -142,19 +188,21 @@ export default function Incentives() {
       </h1>
       
       <div className="flex justify-between mb-4">
-        <div className="flex flex-col">
-          <label htmlFor="agentDropdown" className="mb-1 font-semibold">Agent Name</label>
-          <select 
-            id="agentDropdown" 
-            value={selectedAgent} 
-            onChange={handleAgentChange} 
-            className="p-2 border"
-          >
-            {agents.map(agent => (
-              <option key={agent} value={agent}>{agent}</option>
-            ))}
-          </select>
-        </div>
+        {isAdmin && (
+          <div className="flex flex-col">
+            <label htmlFor="agentDropdown" className="mb-1 font-semibold">Agent Name</label>
+            <select 
+              id="agentDropdown" 
+              value={selectedAgent} 
+              onChange={handleAgentChange} 
+              className="p-2 border"
+            >
+              {agents.map(agent => (
+                <option key={agent} value={agent}>{agent}</option>
+              ))}
+            </select>
+          </div>
+        )}
 
         <div className="flex flex-col">
           <label htmlFor="monthDropdown" className="mb-1 font-semibold">Month</label>

@@ -73,7 +73,7 @@ function App() {
                     <Route path="/announcements" element={userInfo && <Announcements />} />
                     <Route
                         path="/incentives"
-                        element={userInfo?.isAdmin && <Incentives />}
+                        element={userInfo && <Incentives />}
                     />
                     
                     <Route
