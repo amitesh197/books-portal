@@ -284,6 +284,9 @@ function Dashboard() {
                     <option value="Sonam">Sonam</option>
                     <option value="Swedha">Swedha</option>
                     <option value="Manisha">Manisha</option>
+                    <option value="Sristi Verma">Sristi Verma</option>
+                    <option value='Nikhil Kumar'>Nikhil Kumar</option>
+                    <option value='Harshit Mishra'>Harshit Mishra</option>
                 </select>
                 <div className="p-2">
                     <div>Date Range:

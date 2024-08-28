@@ -20,10 +20,7 @@ import CurrUsersStats from "./pages/currUsersStats";
 import SignUp from "./pages/signUp";
 import Navbar from "./components/navbar.jsx";
 import Dashboard from "./pages/dashboard.jsx";
-<<<<<<< HEAD
 import Incentives from "./pages/incentives.jsx";
-=======
->>>>>>> 5518310d4b6d10b7c15645e9c972a194777b0b43
 
 function App() {
     const { userInfo, setUserInfo } = useGlobalContext();
@@ -74,13 +71,10 @@ function App() {
                         element={userInfo?.isAdmin && <Dashboard />}
                     />
                     <Route path="/announcements" element={userInfo && <Announcements />} />
-<<<<<<< HEAD
                     <Route
                         path="/incentives"
                         element={userInfo?.isAdmin && <Incentives />}
                     />
-=======
->>>>>>> 5518310d4b6d10b7c15645e9c972a194777b0b43
                     
                     <Route
                         path="/users/:userName"
