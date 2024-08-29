@@ -16,23 +16,25 @@ export default function Incentives() {
 
   // Email to agent name mapping
   const emailToAgentMapping = {
-    "amiteshs197@gmail.com": "AMI",
-    "manishabansal788@gmail.com": "MBM",
-    "rkpandey817@gmail.com": "RAM",
-    "irfanmindbrink@gmail.com": "IRF",
-    "sristiverma.rbj@gmail.com": "SRI",
-    "vermaanchalkumari@gmail.com": "ANC",
-    "mohitvats01@gmail.com": "MOH",
-    "harshmishra363@gmail.com": "HAR",
-    "sanjaysinghrajawat23#gmail.com": "THI",
-    "shiavni.sharma.719@gmail.com" : "RKS",
-    "apurva000730@gmail.com" : "APU",
-    "advaitsajal@gmail.com" : "SAR",
-    "sonam.edsarrthi99@gmail.com" : "KCV",
-    "ravikumartanti2@gmail.com" : "RKT",
-    "nikhil2906kumar@gmail.com" : "NIK",
-    "puru.attrish24@gmail.com" : "PUR",
-    "iabhaysingh15@gmail.com" : "APS"
+    "amiteshs197@gmail.com": "AMIT",
+    "manishabansal788@gmail.com": "Manisha",
+    "rkpandey817@gmail.com": "Ram Pandey",
+    "irfanmindbrink@gmail.com": "Irfan",
+    "sristiverma.rbj@gmail.com": "Srishti Verma",
+    "vermaanchalkumari@gmail.com": "Anchal Verma",
+    "mohitvats01@gmail.com": "Mohit Vats",
+    "harshmishra363@gmail.com": "Harshit Mishra",
+    "sanjaysinghrajawat23#gmail.com": "Sanjay",
+    "shiavni.sharma.719@gmail.com" : "Shivani",
+    "apurva000730@gmail.com" : "Apurva",
+    "advaitsajal@gmail.com" : "Sajal",
+    "sonam.edsarrthi99@gmail.com" : "Sonam",
+    "ravikumartanti2@gmail.com" : "Ravi",
+    "nikhil2906kumar@gmail.com" : "Nikhil",
+    "puru.attrish24@gmail.com" : "Purusharth",
+    "iabhaysingh15@gmail.com" : "Abhay",
+    "swedhakarnani21@gmail.com": "Swedha Karnani",
+    "shinusuman10@gmail.com": "Sneha"
     // Add other email to agent mappings here
   };
 
@@ -40,11 +42,11 @@ export default function Incentives() {
   const agentMapping = {
     AKR: 'AKR',
     MBM: 'Manisha',
-    KKS: 'Sweta',
+    KKS: 'Swedha Karnani',
     RAM: 'Ram Pandey',
     IRF: 'Irfan',
     SRI: 'Srishti Verma',
-    TEZ: 'TEZ',
+    TEZ: 'Sneha',
     ANC: 'Anchal Verma',
     MOH: 'Mohit Vats',
     HAR: 'Harshit Mishra',
@@ -61,7 +63,7 @@ export default function Incentives() {
     oldstudent: 'oldstudent',
     STUDENTPOWER: 'STUDENTPOWER',
     MMP: 'MMP',
-    AMI: "AMI"
+    AMI: "AMIT"
   };
 
   useEffect(() => {
