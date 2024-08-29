@@ -25,7 +25,7 @@ export default function Incentives() {
     "mohitvats01@gmail.com": "Mohit Vats",
     "harshmishra363@gmail.com": "Harshit Mishra",
     "sanjaysinghrajawat23#gmail.com": "Sanjay",
-    "shiavni.sharma.719@gmail.com" : "Shivani",
+    "shivani.sharma.7194@gmail.com" : "Shivani",
     "apurva000730@gmail.com" : "Apurva",
     "advaitsajal@gmail.com" : "Sajal",
     "sonam.edsarrthi99@gmail.com" : "Sonam",
