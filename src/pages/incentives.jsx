@@ -2,6 +2,9 @@ import React, { useEffect, useState } from 'react';
 import { fetchGoogleSheetData } from '../api/fetchGoogleSheetData';
 import IncentiveTable from '../components/IncentiveTable';
 import Loading from '../components/Loading';
+import { CognitoUser, AuthenticationDetails } from "amazon-cognito-identity-js";
+import UserPool from "../UserPool"; // Your UserPool configuration
+import '../stylesheets/query_table/Incentives.scss';
 
 export default function Incentives() {
   const [data, setData] = useState([]);
@@ -13,6 +16,8 @@ export default function Incentives() {
   const [months, setMonths] = useState([]);
   const [isAdmin, setIsAdmin] = useState(false);
   const [currentAgent, setCurrentAgent] = useState(null);
+  const [passwordInput, setPasswordInput] = useState('');
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
 
   // Email to agent name mapping
   const emailToAgentMapping = {
@@ -25,14 +30,14 @@ export default function Incentives() {
     "mohitvats01@gmail.com": "Mohit Vats",
     "harshmishra363@gmail.com": "Harshit Mishra",
     "sanjaysinghrajawat23#gmail.com": "Sanjay",
-    "shivani.sharma.7194@gmail.com" : "Shivani",
-    "apurva000730@gmail.com" : "Apurva",
-    "advaitsajal@gmail.com" : "Sajal",
-    "sonam.edsarrthi99@gmail.com" : "Sonam",
-    "ravikumartanti2@gmail.com" : "Ravi",
-    "nikhil2906kumar@gmail.com" : "Nikhil",
-    "puru.attrish24@gmail.com" : "Purusharth",
-    "iabhaysingh15@gmail.com" : "Abhay",
+    "shivani.sharma.7194@gmail.com": "Shivani",
+    "apurva000730@gmail.com": "Apurva",
+    "advaitsajal@gmail.com": "Sajal",
+    "sonam.edsarrthi99@gmail.com": "Sonam",
+    "ravikumartanti2@gmail.com": "Ravi",
+    "nikhil2906kumar@gmail.com": "Nikhil",
+    "puru.attrish24@gmail.com": "Purusharth",
+    "iabhaysingh15@gmail.com": "Abhay",
     "swedhakarnani21@gmail.com": "Swedha Karnani",
     "shinusuman10@gmail.com": "Sneha"
     // Add other email to agent mappings here
@@ -70,18 +75,15 @@ export default function Incentives() {
     const getUserInfo = () => {
       const userInfoString = sessionStorage.getItem('userInfo');
       const userInfo = userInfoString ? JSON.parse(userInfoString) : {};
-      
+
       const email = userInfo.email || 'unknown';
       const isAdmin = userInfo.isAdmin || false;
-
-      console.log('Fetched Email:', email);
-      console.log('Is Admin:', isAdmin);
+      const token = userInfo.token || '';
 
       setIsAdmin(isAdmin);
       if (!isAdmin) {
         const agentName = emailToAgentMapping[email];
         setCurrentAgent(agentName);
-        console.log('Mapped Agent Name:', agentName);
       }
     };
 
@@ -102,7 +104,7 @@ export default function Incentives() {
 
       fetchedData.forEach((item) => {
         const couponCode = item.couponCode;
-        const transDate = item.TransDate; // Ensure this is properly formatted
+        const transDate = item.TransDate;
         const month = new Date(transDate).toLocaleString('default', { month: 'long', year: 'numeric' });
 
         if (couponCode && typeof couponCode === 'string') {
@@ -118,7 +120,7 @@ export default function Incentives() {
             incentivesMap[agentName][courseName] = {
               count: 0,
               totalRevenue: 0,
-              months: new Set() // Track months for each agent-course pair
+              months: new Set()
             };
           }
 
@@ -150,7 +152,7 @@ export default function Incentives() {
       const uniqueAgents = Array.from(new Set(formattedData.map(item => item.agentName)));
       setAgents(['All', ...uniqueAgents]);
 
-      setMonths(['All', ...Array.from(monthsSet)]); // Include 'All' option
+      setMonths(['All', ...Array.from(monthsSet)]);
     };
 
     getUserInfo();
@@ -164,40 +166,107 @@ export default function Incentives() {
   const handleMonthChange = (event) => {
     setSelectedMonth(event.target.value);
   };
-
+  const handlePasswordSubmit = () => {
+    const userInfoString = sessionStorage.getItem('userInfo');
+    const userInfo = userInfoString ? JSON.parse(userInfoString) : {};
+  
+    const email = userInfo.email || 'unknown';
+    const isAdmin = userInfo.isAdmin || false;
+  
+    if (!email || email === 'unknown') {
+      alert('Email not found in session storage');
+      return;
+    }
+  
+    const authDetails = new AuthenticationDetails({
+      Username: email,
+      Password: passwordInput,
+    });
+  
+    const user = new CognitoUser({
+      Username: email,
+      Pool: UserPool,
+    });
+  
+    user.authenticateUser(authDetails, {
+      onSuccess: async (loginData) => {
+        const accessToken = loginData.getAccessToken().getJwtToken();
+        const accessTokenPayload = loginData.getAccessToken().payload;
+  
+        const newIsAdmin = accessTokenPayload["cognito:groups"]?.includes("admins") || isAdmin;
+  
+        setIsAuthenticated(true);
+        setIsAdmin(newIsAdmin);
+  
+        sessionStorage.setItem(
+          'userInfo',
+          JSON.stringify({
+            username: loginData.accessToken.payload.username,
+            email: loginData.idToken.payload.email,
+            token: accessToken,
+            isAdmin: newIsAdmin,
+          })
+        );
+      },
+      onFailure: (err) => {
+        alert('Incorrect password');
+      },
+    });
+  };
+  
   const filteredData = incentivesData
-    .filter(item => (isAdmin || item.agentName === currentAgent) &&
-                     (selectedAgent === 'All' || item.agentName === selectedAgent) &&
-                     (selectedMonth === 'All' || item.month === selectedMonth));
-
-  // Calculate totals
+    .filter(item => (isAdmin || (isAuthenticated && item.agentName === currentAgent)) &&
+      (selectedAgent === 'All' || item.agentName === selectedAgent) &&
+      (selectedMonth === 'All' || item.month === selectedMonth)) || [];
+  
   const totalCourses = filteredData.reduce((acc, item) => acc + item.count, 0);
   const totalRevenue = filteredData.reduce((acc, item) => acc + item.totalRevenue, 0);
-
+  
   const handleRowClick = (row) => {
     console.log('Row clicked:', row);
     // Implement navigation or display logic for detailed transactions
   };
-
+  
   if (isLoading) {
     return <Loading />;
   }
-
+  
+  if (!isAdmin && !isAuthenticated) {
+    return (
+      <div className="password-container">
+        <div className="password-box">
+          <h2 className="password-title">Enter Password</h2>
+          <input
+            type="password"
+            value={passwordInput}
+            onChange={(e) => setPasswordInput(e.target.value)}
+            placeholder="Enter your password"
+            className="password-input"
+          />
+          <button
+            onClick={handlePasswordSubmit}
+            className="password-button"
+          >
+            Submit
+          </button>
+        </div>
+      </div>
+    );
+  }
+  
   return (
-    <div className="table-container">
-      <h1 className="text-xl font-semibold w-full text-center my-2">
-        Incentives Summary
-      </h1>
+    <div className="container">
+      <h1 className="header">Incentives Summary</h1>
       
-      <div className="flex justify-between mb-4">
+      <div className="filter-container">
         {isAdmin && (
-          <div className="flex flex-col">
-            <label htmlFor="agentDropdown" className="mb-1 font-semibold">Agent Name</label>
+          <div className="filter-group">
+            <label htmlFor="agentDropdown" className="filter-label">Agent Name</label>
             <select 
               id="agentDropdown" 
               value={selectedAgent} 
               onChange={handleAgentChange} 
-              className="p-2 border"
+              className="filter-select"
             >
               {agents.map(agent => (
                 <option key={agent} value={agent}>{agent}</option>
@@ -205,14 +274,14 @@ export default function Incentives() {
             </select>
           </div>
         )}
-
-        <div className="flex flex-col">
-          <label htmlFor="monthDropdown" className="mb-1 font-semibold">Month</label>
+  
+        <div className="filter-group">
+          <label htmlFor="monthDropdown" className="filter-label">Month</label>
           <select 
             id="monthDropdown" 
             value={selectedMonth} 
             onChange={handleMonthChange} 
-            className="p-2 border"
+            className="filter-select"
           >
             {months.map(month => (
               <option key={month} value={month}>{month}</option>
@@ -220,20 +289,19 @@ export default function Incentives() {
           </select>
         </div>
       </div>
-
-      {/* Totals Display */}
-      <div className="totals-display mb-4">
-        <div className="total-courses">
+  
+      <div className="summary">
+        <div className="summary-item">
           <strong>Total Courses: </strong>{totalCourses}
         </div>
-        <div className="total-revenue">
+        <div className="summary-item">
           <strong>Total Revenue: </strong>{totalRevenue.toLocaleString('en-IN', {
             style: 'currency',
             currency: 'INR',
           })}
         </div>
       </div>
-
+  
       <IncentiveTable
         data={filteredData.map(({ agentName, courseName, count, totalRevenue }) => ({
           agentName,
@@ -254,4 +322,4 @@ export default function Incentives() {
       />
     </div>
   );
-}
+  }
