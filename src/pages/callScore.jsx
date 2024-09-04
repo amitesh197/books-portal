@@ -141,6 +141,13 @@ function CallScore() {
         }
     };
 
+    const formatTime = (seconds) => {
+        const h = Math.floor(seconds / 3600);
+        const m = Math.floor((seconds % 3600) / 60);
+        const s = seconds % 60;
+        return `${h}h ${m}m ${s}s`;
+    };
+
     const handleWeekChange = (e) => {
         const week = e.target.value;
         setSelectedWeek(week);
@@ -273,10 +280,10 @@ function CallScore() {
                             <tr>
                                 {getColumns().map((column) => (
                                     <th
-                                    key={column.Header}
-                                    className="py-2 px-4 border-b"
-                                    style={{ backgroundColor: '#EEAF50' }} // Light yellow color
-                                >
+                                        key={column.Header}
+                                        className="py-2 px-4 border-b"
+                                        style={{ backgroundColor: '#EEAF50' }}
+                                    >
                                         {column.Header}
                                     </th>
                                 ))}
@@ -288,7 +295,10 @@ function CallScore() {
                                     <td className="py-2 px-4 border-b">{row.agent_name}</td>
                                     <td className="py-2 px-4 border-b">{row.avgCallsPerWeek}</td>
                                     <td className="py-2 px-4 border-b">{row.callScore}</td>
-                                    <td className="py-2 px-4 border-b">{row.avgTalkTime}</td>
+                                    <td className="py-2 px-4 border-b">
+                                        {row.avgTalkTime} <br />
+                                        ({formatTime(row.avgTalkTime)})
+                                    </td>
                                     <td className="py-2 px-4 border-b">{row.talkTimeScore}</td>
                                     <td className="py-2 px-4 border-b">
                                         <select
