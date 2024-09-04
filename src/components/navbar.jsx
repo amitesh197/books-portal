@@ -69,6 +69,7 @@ function Navbar() {
                         ...(userInfo?.isAdmin ? [
                             {icon: "fa-solid fa-chart-bar", text: "Stats", link: "/stats"},
                             {icon: "fa-solid fa-tachometer-alt", text: "Dashboard", link: "/dashboard"},
+                            {icon: "fa-solid fa-phone", text: "Call Score", link: "/call-score"},
                             {
                                 icon: "fa-solid fa-clock-rotate-left",
                                 text: "Monthly user's history",

@@ -21,6 +21,7 @@ import SignUp from "./pages/signUp";
 import Navbar from "./components/navbar.jsx";
 import Dashboard from "./pages/dashboard.jsx";
 import Incentives from "./pages/incentives.jsx";
+import CallScore from "./pages/callScore.jsx";
 
 function App() {
     const { userInfo, setUserInfo } = useGlobalContext();
@@ -66,9 +67,14 @@ function App() {
                     <Route
                         path="/monthly-user-history"
                         element={userInfo?.isAdmin && <MonthlyUserHistory />}
-                    /> <Route
+                    /> 
+                    <Route
                         path="/dashboard"
                         element={userInfo?.isAdmin && <Dashboard />}
+                    />
+                    <Route
+                        path="/call-score"
+                        element={userInfo?.isAdmin && <CallScore />}
                     />
                     <Route path="/announcements" element={userInfo && <Announcements />} />
                     <Route
