@@ -268,11 +268,11 @@ function CallScore() {
                         value={selectedWeek}
                         onChange={handleWeekChange}
                     >
-                        <option value="Week 1">Week 1</option>
-                        <option value="Week 2">Week 2</option>
-                        <option value="Week 3">Week 3</option>
-                        <option value="Week 4">Week 4</option>
-                        <option value="Week 5">Week 5</option>
+                        <option value="Week 1">Week 1 (Date 1-7)</option>
+                        <option value="Week 2">Week 2 (Date 8-14)</option>
+                        <option value="Week 3">Week 3 (Date 15-21)</option>
+                        <option value="Week 4">Week 4 (Date 22-28)</option>
+                        <option value="Week 5">Week 5 (Date 29-31)</option>
                     </select>
                 </div>
                 <div>
