@@ -11,8 +11,31 @@ function CallScore() {
     const [loading, setLoading] = useState(false);
     const AWS_API_ENDPOINT = import.meta.env.VITE_AWS_ENDPOINT_CALLS || "";
     const [selectedWeek, setSelectedWeek] = useState('Week 1');
-    const [selectedAgent, setSelectedAgent] = useState('Sneha');
+    const [selectedAgent, setSelectedAgent] = useState('All Agents');
     const [qualityScores, setQualityScores] = useState({});
+
+    const agentsList = [
+        "Sneha",
+        "Purusharth",
+        "Sanjay Rajawat",
+        "Irfan",
+        "Shivani",
+        "MohitVats",
+        "Ravi",
+        "Apurva",
+        "Anchal",
+        "Khushboo",
+        "Sajal",
+        "RAM",
+        "Sarthak",
+        "Ankit Kumar",
+        "Sonam",
+        "Swedha",
+        "Manisha",
+        "Sristi Verma",
+        "Nikhil Kumar",
+        "Harshit Mishra"
+    ];
 
     const calculateScores = (totalCalls, totalDuration) => {
         const avgCallsPerWeek = Math.round(totalCalls / 7);
@@ -80,57 +103,73 @@ function CallScore() {
             const formattedStartDate = istStartDate.toISOString().split('T')[0];
             const formattedEndDate = istEndDate.toISOString().split('T')[0];
 
-            const body = {
-                query_type: "getData",
-                agent_name: agentName.toString().toLowerCase().replace(" ", "_"),
-                start_date: formattedStartDate,
-                end_date: formattedEndDate,
+            const fetchAgentData = async (agent) => {
+                const body = {
+                    query_type: "getData",
+                    agent_name: agent.toString().toLowerCase().replace(" ", "_"),
+                    start_date: formattedStartDate,
+                    end_date: formattedEndDate,
+                };
+
+                console.log("Request body:", body);
+
+                try {
+                    const response = await axios.post(
+                        AWS_API_ENDPOINT,
+                        JSON.stringify(body),
+                        {
+                            headers: {
+                                'Content-Type': 'application/json'
+                            }
+                        }
+                    );
+
+                    const responseData = JSON.parse(response.data);
+                    console.log("Response data:", responseData);
+
+                    if (responseData.error || responseData.length === 0) {
+                        toast.error(`No data found for agent ${agent}.`);
+                        return null;
+                    }
+
+                    // Aggregate data
+                    const totalCalls = responseData.reduce((acc, row) => acc + (row.total_calls || 0), 0);
+                    const totalDuration = responseData.reduce((acc, row) => acc + (row.duration || 0), 0);
+                    console.log(`Total Calls: ${totalCalls}, Total Duration: ${totalDuration}`);
+
+                    const scores = calculateScores(totalCalls, totalDuration);
+                    console.log("Calculated Scores:", scores);
+
+                    const qualityScore = qualityScores[agent] || 0;
+
+                    return {
+                        agent_name: agent,
+                        avgCallsPerWeek: scores.avgCallsPerWeek,
+                        callScore: scores.callScore,
+                        avgTalkTime: scores.avgTalkTime,
+                        talkTimeScore: scores.talkTimeScore,
+                        qualityScore,
+                        totalScore: scores.callScore + scores.talkTimeScore + qualityScore,
+                    };
+                } catch (err) {
+                    toast.error(`Error fetching data for agent ${agent}: ${err.message}`);
+                    console.error(`Error fetching data for agent ${agent}:`, err);
+                    return null;
+                }
             };
 
-            console.log("Request body:", body);
-
-            const response = await axios.post(
-                AWS_API_ENDPOINT,
-                JSON.stringify(body),
-                {
-                    headers: {
-                        'Content-Type': 'application/json'
-                    }
+            if (agentName === "All Agents") {
+                const allDataPromises = agentsList.map(fetchAgentData);
+                const allData = await Promise.all(allDataPromises);
+                const filteredData = allData.filter(item => item !== null);
+                setData(filteredData);
+            } else {
+                const agentData = await fetchAgentData(agentName);
+                if (agentData) {
+                    setData([agentData]);
                 }
-            );
-
-            const responseData = JSON.parse(response.data);
-            console.log("Response data:", responseData);
-
-            if (responseData.error || responseData.length === 0) {
-                toast.error("No data found for the selected date range or agent. Please try again.");
-                setData([]);
-                return;
             }
 
-            // Aggregate data
-            const totalCalls = responseData.reduce((acc, row) => acc + (row.total_calls || 0), 0);
-            const totalDuration = responseData.reduce((acc, row) => acc + (row.duration || 0), 0);
-            console.log(`Total Calls: ${totalCalls}, Total Duration: ${totalDuration}`);
-
-            const scores = calculateScores(totalCalls, totalDuration);
-            console.log("Calculated Scores:", scores);
-
-            const totalScore = scores.callScore + scores.talkTimeScore + (qualityScores[selectedAgent] || 0);
-
-            const formattedData = [{
-                agent_name: selectedAgent,
-                avgCallsPerWeek: scores.avgCallsPerWeek,
-                callScore: scores.callScore,
-                avgTalkTime: scores.avgTalkTime,
-                talkTimeScore: scores.talkTimeScore,
-                qualityScore: qualityScores[selectedAgent] || 0,
-                totalScore: scores.callScore + scores.talkTimeScore + (qualityScores[selectedAgent] || 0),
-            }];
-
-            console.log("Formatted Data:", formattedData);
-
-            setData(formattedData);
             toast.success("Data fetched successfully!");
 
         } catch (err) {
@@ -246,6 +285,7 @@ function CallScore() {
                         value={selectedAgent}
                         onChange={handleAgentChange}
                     >
+                        <option value="All Agents">All Agents</option>
                         <option value="Sneha">Sneha</option>
                         <option value="Purusharth">Purusharth</option>
                         <option value="Sanjay Rajawat">Sanjay Rajawat</option>
@@ -303,7 +343,7 @@ function CallScore() {
                                     <td className="py-2 px-4 border-b">
                                         <select
                                             value={row.qualityScore}
-                                            onChange={handleQualityScoreChange}
+                                            onChange={(e) => handleQualityScoreChange(e)}
                                             className="border px-2 py-1 rounded"
                                         >
                                             <option value="0">0</option>
