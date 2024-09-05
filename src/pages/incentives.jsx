@@ -233,28 +233,28 @@ export default function Incentives() {
     return <Loading />;
   }
   
-  if (!isAdmin && !isAuthenticated) {
-    return (
-      <div className="password-container">
-        <div className="password-box">
-          <h2 className="password-title">Enter Password</h2>
-          <input
-            type="password"
-            value={passwordInput}
-            onChange={(e) => setPasswordInput(e.target.value)}
-            placeholder="Enter your password"
-            className="password-input"
-          />
-          <button
-            onClick={handlePasswordSubmit}
-            className="password-button"
-          >
-            Submit
-          </button>
-        </div>
-      </div>
-    );
-  }
+  // if (!isAdmin && !isAuthenticated) {
+  //   return (
+  //     <div className="password-container">
+  //       <div className="password-box">
+  //         <h2 className="password-title">Enter Password</h2>
+  //         <input
+  //           type="password"
+  //           value={passwordInput}
+  //           onChange={(e) => setPasswordInput(e.target.value)}
+  //           placeholder="Enter your password"
+  //           className="password-input"
+  //         />
+  //         <button
+  //           onClick={handlePasswordSubmit}
+  //           className="password-button"
+  //         >
+  //           Submit
+  //         </button>
+  //       </div>
+  //     </div>
+  //   );
+  // }
   
   return (
     <div className="container">

@@ -186,7 +186,7 @@ function Login() {
                         alt="sarrthi ias logo"
                     />
                     <div className="font-bold text-3xl mx-8 lg:mx-16 text-center my-20">
-                        Welcome to Sarrthi IAS Sales Portal!
+                        Welcome to Sarrthi IAS Books Portal!
                     </div>
                 </div>
                 <div className="w-1/2">
@@ -257,7 +257,7 @@ function Login() {
                         alt="sarrthi ias logo"
                     />
                     <div className="font-bold text-3xl mx-2 text-center my-10">
-                        Welcome to Sarrthi IAS Sales Portal!
+                        Welcome to Sarrthi IAS Books Portal!
                     </div>
                     <div className="my-5 mx-auto text-center text-xl font-semibold">
                         Please Login to continue.
@@ -338,8 +338,8 @@ function Login() {
             >
                 <div className="w-1/2   text-black ">
                     <div className="flex flex-col w-full  p-10 text-2xl">
-                        <span className="font-extrabolder">Skyrocket Your Sales!</span>
-                        <span className="">Conquer Your Targets in Real-Time</span>
+                        <span className="font-extrabolder">Take a look at your transactions!</span>
+                        <span className="">All the books you wanted.</span>
                     </div>
                     <div className=" flex justify-center items-center h-3/4 p-5">
                         <img
@@ -360,7 +360,7 @@ function Login() {
                             alt="sarrthi ias logo"
                         />
                         <div className="my-10 mx-auto text-center text-xl ">
-                            Welcome to Sarrthi IAS Sales Portal!
+                            Welcome to Sarrthi IAS Books Portal!
                         </div>
 
                         <form className="w-full px-10 lg:px-32" onSubmit={loginHandler}>
@@ -445,7 +445,7 @@ function Login() {
                         alt="sarrthi ias logo"
                     />
                     <div className="font-bold text-3xl mx-2 text-center my-10">
-                        Welcome to Sarrthi IAS Sales Portal!
+                        Welcome to Sarrthi IAS Books Portal!
                     </div>
                     <div className="my-5 mx-auto text-center text-xl font-semibold">
                         Please Login to continue.

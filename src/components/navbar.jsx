@@ -62,29 +62,14 @@ function Navbar() {
 
                 <ul className="flex-1 px-3">
                     {[
-                        {icon: "fa-solid fa-home", text: "Home", link: "/"},
-                        {icon: "fa-solid fa-list", text: "All", link: "/all"},
-                        {icon: "fa-solid fa-check-circle", text: "Resolved", link: "/resolved"},
-                        {icon: "fa-solid fa-exclamation-circle", text: "Unresolved", link: "/unresolved"},
+                        {icon: "fa-solid fa-home", text: "Books Transaction", link: "/incentives"},
                         ...(userInfo?.isAdmin ? [
-                            {icon: "fa-solid fa-chart-bar", text: "Stats", link: "/stats"},
-                            {icon: "fa-solid fa-tachometer-alt", text: "Dashboard", link: "/dashboard"},
-                            {icon: "fa-solid fa-phone", text: "Call Score", link: "/call-score"},
-                            {
-                                icon: "fa-solid fa-clock-rotate-left",
-                                text: "Monthly user's history",
-                                link: "/monthly-user-history"
-                            },
-                            {icon: "fa-solid fa-calendar", text: "Current Month Stats", link: "/current-users-stats"},
+                            
                             
                             
                         ] : [
-                            {icon: "fa-solid fa-user", text: "Profile", link: "/profile"},
-                            {icon: "fa-solid fa-clock-rotate-left", text: "History", link: "/history"}
+                            
                         ]),
-                        {icon: "fa fa-gift", text: "Incentives", link: "/incentives"},
-                        {icon: "fa-solid fa-trophy", text: "Top Performers", link: "/topperformers"},
-                        {icon: "fa-solid fa-bullhorn", text: "Announcements", link: "/announcements"}
                     ].map(({icon, text, link }) => (
                         <SidebarItem
                             key={link}
