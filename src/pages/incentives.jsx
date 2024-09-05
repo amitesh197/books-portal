@@ -39,7 +39,8 @@ export default function Incentives() {
     "puru.attrish24@gmail.com": "Purusharth",
     "iabhaysingh15@gmail.com": "Abhay",
     "swedhakarnani21@gmail.com": "Swedha Karnani",
-    "shinusuman10@gmail.com": "Sneha"
+    "shinusuman10@gmail.com": "Sneha",
+    "ankit821022@gmail.com" : "Ankit Singh"
     // Add other email to agent mappings here
   };
 
@@ -68,7 +69,8 @@ export default function Incentives() {
     oldstudent: 'oldstudent',
     STUDENTPOWER: 'STUDENTPOWER',
     MMP: 'MMP',
-    AMI: "AMIT"
+    AMI: "AMIT",
+    ANK: "Ankit Singh"
   };
 
   useEffect(() => {

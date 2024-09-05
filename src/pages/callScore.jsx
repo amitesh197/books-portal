@@ -34,7 +34,8 @@ function CallScore() {
         "Manisha",
         "Sristi Verma",
         "Nikhil Kumar",
-        "Harshit Mishra"
+        "Harshit Mishra",
+        "Ankit Singh"
     ];
 
     const calculateScores = (totalCalls, totalDuration) => {
