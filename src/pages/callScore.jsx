@@ -41,7 +41,6 @@ function CallScore() {
         const avgCallsPerWeek = Math.round(totalCalls / 7);
         const avgTalkTime = Math.round(totalDuration / 7);
 
-        // Calculate Call Score
         let callScore = 0;
         if (avgCallsPerWeek >= 115 && avgCallsPerWeek <= 125) {
             callScore = 1;
@@ -51,7 +50,6 @@ function CallScore() {
             callScore = 3;
         }
 
-        // Calculate TalkTime Score
         let talkTimeScore = 0;
         if (avgTalkTime >= 5400 && avgTalkTime <= 7200) {
             talkTimeScore = 1;
@@ -197,15 +195,15 @@ function CallScore() {
         setSelectedAgent(agent);
     };
 
-    const handleQualityScoreChange = (e) => {
+    const handleQualityScoreChange = (e, agentName) => {
         const score = parseInt(e.target.value);
         setQualityScores(prevScores => ({
             ...prevScores,
-            [selectedAgent]: score
+            [agentName]: score
         }));
 
         setData(prevData => prevData.map(row => {
-            if (row.agent_name === selectedAgent) {
+            if (row.agent_name === agentName) {
                 const newTotalScore = row.callScore + row.talkTimeScore + score;
                 return { ...row, qualityScore: score, totalScore: newTotalScore };
             }
@@ -223,10 +221,10 @@ function CallScore() {
             {
                 Header: 'Quality Score',
                 accessor: 'qualityScore',
-                Cell: ({ value }) => (
+                Cell: ({ value, row }) => (
                     <select
                         value={value}
-                        onChange={handleQualityScoreChange}
+                        onChange={(e) => handleQualityScoreChange(e, row.original.agent_name)}
                         className="border px-2 py-1 rounded"
                     >
                         <option value="0">0</option>
@@ -240,7 +238,6 @@ function CallScore() {
             { Header: 'Total Score', accessor: 'totalScore' },
         ];
     };
-
     useEffect(() => {
         if (userInfo?.email) {
             getData(selectedAgent, selectedWeek);
@@ -286,26 +283,9 @@ function CallScore() {
                         onChange={handleAgentChange}
                     >
                         <option value="All Agents">All Agents</option>
-                        <option value="Sneha">Sneha</option>
-                        <option value="Purusharth">Purusharth</option>
-                        <option value="Sanjay Rajawat">Sanjay Rajawat</option>
-                        <option value="Irfan">Irfan</option>
-                        <option value="Shivani">Shivani</option>
-                        <option value="MohitVats">MohitVats</option>
-                        <option value="Ravi">Ravi</option>
-                        <option value="Apurva">Apurva</option>
-                        <option value="Anchal">Anchal</option>
-                        <option value="Khushboo">Khushboo</option>
-                        <option value="Sajal">Sajal</option>
-                        <option value="RAM">RAM</option>
-                        <option value="Sarthak">Sarthak</option>
-                        <option value="Ankit Kumar">Ankit Kumar</option>
-                        <option value="Sonam">Sonam</option>
-                        <option value="Swedha">Swedha</option>
-                        <option value="Manisha">Manisha</option>
-                        <option value="Sristi Verma">Sristi Verma</option>
-                        <option value="Nikhil Kumar">Nikhil Kumar</option>
-                        <option value="Harshit Mishra">Harshit Mishra</option>
+                        {agentsList.map(agent => (
+                            <option key={agent} value={agent}>{agent}</option>
+                        ))}
                     </select>
                 </div>
             </div>
@@ -343,7 +323,7 @@ function CallScore() {
                                     <td className="py-2 px-4 border-b">
                                         <select
                                             value={row.qualityScore}
-                                            onChange={(e) => handleQualityScoreChange(e)}
+                                            onChange={(e) => handleQualityScoreChange(e, row.agent_name)}
                                             className="border px-2 py-1 rounded"
                                         >
                                             <option value="0">0</option>
