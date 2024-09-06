@@ -68,7 +68,7 @@ export default function Incentives() {
       </div>
 
       <IncentiveTable
-        data={incentivesData.map(({ Name, Email, 'Phone Number': PhoneNumber, Course, Date, Amount, 'Coupon Code': CouponCode }) => ({
+        data={incentivesData.map(({ Name, Email, 'Phone Number': PhoneNumber, Course, Date, Amount, 'Coupon Code': CouponCode, 'Tracking ID': TrackingID, Address, 'Courier Company': CourierCompany }) => ({
           Name,
           Email,
           PhoneNumber,
@@ -79,6 +79,9 @@ export default function Incentives() {
             currency: 'INR',
           }) : 'N/A',
           CouponCode,
+          TrackingID,
+          Address,
+          CourierCompany
         }))}
         columns={[
           { header: 'Name', accessor: 'Name' },
@@ -88,6 +91,9 @@ export default function Incentives() {
           { header: 'Date', accessor: 'Date' },
           { header: 'Amount', accessor: 'Amount' },
           { header: 'Coupon Code', accessor: 'CouponCode' },
+          { header: 'Tracking ID', accessor: 'TrackingID' },
+          { header: 'Address', accessor: 'Address' },
+          { header: 'Courier Company', accessor: 'CourierCompany' },
         ]}
       />
     </div>
