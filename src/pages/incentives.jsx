@@ -37,8 +37,8 @@ export default function Incentives() {
     // Process and filter data based on course and user email
     const processData = (fetchedData) => {
       const filteredData = fetchedData.filter(item => {
-        const courseMatched = item.Course === 'UPSC Prelims Topic-Wise Solved PYQs (2011 - 2024) Book';
-        const emailMatched = item.Email === userEmail;
+        const courseMatched = item.CourseName === 'UPSC Prelims Topic-Wise Solved PYQs (2011 - 2024) Book';
+        const emailMatched = item.email === userEmail;
 
         if (isAdmin) {
           return courseMatched;  // Admin sees all rows for the matched course
@@ -68,32 +68,53 @@ export default function Incentives() {
       </div>
 
       <IncentiveTable
-        data={incentivesData.map(({ Name, Email, 'Phone Number': PhoneNumber, Course, Date, Amount, 'Coupon Code': CouponCode, 'Tracking ID': TrackingID, Address, 'Courier Company': CourierCompany }) => ({
-          Name,
-          Email,
-          PhoneNumber,
-          Course,
-          Date,
-          Amount: Amount ? parseFloat(Amount).toLocaleString('en-IN', {
+        data={incentivesData.map(({ OrgID, CourseID, CourseName, Course_URL, TransDate, UserID, PaymentID, Amount_Paid, Current_CoursePrice, transactionid, InstallmentType, Backend_Trans, CouponDiscount, name, mobile, email, expiryDate, isExpired, ShipmentAdreess }) => ({
+          OrgID,
+          CourseID,
+          CourseName,
+          Course_URL,
+          TransDate,
+          UserID,
+          PaymentID,
+          Amount_Paid: Amount_Paid ? parseFloat(Amount_Paid).toLocaleString('en-IN', {
             style: 'currency',
             currency: 'INR',
           }) : 'N/A',
-          CouponCode,
-          TrackingID,
-          Address,
-          CourierCompany
+          Current_CoursePrice: Current_CoursePrice ? parseFloat(Current_CoursePrice).toLocaleString('en-IN', {
+            style: 'currency',
+            currency: 'INR',
+          }) : 'N/A',
+          transactionid,
+          InstallmentType,
+          Backend_Trans,
+          CouponDiscount,
+          name,
+          mobile,
+          email,
+          expiryDate,
+          isExpired,
+          ShipmentAdreess
         }))}
         columns={[
-          { header: 'Name', accessor: 'Name' },
-          { header: 'Email', accessor: 'Email' },
-          { header: 'Phone Number', accessor: 'PhoneNumber' },
-          { header: 'Course', accessor: 'Course' },
-          { header: 'Date', accessor: 'Date' },
-          { header: 'Amount', accessor: 'Amount' },
-          { header: 'Coupon Code', accessor: 'CouponCode' },
-          { header: 'Tracking ID', accessor: 'TrackingID' },
-          { header: 'Address', accessor: 'Address' },
-          { header: 'Courier Company', accessor: 'CourierCompany' },
+          { header: 'OrgID', accessor: 'OrgID' },
+          { header: 'CourseID', accessor: 'CourseID' },
+          { header: 'CourseName', accessor: 'CourseName' },
+          { header: 'Course_URL', accessor: 'Course_URL' },
+          { header: 'TransDate', accessor: 'TransDate' },
+          { header: 'UserID', accessor: 'UserID' },
+          { header: 'PaymentID', accessor: 'PaymentID' },
+          { header: 'Amount_Paid', accessor: 'Amount_Paid' },
+          { header: 'Current_CoursePrice', accessor: 'Current_CoursePrice' },
+          { header: 'transactionid', accessor: 'transactionid' },
+          { header: 'InstallmentType', accessor: 'InstallmentType' },
+          { header: 'Backend_Trans', accessor: 'Backend_Trans' },
+          { header: 'CouponDiscount', accessor: 'CouponDiscount' },
+          { header: 'name', accessor: 'name' },
+          { header: 'mobile', accessor: 'mobile'},
+          { header: 'email', accessor: 'email'},
+          { header: 'expiryDate', accessor: 'expiryDate'},
+          { header: 'isExpired', accessor: 'isExpired'},
+          { header: 'ShipmentAdreess', accessor: 'ShipmentAdreess'}
         ]}
       />
     </div>
