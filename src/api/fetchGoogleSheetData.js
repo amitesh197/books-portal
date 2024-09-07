@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 export async function fetchGoogleSheetData() {
-  const API_URL = 'https://sheets.googleapis.com/v4/spreadsheets/1kixTF3Z_NR9MOuSaRycLapGH24BFmbE236CMWOR80EM/values/Sheet1?key=AIzaSyAAe2T-LDq9O-74KILyOMVFHZMzgkUM7Wg';
+  const API_URL = 'https://sheets.googleapis.com/v4/spreadsheets/1B7EwUZOPWCM3c8efLvOpqFs_sHVdqjzmY7N8mXJzPXU/values/Sheet1?key=AIzaSyAAe2T-LDq9O-74KILyOMVFHZMzgkUM7Wg';
 
   try {
     const response = await axios.get(API_URL);

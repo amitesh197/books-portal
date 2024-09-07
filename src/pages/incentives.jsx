@@ -68,7 +68,7 @@ export default function Incentives() {
       </div>
 
       <IncentiveTable
-        data={incentivesData.map(({ OrgID, CourseID, CourseName, Course_URL, TransDate, UserID, PaymentID, Amount_Paid, Current_CoursePrice, transactionid, InstallmentType, Backend_Trans, CouponDiscount, name, mobile, email, expiryDate, isExpired, ShipmentAdreess }) => ({
+        data={incentivesData.map(({ OrgID, CourseID, CourseName, Course_URL, TransDate, UserID, PaymentID, Amount_Paid, Current_CoursePrice, transactionid, InstallmentType, Backend_Trans, CouponDiscount, name, mobile, email, expiryDate, isExpired, ShipmentAdreess, DateofPurchase, TrackingID, CourierCompany }) => ({
           OrgID,
           CourseID,
           CourseName,
@@ -93,28 +93,35 @@ export default function Incentives() {
           email,
           expiryDate,
           isExpired,
-          ShipmentAdreess
+          ShipmentAdreess,
+          DateofPurchase,
+          TrackingID,
+          CourierCompany
         }))}
         columns={[
-          { header: 'OrgID', accessor: 'OrgID' },
-          { header: 'CourseID', accessor: 'CourseID' },
-          { header: 'CourseName', accessor: 'CourseName' },
-          { header: 'Course_URL', accessor: 'Course_URL' },
-          { header: 'TransDate', accessor: 'TransDate' },
-          { header: 'UserID', accessor: 'UserID' },
-          { header: 'PaymentID', accessor: 'PaymentID' },
-          { header: 'Amount_Paid', accessor: 'Amount_Paid' },
-          { header: 'Current_CoursePrice', accessor: 'Current_CoursePrice' },
-          { header: 'transactionid', accessor: 'transactionid' },
-          { header: 'InstallmentType', accessor: 'InstallmentType' },
-          { header: 'Backend_Trans', accessor: 'Backend_Trans' },
-          { header: 'CouponDiscount', accessor: 'CouponDiscount' },
-          { header: 'name', accessor: 'name' },
-          { header: 'mobile', accessor: 'mobile'},
-          { header: 'email', accessor: 'email'},
-          { header: 'expiryDate', accessor: 'expiryDate'},
-          { header: 'isExpired', accessor: 'isExpired'},
-          { header: 'ShipmentAdreess', accessor: 'ShipmentAdreess'}
+          { header: 'Tracking ID', accessor: 'TrackingID' },
+          { header: 'Courier Company', accessor: 'CourierCompany' },
+          { header: 'Course Name', accessor: 'CourseName' },
+          { header: 'Student Name', accessor: 'name' },
+          { header: 'Student Mobile Number', accessor: 'mobile'},
+          { header: 'Date of Purchase', accessor: 'DateofPurchase' },
+          { header: 'Shipment Adreess', accessor: 'ShipmentAdreess'}
+          // { header: 'Course_URL', accessor: 'Course_URL' },
+          // { header: 'TransDate', accessor: 'TransDate' },
+          // { header: 'UserID', accessor: 'UserID' },
+          // { header: 'PaymentID', accessor: 'PaymentID' },
+          // { header: 'Amount_Paid', accessor: 'Amount_Paid' },
+          // { header: 'Current_CoursePrice', accessor: 'Current_CoursePrice' },
+          // { header: 'transactionid', accessor: 'transactionid' },
+          // { header: 'InstallmentType', accessor: 'InstallmentType' },
+          // { header: 'Backend_Trans', accessor: 'Backend_Trans' },
+          // { header: 'CouponDiscount', accessor: 'CouponDiscount' },
+          // { header: 'name', accessor: 'name' },
+          // { header: 'mobile', accessor: 'mobile'},
+          // { header: 'email', accessor: 'email'},
+          // { header: 'expiryDate', accessor: 'expiryDate'},
+          // { header: 'isExpired', accessor: 'isExpired'},
+          
         ]}
       />
     </div>
