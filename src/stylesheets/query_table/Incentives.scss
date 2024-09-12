@@ -1,3 +1,46 @@
+.table-container {
+  padding: 20px;
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  table-layout: fixed; // Ensures table layout is consistent
+}
+
+.header-row {
+  text-align: center;
+  font-size: 1.2rem; // Decreased font size for headers
+  font-weight: 600;
+  background-color: #f4f4f4;
+}
+
+.header-row th {
+  padding: 10px;
+  border: 1px solid #ddd;
+  background-color: #f4f4f4;
+  word-wrap: break-word; // Wraps text in header cells
+}
+
+.data-row td {
+  padding: 10px;
+  border: 1px solid #ddd;
+  text-align: left;
+  word-wrap: break-word; // Allows text to wrap within the cell
+  overflow-wrap: break-word; // Ensures long words break appropriately
+}
+
+input[type="text"] {
+  width: 100%;
+  box-sizing: border-box;
+  padding: 0.75rem;
+  border-radius: 4px;
+  border: 1px solid #ddd;
+  font-size: 14px;
+  margin: 0; // Remove default margin if any
+}
+
+// Additional styles
 .container {
   padding: 20px;
 }
