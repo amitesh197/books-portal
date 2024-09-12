@@ -85,8 +85,8 @@ export default function Incentives() {
         <Loading />
       ) : (
         <>
-          <h1>Incentives Records</h1>
-          <p>Total Records: {data.length}</p>
+          <h1 style={{ textAlign: 'center', fontSize: '2rem', margin: '20px 0', color: '#333' }}>Book Transactions</h1>
+          <p style={{ textAlign: 'center', fontSize: '1.2rem', color: '#666' }}>Total Orders: {data.length}</p>
           <IncentiveTable
             data={data}
             isAdmin={isAdmin}
