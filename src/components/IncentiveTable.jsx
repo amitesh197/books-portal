@@ -43,9 +43,13 @@ const IncentiveTable = ({ data, handleUpdate, isAdmin }) => {
                 {isAdmin ? (
                   <input
                     type="text"
-                    value={row.TrackingID || ''}
-                    onChange={(e) => handleInputChange(rowIndex, 'TrackingID', e.target.value)}
-                    onBlur={() => handleBlur(rowIndex)}
+                    value={''}
+
+                    //update this feature to make it work properly
+
+                    // value={row.TrackingID || ''}
+                    // onChange={(e) => handleInputChange(rowIndex, 'TrackingID', e.target.value)}
+                    // onBlur={() => handleBlur(rowIndex)}
                   />
                 ) : (
                   row.TrackingID || 'N/A' // Handle empty values
@@ -55,9 +59,14 @@ const IncentiveTable = ({ data, handleUpdate, isAdmin }) => {
                 {isAdmin ? (
                   <input
                     type="text"
-                    value={row.CourierCompany || ''}
-                    onChange={(e) => handleInputChange(rowIndex, 'CourierCompany', e.target.value)}
-                    onBlur={() => handleBlur(rowIndex)}
+                    value={''}
+
+
+                    //update this feature to make it work properly
+
+                    //value={row.CourierCompany || ''}
+                    //onChange={(e) => handleInputChange(rowIndex, 'CourierCompany', e.target.value)}
+                    //onBlur={() => handleBlur(rowIndex)}
                   />
                 ) : (
                   row.CourierCompany || 'N/A' // Handle empty values

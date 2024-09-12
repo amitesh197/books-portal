@@ -71,7 +71,7 @@ export default function Incentives() {
       // }
 
 
-      alert('Failed to update data.');   // Remove this after making the above feature work
+      //alert('Failed to update data.');   // Remove this after making the above feature work
     } catch (error) {
       console.error('Failed to update data:', error);
       alert('Failed to update data.');
